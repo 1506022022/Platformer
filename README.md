@@ -17,35 +17,36 @@
 
 # I. 메인 코딩 표준
 - 클래스와 구조체의 이름은 파스칼 표기법을 따른다.
-  
+```C++
 class PlayerManager;
-
 struct PlayerData;
-
+```
 - 지역 변수 그리고 함수의 매개 변수의 이름은 카멜 표기법을 따른다.
   
 ```C++
 public void SomeMethod(int someParameter)
 {
-
     int someNumber;
-    
     int id;
-    
 }
 ```
 
 - 메서드 이름은 기본적으로 동사(명령형)+명사(목적어)의 형태로 짓는다.
+```C++
 public uint GetAge();
+```
 
 단, 단순히 부울(boolean) 상태를 반환하는 메서드의 동사 부분은 최대한 Is, Can, Has, Should를 사용하되 그러는 것이 부자연스러울 경우에는 상태를 나타내는 다른 3인칭 단수형 동사를 사용한다.
+```C++
 public bool IsAlive(Person person);
 public bool HasChild(Person person);
 public bool CanAccept(Person person);
 public bool ShouldDelete(Person person);
 public bool Exists(Person person);
+```
 
 - 메서드의 이름은 파스칼 표기법을 따른다.
+  ``
 public uint GetAge();
 
 - 상수의 이름은 모두 대문자로 하되 밑줄로 각 단어를 분리한다.
