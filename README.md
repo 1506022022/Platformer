@@ -215,7 +215,9 @@ PlayerAnimation.cs
 
   
  Human.Head.cs
+ 
  Human.Body.cs
+ 
  Human.Arm.cs
 ```C++
 public partial class Human;
@@ -282,9 +284,7 @@ switch (accountType)
 ```C++
  public Anim GetAnim(string nameOrNull);
 ```
-- 함수에서 null을 반환하지 않는 것을 추구한다. 특히 public 함수일 경우 더욱 그러하다. 그러나 때로는 예외를 던지는 것을 방지하기 위해 그래야 할 경우도 있다.
-
-함수에서 null을 반환할 때는 함수 이름 뒤에 OrNull을 붙인다.
+- 함수에서 null을 반환하지 않는 것을 추구한다. 특히 public 함수일 경우 더욱 그러하다. 그러나 때로는 예외를 던지는 것을 방지하기 위해 그래야 할 경우도 있다. 함수에서 null을 반환할 때는 함수 이름 뒤에 OrNull을 붙인다.
 ```C++
  public string GetNameOrNull();
 ```
