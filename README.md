@@ -254,7 +254,7 @@ public static readonly MyConstClass MY_CONST_OBJECT = new MyConstClass();
 - 범용적인 자료형을 강타입(strong type)으로 만들 때는readonly record struct(C# 10.0)를 사용한다
 
   
-II. 소스 코드 포맷팅
+# II. 소스 코드 포맷팅
 - 탭(tab)은 비주얼 스튜디오 기본값을 사용하며, 비주얼 스튜디오를 사용하지 않을 시 띄어쓰기 4칸을 탭으로 사용한다.
 
 - 중괄호( { )를 열 때는 언제나 새로운 줄에 연다.
@@ -273,7 +273,7 @@ int counter = 0;
 int index = 0;
 
 
-III. 프로젝트 설정 관련
+# III. 프로젝트 설정 관련
 - 배포(release) 빌드에서 컴파일러 경고(warning)를 오류(error)로 처리하게 설정한다.
 
 - implicit global using(C# 10.0)을 사용하지 않는다
