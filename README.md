@@ -24,7 +24,7 @@ struct PlayerData;
 
 - 지역 변수 그리고 함수의 매개 변수의 이름은 카멜 표기법을 따른다.
   
-{public void SomeMethod(int someParameter)
+'''public void SomeMethod(int someParameter)
 
 {
 
@@ -32,8 +32,7 @@ struct PlayerData;
     
     int id;
     
-}
-}
+}'''
 
 - 메서드 이름은 기본적으로 동사(명령형)+명사(목적어)의 형태로 짓는다.
 public uint GetAge();
