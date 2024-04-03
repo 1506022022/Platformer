@@ -76,12 +76,13 @@ public static readonly MyConstClass MY_CONST_OBJECT = new MyConstClass();
      }
  }
 ```
-
 - 네임스페이스의 이름은 파스칼 표기법을 따른다.
 ```C++
  namespace System.Graphics
 ```
-
+- 네임스페이스의 구성 요소는 마침표로 구분한다(Microsoft.Office.PowerPoint).
+- 서로 다른 회사의 네임스페이스가 동일한 이름을 갖는 것을 방지하려면 네임스페이스 이름 앞에 회사 이름을 붙인다.
+- 네임스페이스 이름의 두 번째 수준에서는 안정적이고 버전 독립적인 제품 이름을 사용한다.
 - 부울(boolean) 변수는 앞에 b를 붙인다.
 ```C++
  bool bFired;                // 지역변수
