@@ -110,7 +110,7 @@ public static readonly MyConstClass MY_CONST_OBJECT = new MyConstClass();
 ```C++
  public struct UserID;
 ```
-- private 멤버 변수명은 앞에 m을 붙이고 파스칼 표기법을 따른다
+- private 멤버 변수명은 앞에 m을 붙이고 파스칼 표기법을 따른다.
 ```C++
  public class Employee
  {
@@ -139,7 +139,7 @@ public static readonly MyConstClass MY_CONST_OBJECT = new MyConstClass();
      public string GetName();
      public string SetName(string name);
  }
-```C++
+```
 올바른 방식:
 ```C++
  public class Employee
@@ -261,7 +261,7 @@ public partial class Human;
 - async void 대신에 async Task를 사용한다. async void가 허용되는 유일한 곳은 이벤트 핸들러이다.
 
 - 외부로부터 들어오는 데이터의 유효성은 외부/내부 경계가 바뀌는 곳에서 검증(validate)하고 문제가 있을 경우 내부 함수로 전달하기 전에 반환해 버린다. 이는 경계를 넘어 내부로 들어온 모든 데이터는 유효하다고 가정한다는 뜻이다.
-- 
+  
 따라서 내부 함수에서 예외(익셉션)를 던지지 않으려 노력한다. 예외는 경계에서만 처리하는 것을 원칙으로 한다.
 
 위 규칙의 예외: enum 형을 switch 문에서 처리할 때 실수로 처리 안 한 enum 값을 찾기 위해 default: 케이스에서 예외를 던지는 것은 허용.
@@ -304,7 +304,7 @@ switch (accountType)
 
 - 파일 범위 namespace 선언(C# 10.0)을 사용한다
 
-- 범용적인 자료형을 강타입(strong type)으로 만들 때는readonly record struct(C# 10.0)를 사용한다
+- 범용적인 자료형을 강타입(strong type)으로 만들 때는readonly record struct(C# 10.0)를 사용한다.
 
   
 # II. 소스 코드 포맷팅
@@ -336,4 +336,4 @@ int index = 0;
 
 - 배포(release) 빌드에서 컴파일러 경고(warning)를 오류(error)로 처리하게 설정한다.
 
-- implicit global using(C# 10.0)을 사용하지 않는다
+- implicit global using(C# 10.0)을 사용하지 않는다.
