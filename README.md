@@ -6,7 +6,7 @@
 
 # RPG Base System
 ![RPG 구조](https://github.com/1506022022/RPG/assets/88864717/e300f7ef-fb73-4cd4-ac6c-169d1fb1158d)
-<details> <summary>**업데이트 히스토리**</summary>
+<details> <summary><b>업데이트 히스토리</b></summary>
 
 - **입력 노드 -> 컨트롤러 노드** : 수행하는 역할이 컨트롤러에 더 맞다고 판단해 의미를 명확하게 전달할수 있도록 변경했습니다.
 - **상호작용 노드 -> 인터렉션 노드** : 콘텐츠 하위 노드인 인터렉터블 노드와의 일관성을 위해서 변경하였습니다.
