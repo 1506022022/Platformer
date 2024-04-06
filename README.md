@@ -37,6 +37,8 @@
 # C#
 ※포프님의 C# 코딩 스탠다드를 참고했습니다.
 
+<https://docs.popekim.com/ko/coding-standards/csharp>
+
 [기본 원칙]
 
 가독성을 최우선으로 삼는다. (대부분의 경우 코드는 그 자체가 문서의 역할을 해야 함)
