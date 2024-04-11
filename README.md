@@ -10,9 +10,15 @@
 
 캐릭터 애니메이션    : <https://github.com/1506022022/RPG/blob/main/Character/CharacterAnimation.cs>
 
+<details><summery> 이전 과제 </summery> 
 <b>~ 24/04/06</b>
-
+  
 <https://youtu.be/bY9U0UJOR3U>
+
+</details>
+
+
+
 
 
 # 문서 설명
