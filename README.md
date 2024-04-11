@@ -9,14 +9,6 @@
 
 <https://youtu.be/bY9U0UJOR3U>
 
-<details>
-<details>
-  <summary>a </summary>
-</details>
-  <details>
-  <summary>b </summary>
-</details>
-</details>
 
 # 문서 설명
 이 문서에서 RPG(Role-playing game)는 플레이어블 캐릭터를 조작하여 몬스터와 전투하며 성장하는 역할 수행게임입니다.
@@ -28,6 +20,17 @@
 
 # RPG Base System
 ![RPG 구조](https://github.com/1506022022/RPG/assets/88864717/0a29b29a-7889-44b9-8f37-1a902c046c1c)
+
+
+<details>
+  <summary> <b>업데이트 히스토리</b></summary>
+<details>
+  <summary>a </summary>
+</details>
+  <details>
+  <summary>b </summary>
+</details>
+</details>
 
 <details>
   <summary>
