@@ -1,50 +1,46 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using static RPG.Input.ActionKey;
 
 namespace RPG.Input.Controller
 {
-    public class CharacterSwappingSystem : Controller
+    public class CharacterSwappingSystem : InputInteraction
     {
-        int mIndex = 0;
-        List<IControllableObject> mControllables = new List<IControllableObject>();
+        Controller mController;
+        public override bool IsAble => mController.IsActive &&
+                              delay + 0.5f <= Time.time;
+        float delay;
+        int mIndex;
 
-        public void SetControllables()
+        public CharacterSwappingSystem(Controller controller) : base()
         {
-            Debug.Assert(mControlledTarget != null);
-            mControllables.Clear();
-            MonoBehaviour obj;
-            // TODO : IControllableObject 검색 부분 최적화 필요
-            var objs = GameObject.FindObjectsOfType<MonoBehaviour>();
-            // TODOEND
-            for (int i = 0, selectedIndex = 0; i < objs.Length; i++)
-            {
-                obj = objs[i];
-                if (obj is IControllableObject)
-                {
-                    mControllables.Add(obj as IControllableObject);
-                    if (mControlledTarget.Equals(obj))
-                    {
-                        mIndex = selectedIndex;
-                    }
-                    selectedIndex++;
-                }
-            }
+            mController = controller;
         }
-        public override void Update()
+
+        void Swapping(float input)
         {
-            base.Update();
-            if (!Active) return;
-            if (UnityEngine.Input.GetKeyDown(KeyCode.Tab))
+            if (input.Equals(0f))
             {
-                mControllables[mIndex++].ReleaseControlledTarget();
-
-                // 루프 타일링
-                mIndex = mIndex == mControllables.Count ? 0 :
-                                                          mIndex;
-                //
-
-                SetControlledTarget(mControllables[mIndex]);
+                return;
             }
+
+            delay = Time.time;
+
+            mController.AllControlledTargets[mIndex++].OnReleaseControll();
+            // 루프 타일링
+            mIndex = mIndex == mController.AllControlledTargets.Count ? 0 :
+                                                      mIndex;
+            //
+            mController.BindObject(mController.AllControlledTargets[mIndex]);
+        }
+
+        protected override void MappingInputEvent()
+        {
+            InputEventMap = new Dictionary<string, UnityAction<float>>()
+            {
+                { TAB, Swapping }
+            };
         }
     }
 }

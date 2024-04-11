@@ -17,7 +17,7 @@ namespace RPG
         [SerializeField] protected Contents.Contents mContents;
         int sceneLevel = 0;
 
-        protected virtual void StartGame()
+        void StartGame()
         {
             Debug.Assert(mLoadSceneNames.Count > 0);
 
@@ -31,35 +31,53 @@ namespace RPG
             Debug.Assert(gms.Count() == 1);
 #endif
         }
-        protected virtual void OnLoadedScene()
+        void OnLoadedScene()
         {
             SelectCharacterAndStartControll();
             bGameStart = true;
         }
-        protected virtual void OnClearGame()
+        void OnClearGame()
         {
+            if (!bGameStart)
+            {
+                return;
+            }
             bGameStart = false;
             mPlayerController.SetActive(false);
             StartCoroutine(GameEndProcess());
         }
-        protected virtual IEnumerator GameEndProcess()
+        IEnumerator GameEndProcess()
         {
             yield return new WaitForSeconds(3.0f);
             StartGame();
         }
-        protected void SelectCharacterAndStartControll()
+        void SelectCharacterAndStartControll()
         {
             mPlayer = FindObjectOfType<Character.Character>();
             Debug.Assert(mPlayer);
             CreateController();
-            mPlayerController.SetControlledTarget(mPlayer);
+            IControllableObject obj = ControllableFactory.CreateFromCharacter(mPlayer);
+            var list = GetControllableList();
+            mPlayerController.SetAllControlledTarget(list);
+            mPlayerController.BindObject(obj);
             mPlayerController.SetActive(true);
         }
-        protected virtual void CreateController()
+        void CreateController()
         {
             mPlayerController = new Controller();
         }
-        protected virtual void Awake()
+        List<IControllableObject> GetControllableList()
+        {
+            List<IControllableObject> list = new List<IControllableObject>();
+            var characters = FindObjectsOfType<Character.Character>();
+            foreach (var character in characters)
+            {
+                var obj = ControllableFactory.CreateFromCharacter(character);
+                list.Add(obj);
+            }
+            return list;
+        }
+        void Awake()
         {
             DontDestroyOnLoad(gameObject);
             mContents.AddListenerLoadedScene(OnLoadedScene);

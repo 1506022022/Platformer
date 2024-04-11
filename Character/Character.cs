@@ -1,10 +1,12 @@
-using RPG.Input.Controller;
 using UnityEngine;
 
 namespace RPG.Character
 {
-    public class Character : MonoBehaviour, IControllableObject
+    public class Character : MonoBehaviour
     {
+        [Header("[Debug]")]
+        [SerializeField] protected State mState = State.Idle;
+
         Combat mCombat;
         Status mStatus;
         CharacterCamera mCharCamera;
@@ -16,38 +18,22 @@ namespace RPG.Character
         [SerializeField] Camera mCam;
         [SerializeField] GameObject mUI;
 
-        [Header("[Debug]")]
-        [SerializeField] State mState = State.Idle;
 
         // TODO : 나중에 이동 관련 구조체(이동속도, 이동가능상태, 버프.. 등) 만들어서 대체
-        [SerializeField] float mMoveSpeed = 1;
-        public float GetMoveSpeed()
-        {
-            return mMoveSpeed;
-        }
+        public float MoveSpeed { get; } = 1.0f;
         // TODOEND
-
-        public Rigidbody GetRigidbody()
-        {
-            Debug.Assert(mRigid);
-            return mRigid;
-        }
         public Camera GetCamera()
         {
             Debug.Assert(mCam);
             return mCam;
         }
-        public bool IsControllable()
-        {
-            return mCharAnim.IsGround();
-        }
-        public void SetControlledTarget()
+        public void FocusOn()
         {
             Debug.Assert(mUI);
             mUI.SetActive(true);
             GetCamera().gameObject.SetActive(true);
         }
-        public void ReleaseControlledTarget()
+        public void FocusOff()
         {
             Debug.Assert(mUI);
             mUI.SetActive(false);

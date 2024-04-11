@@ -13,32 +13,25 @@ namespace RPG.Contents
                 Debug.Assert(mInstance);
                 return mInstance;
             }
-            protected set
+            private set
             {
                 mInstance = value;
             }
         }
         static Map mInstance;
-        [SerializeField] UnityEvent mClearEvent = new UnityEvent();
+        [SerializeField] Stage mStage;
 
         public void AddListenerClearEvent(UnityAction action)
         {
-            mClearEvent.AddListener(action);
+            mStage.AddListenerClearEvent(action);
         }
-        protected virtual void Awake()
+        void Awake()
         {
             mInstance = this;
-#if UNITY_EDITOR
+#if DEVELOPMENT
             var maps = FindObjectsOfType<Map>();
             Debug.Assert(maps.Count() == 1);
 #endif
-        }
-        protected virtual void Start()
-        {
-        }
-        protected void Clear()
-        {
-            mClearEvent.Invoke();
         }
     }
 }

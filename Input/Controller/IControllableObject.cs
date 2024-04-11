@@ -8,8 +8,8 @@ namespace RPG.Input.Controller
         public Camera GetCamera();
         public float GetMoveSpeed();
         public bool IsControllable();
-        public void SetControlledTarget();
-        public void ReleaseControlledTarget();
+        public void OnBindControll();
+        public void OnReleaseControll();
     }
 }
 

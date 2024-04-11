@@ -22,14 +22,14 @@ namespace RPG.Character
             mRigid = rigid;
             mTrigger = IDLE;
             mLandTrigger = new BlendTrigger(LAND,
-                                            new string[] { WALK, RUN, IDLE });
+                              new string[] { WALK, RUN, IDLE });
         }
         public State UpdateAndGetState()
         {
             mPrevTrigger = mTrigger;
 
             // GetState
-            if (IsGround())
+            if (RigidbodyUtil.IsGround(mRigid))
             {
                 mTrigger = GetMovementState();
                 if (mPrevTrigger == FALL)

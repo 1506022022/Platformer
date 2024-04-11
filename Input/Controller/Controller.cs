@@ -1,80 +1,80 @@
+using System.Collections.Generic;
 using UnityEngine;
-using static MovementInfo;
+using UnityEngine.Events;
 
 namespace RPG.Input.Controller
 {
     public class Controller
     {
-        public bool Active
-        {
-            get
-            {
-                return mbActive;
-            }
-        }
+        public bool IsActive => mbActive;
         bool mbActive;
-        protected IControllableObject mControlledTarget;
-        float mJumpDelay;
-        Vector3 mMoveDir;
-        Vector3 mMoveVector;
-        Vector3 mVelocity;
-        Rigidbody mTargetRigid;
+        IControllableObject mControlledTarget;
+        public List<IControllableObject> AllControlledTargets
+        {
+            get;
+            private set;
+        }
+        List<IInputInteraction> mInputInteractionList = new List<IInputInteraction>();
+        string mKeyName;
+        float mKeyInputValue;
+        XZMovement mXZMovement;
+        JumpMovement mJumpMovement;
+        UnityAction<float> mInputEvent;
+        List<IControllableObject> mReleasedTarget = new List<IControllableObject>();
+        public Controller()
+        {
+            mXZMovement = new XZMovement();
+            mInputInteractionList.Add(mXZMovement);
+            mJumpMovement = new JumpMovement();
+            mInputInteractionList.Add(mJumpMovement);
+            var swappingSystem = new CharacterSwappingSystem(this);
+            mInputInteractionList.Add(swappingSystem);
+        }
 
         public virtual void Update()
         {
-            if (!Active) return;
-            Debug.Assert(mTargetRigid);
-            if (!mControlledTarget.IsControllable()) return;
-            DoJumpIfPressed();
-            DoMoveIfPressed();
+            if (!IsActive) return;
 
-            // TODO : 공격입력, 상호작용입력 기능 구현
-            ActionInput.IsAttacking();
-            ActionInput.IsInteraction();
-            // TODOEND
+            Dictionary<string, float> axisRawMap = ActionKey.GetAxisRawMap();
+            foreach (var interactionTarget in mInputInteractionList)
+            {
+                if (!interactionTarget.IsAble)
+                {
+                    continue;
+                }
+
+                foreach (var item in interactionTarget.InputEventMap)
+                {
+                    mKeyName = item.Key;
+                    mInputEvent = item.Value;
+                    mKeyInputValue = axisRawMap[mKeyName];
+
+                    mInputEvent.Invoke(mKeyInputValue);
+                }
+            }
         }
         public void SetActive(bool active)
         {
+            Debug.Assert(!active || active && mReleasedTarget.Count == 0);
             mbActive = active;
         }
-        public void SetControlledTarget(IControllableObject target)
+        public virtual void BindObject(IControllableObject target)
         {
             mControlledTarget = target;
-            mTargetRigid = target.GetRigidbody();
-            target.SetControlledTarget();
+            mXZMovement.SetMovementObject(target);
+            mJumpMovement.SetMovementObject(target);
+            target.OnBindControll();
+            mReleasedTarget.Clear();
         }
-        void DoMoveIfPressed()
+        public virtual void ReleaseObject()
         {
-            mMoveDir = Input.Movement.GetMoveDirection(mControlledTarget);
-            mMoveVector = mMoveDir * mControlledTarget.GetMoveSpeed() * Time.deltaTime * 1000f;
-            mTargetRigid.AddForce(mMoveVector);
-            // 감속
-            if (mMoveDir == Vector3.zero)
-            {
-                mTargetRigid.velocity *= 0.96f;
-            }
-            //
-
-            // 이동 속도 제한
-            mVelocity = mTargetRigid.velocity;
-            mVelocity.x = Mathf.Clamp(mVelocity.x, -MAX_MOVE_VELOCITY, MAX_MOVE_VELOCITY);
-            mVelocity.z = Mathf.Clamp(mVelocity.z, -MAX_MOVE_VELOCITY, MAX_MOVE_VELOCITY);
-            mTargetRigid.velocity = mVelocity;
-            //
+            mControlledTarget.OnReleaseControll();
+            mReleasedTarget.Add(mControlledTarget);
+            SetActive(false);
         }
-        void DoJumpIfPressed()
+        public void SetAllControlledTarget(List<IControllableObject> targets)
         {
-            if (Movement.IsPressedJumpKey() &&
-                mJumpDelay <= Time.time)
-            {
-                mTargetRigid.AddForce(Vector3.up * JUMP_POWER);
-                mJumpDelay = Time.time + JUMP_Delay;
-            }
-            // 점프 속도 제한
-            mVelocity = mTargetRigid.velocity;
-            mVelocity.y = Mathf.Clamp(mVelocity.y, -MAX_JUMP_VELOCITY, MAX_JUMP_VELOCITY);
-            mTargetRigid.velocity = mVelocity;
-            //
+            AllControlledTargets = targets;
         }
     }
 }
