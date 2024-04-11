@@ -39,7 +39,7 @@ namespace RPG.Contents
         void OnTriggerExitListener(Collider other)
         {
             GameObject player = other.gameObject;
-            if(mGoalCheck.ContainsKey(player))
+            if (mGoalCheck.ContainsKey(player))
             {
                 mGoalCheck[player] = false;
             }

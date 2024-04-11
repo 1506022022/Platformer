@@ -3,35 +3,26 @@ using UnityEngine;
 
 namespace RPG.Input.Controller
 {
-    public class ControllerChanger : MonoBehaviour
+    public class CharacterSwappingSystem : Controller
     {
         int mIndex = 0;
-        Controller mController;
-        public Controller Controller
-        {
-            private get
-            {
-                return mController;
-            }
-            set
-            {
-                mController = value;
-            }
-        }
         List<IControllableObject> mControllables = new List<IControllableObject>();
 
-        public void SetControllables(IControllableObject selected = null)
+        public void SetControllables()
         {
+            Debug.Assert(mControlledTarget != null);
             mControllables.Clear();
             MonoBehaviour obj;
-            var objs = FindObjectsOfType<MonoBehaviour>();
+            // TODO : IControllableObject 검색 부분 최적화 필요
+            var objs = GameObject.FindObjectsOfType<MonoBehaviour>();
+            // TODOEND
             for (int i = 0, selectedIndex = 0; i < objs.Length; i++)
             {
                 obj = objs[i];
                 if (obj is IControllableObject)
                 {
                     mControllables.Add(obj as IControllableObject);
-                    if (selected.Equals(obj))
+                    if (mControlledTarget.Equals(obj))
                     {
                         mIndex = selectedIndex;
                     }
@@ -39,9 +30,10 @@ namespace RPG.Input.Controller
                 }
             }
         }
-        void Update()
+        public override void Update()
         {
-            if (mController==null || !mController.Active) return;
+            base.Update();
+            if (!Active) return;
             if (UnityEngine.Input.GetKeyDown(KeyCode.Tab))
             {
                 mControllables[mIndex++].ReleaseControlledTarget();
@@ -51,7 +43,7 @@ namespace RPG.Input.Controller
                                                           mIndex;
                 //
 
-                mController.SetControlledTarget(mControllables[mIndex]);
+                SetControlledTarget(mControllables[mIndex]);
             }
         }
     }

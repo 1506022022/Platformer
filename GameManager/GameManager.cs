@@ -23,7 +23,7 @@ namespace RPG
 
             bGameStart = false;
             string sceneName = mLoadSceneNames[sceneLevel];
-            sceneLevel = Mathf.Min(sceneLevel + 1, mLoadSceneNames.Count-1);
+            sceneLevel = Mathf.Min(sceneLevel + 1, mLoadSceneNames.Count - 1);
             mContents.LoadScene(sceneName);
 
 #if DEVELOPMENT
@@ -47,15 +47,19 @@ namespace RPG
             yield return new WaitForSeconds(3.0f);
             StartGame();
         }
-        void SelectCharacterAndStartControll()
+        protected void SelectCharacterAndStartControll()
         {
             mPlayer = FindObjectOfType<Character.Character>();
             Debug.Assert(mPlayer);
-            mPlayerController = new Controller();
+            CreateController();
             mPlayerController.SetControlledTarget(mPlayer);
             mPlayerController.SetActive(true);
         }
-        void Awake()
+        protected virtual void CreateController()
+        {
+            mPlayerController = new Controller();
+        }
+        protected virtual void Awake()
         {
             DontDestroyOnLoad(gameObject);
             mContents.AddListenerLoadedScene(OnLoadedScene);

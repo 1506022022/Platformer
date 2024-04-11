@@ -13,16 +13,16 @@ namespace RPG.Input.Controller
             }
         }
         bool mbActive;
+        protected IControllableObject mControlledTarget;
         float mJumpDelay;
         Vector3 mMoveDir;
         Vector3 mMoveVector;
         Vector3 mVelocity;
         Rigidbody mTargetRigid;
-        IControllableObject mControlledTarget;
 
-        public void Update()
+        public virtual void Update()
         {
-            if (!mbActive) return;
+            if (!Active) return;
             Debug.Assert(mTargetRigid);
             if (!mControlledTarget.IsControllable()) return;
             DoJumpIfPressed();

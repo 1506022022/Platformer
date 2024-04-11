@@ -1,17 +1,20 @@
 using RPG.Input.Controller;
-using UnityEngine;
 
 namespace RPG
 {
     public class PuzzlePlatformerGM : GameManager
     {
-        [SerializeField] protected  ControllerChanger mChanger;
+        CharacterSwappingSystem swappingController;
 
         protected override void OnLoadedScene()
         {
             base.OnLoadedScene();
-            mChanger.Controller = mPlayerController;
-            mChanger.SetControllables(mPlayer);
+            swappingController.SetControllables();
+        }
+        protected override void CreateController()
+        {
+            mPlayerController = new CharacterSwappingSystem();
+            swappingController = mPlayerController as CharacterSwappingSystem;
         }
     }
 }

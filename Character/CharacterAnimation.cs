@@ -74,7 +74,7 @@ namespace RPG.Character
             if (hitsExceptForMyself.Any())
             {
 
-                Debug.DrawRay(origin, Vector3.down, Color.yellow, hitsExceptForMyself.Min(x=>x.distance));
+                Debug.DrawRay(origin, Vector3.down, Color.yellow, hitsExceptForMyself.Min(x => x.distance));
                 DebugGizmos.DrawWireCube(origin + Vector3.down * hitsExceptForMyself.Min(x => x.distance), Vector3.one * 0.25f, mRigid.GetHashCode());
             }
             else
