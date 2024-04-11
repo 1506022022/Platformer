@@ -22,29 +22,22 @@
 ![RPG 구조](https://github.com/1506022022/RPG/assets/88864717/0a29b29a-7889-44b9-8f37-1a902c046c1c)
 
 
-<details>
-  <summary> <b>업데이트 히스토리</b></summary>
-<details>
-  <summary>
-    <b></v>2024.04.06</b>
-  </summary>
+<details><summary> <b>업데이트 히스토리</b></summary>
+
+<details><summary><b>2024.04.06</b></summary>
   
 - **입력 노드 -> 컨트롤러 노드** : 수행하는 역할이 컨트롤러에 더 맞다고 판단해 의미를 명확하게 전달할수 있도록 변경했습니다.
 - **상호작용 노드 -> 인터렉션 노드** : 콘텐츠 하위 노드인 인터렉터블 노드와의 일관성을 위해서 변경하였습니다.
 - **코딩 원칙** : 노드 이름들을 영어나 한글 둘 중 하나로 통일하려 했지만 몇몇 단어가(인터렉터블 = 상호작용가능?) 부자연스러울 수 있을 것 같아 자연스러운 쪽을 택하기로 결정했습니다.
 - **코딩 원칙** : 동일한 레벨로 연결되어 있는 노드 간에는 접근 가능하도록 하는 원칙이었지만 모듈성이 깨지기 때문에 최대한 지양하는 것이 좋을 것 같아 해당 문구를 추가했습니다.
 - **코딩 원칙** : 하위에서 상위의 레벨로 옵저버를 통해 정보를 전달할 때 반환값을 통한 전달을 누락했었기에 추가했습니다.
-
   
-  ![RPG 구조](https://github.com/1506022022/RPG/assets/88864717/827fc4f7-dee2-4911-876f-e1eda7164f95)
-  
+![RPG 구조](https://github.com/1506022022/RPG/assets/88864717/827fc4f7-dee2-4911-876f-e1eda7164f95)
 </details>
-  <details>
-  <summary><b>2024.04.03</b></summary>
-
+<!-- 00 -->
+<details><summary><b>2024.04.03</b></summary>
   
 ![RPG](https://github.com/1506022022/MyPortfolio/assets/88864717/a97cabde-f8af-4a33-9ed3-b5d3569609ec)
-
 </details>
 </details>
 
