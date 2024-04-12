@@ -6,12 +6,12 @@ namespace RPG.Character
     {
         string mTrigger;
         string[] mConditions;
+
         public BlendTrigger(string trigger, string[] conditions)
         {
             mTrigger = trigger;
             mConditions = conditions;
         }
-
         public string CheckORConditionsAndGetTrigger(string trigger)
         {
             string result;

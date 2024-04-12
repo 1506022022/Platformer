@@ -10,6 +10,7 @@ namespace RPG.Contents
     public static class SceneLoader
     {
         static UnityEvent mOnLoadedScene = new UnityEvent();
+        static GameObject mLoadingCanvas;
         public static GameObject LoadingCanvas
         {
             private get
@@ -22,7 +23,7 @@ namespace RPG.Contents
                 mLoadingCanvas = value;
             }
         }
-        static GameObject mLoadingCanvas;
+        static Slider mProgressBar;
         public static Slider ProgressBar
         {
             private get
@@ -35,7 +36,7 @@ namespace RPG.Contents
                 mProgressBar = value;
             }
         }
-        static Slider mProgressBar;
+        static TextMeshProUGUI mLoadSceneNameText;
         public static TextMeshProUGUI LoadSceneNameText
         {
             private get
@@ -48,7 +49,7 @@ namespace RPG.Contents
                 mLoadSceneNameText = value;
             }
         }
-        static TextMeshProUGUI mLoadSceneNameText;
+        static MonoBehaviour mCoroutineRunner;
         public static MonoBehaviour CoroutineRunner
         {
             private get
@@ -61,8 +62,6 @@ namespace RPG.Contents
                 mCoroutineRunner = value;
             }
         }
-        static MonoBehaviour mCoroutineRunner;
-
         public static void AddListenerLoadedSceneEvent(UnityAction action)
         {
             mOnLoadedScene.AddListener(action);

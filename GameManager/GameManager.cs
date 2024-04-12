@@ -8,32 +8,46 @@ namespace RPG
 {
     public class GameManager : MonoBehaviour
     {
-        protected bool bGameStart;
-        protected Controller mPlayerController;
-        protected Character.Character mPlayer;
+        bool bGameStart;
+        int mSceneLevel = 0;
+        Controller mController;
+        CharacterSwappingSystem mSwapSystem;
+
         [Header("로딩할 순서대로 씬 이름 입력")]
-        [SerializeField] protected List<string> mLoadSceneNames;
+        [SerializeField] List<string> mLoadSceneNames;
+
         [Header("Components")]
-        [SerializeField] protected Contents.Contents mContents;
-        int sceneLevel = 0;
+        [SerializeField] Contents.Contents mContents;
+
+        [Header("Options")]
+        [SerializeField] bool mbCharacterSwap;
+        [SerializeField] bool mbSingleState;
+        List<ControllableCharacter> mControllableCharacters = new List<ControllableCharacter>();
 
         void StartGame()
         {
             Debug.Assert(mLoadSceneNames.Count > 0);
 
             bGameStart = false;
-            string sceneName = mLoadSceneNames[sceneLevel];
-            sceneLevel = Mathf.Min(sceneLevel + 1, mLoadSceneNames.Count - 1);
+            string sceneName = mLoadSceneNames[mSceneLevel];
+            mSceneLevel = Mathf.Min(mSceneLevel + 1, mLoadSceneNames.Count - 1);
             mContents.LoadScene(sceneName);
 
 #if DEVELOPMENT
             var gms = FindObjectsOfType<GameManager>();
-            Debug.Assert(gms.Count() == 1);
+            Debug.Assert(gms.Count() == 1, $"GM is not Unique : {gms.Count()}");
 #endif
         }
         void OnLoadedScene()
         {
+            mControllableCharacters.Clear();
+            foreach (var character in Character.Character.Instances)
+            {
+                var controllable = new ControllableCharacter(character);
+                mControllableCharacters.Add(controllable);
+            }
             SelectCharacterAndStartControll();
+            mSwapSystem.BindCharacters(mControllableCharacters);
             bGameStart = true;
         }
         void OnClearGame()
@@ -43,7 +57,11 @@ namespace RPG
                 return;
             }
             bGameStart = false;
-            mPlayerController.SetActive(false);
+            mController.IsActive = false;
+            foreach (var character in mControllableCharacters)
+            {
+                mController.RemoveInputInteractionTarget(character);
+            }
             StartCoroutine(GameEndProcess());
         }
         IEnumerator GameEndProcess()
@@ -53,35 +71,39 @@ namespace RPG
         }
         void SelectCharacterAndStartControll()
         {
-            mPlayer = FindObjectOfType<Character.Character>();
-            Debug.Assert(mPlayer);
-            CreateController();
-            IControllableObject obj = ControllableFactory.CreateFromCharacter(mPlayer);
-            var list = GetControllableList();
-            mPlayerController.SetAllControlledTarget(list);
-            mPlayerController.BindObject(obj);
-            mPlayerController.SetActive(true);
+            Debug.Assert(mControllableCharacters.Count > 0, $"Cannot find character(Count : {mControllableCharacters.Count}).");
+            var firstCharacter = mControllableCharacters.First();
+            mController.AddInputInteractionTarget(firstCharacter);
+            firstCharacter.OnBindControll();
+            mController.IsActive = true;
         }
         void CreateController()
         {
-            mPlayerController = new Controller();
-        }
-        List<IControllableObject> GetControllableList()
-        {
-            List<IControllableObject> list = new List<IControllableObject>();
-            var characters = FindObjectsOfType<Character.Character>();
-            foreach (var character in characters)
+            mController = new Controller();
+            if (mbCharacterSwap)
             {
-                var obj = ControllableFactory.CreateFromCharacter(character);
-                list.Add(obj);
+                mSwapSystem = new CharacterSwappingSystem(mController);
+                mController.AddInputInteractionTarget(mSwapSystem);
             }
-            return list;
+        }
+        void BindContentsEvents()
+        {
+            mContents.AddListenerLoadedScene(OnLoadedScene);
+            mContents.AddListenerClearGame(OnClearGame);
+        }
+        void SetContentsOption()
+        {
+            if (mbSingleState)
+            {
+                mContents.EnableLoadScene = false;
+            }
         }
         void Awake()
         {
+            CreateController();
+            SetContentsOption();
+            BindContentsEvents();
             DontDestroyOnLoad(gameObject);
-            mContents.AddListenerLoadedScene(OnLoadedScene);
-            mContents.AddListenerClearGame(OnClearGame);
         }
         void Start()
         {
@@ -90,7 +112,7 @@ namespace RPG
         void Update()
         {
             if (!bGameStart) return;
-            mPlayerController.Update();
+            mController.Update();
         }
     }
 }

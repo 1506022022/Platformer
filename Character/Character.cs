@@ -1,22 +1,42 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace RPG.Character
 {
     public class Character : MonoBehaviour
     {
+        static List<Character> instances = new List<Character>();
+        public static List<Character> Instances
+        {
+            get
+            {
+                Debug.Assert(instances.Count > 0,$"Not found Character : {instances.Count}");
+                return instances.ToList();
+            }
+            private set
+            {
+                instances = value;
+            }
+        }
+        public Combat Combat
+        {
+            get;
+            private set;
+        }
+
         [Header("[Debug]")]
         [SerializeField] protected State mState = State.Idle;
 
-        Combat mCombat;
         Status mStatus;
         CharacterCamera mCharCamera;
-        CharacterAnimation mCharAnim;
+        List<ITransitionAnimation> mTransitionAnimationList = new List<ITransitionAnimation>();
 
         [Header("[Component]")]
-        [SerializeField] Animator mAnimator;
-        [SerializeField] Rigidbody mRigid;
         [SerializeField] Camera mCam;
         [SerializeField] GameObject mUI;
+        [SerializeField] Rigidbody mRigid;
+        [SerializeField] Animator mAnimator;
 
 
         // TODO : 나중에 이동 관련 구조체(이동속도, 이동가능상태, 버프.. 등) 만들어서 대체
@@ -39,17 +59,51 @@ namespace RPG.Character
             mUI.SetActive(false);
             GetCamera().gameObject.SetActive(false);
         }
-        void Awake()
+        void CreateMovementAnimAndUse()
         {
-            mCombat = new Combat();
-            mStatus = new Status();
-            mCharAnim = new CharacterAnimation(mAnimator, mRigid);
-            mCharCamera = new CharacterCamera();
+            var MovementAnim = new MovementAnimation();
+            mTransitionAnimationList.Add(MovementAnim);
+        }
+        void CreateCombatAndUse()
+        {
+            Combat = new Combat();
+            mTransitionAnimationList.Add(Combat);
+        }
+        void BindTransitionAnimations()
+        {
+            foreach (var transitionAnim in mTransitionAnimationList)
+            {
+                transitionAnim.SetAnimationTarget(mAnimator, mRigid);
+            }
         }
         void Update()
         {
-            mState = mCharAnim.UpdateAndGetState();
+            // 애니메이션, 상태 업데이트
+            foreach (var transitionAnim in mTransitionAnimationList)
+            {
+                if (transitionAnim.IsTransitionAbleState(mState))
+                {
+                    mState = transitionAnim.UpdateAndGetState();
+                }
+            }
+            //
         }
+        void Awake()
+        {
+            CreateCombatAndUse();
+            CreateMovementAnimAndUse();
+            BindTransitionAnimations();
 
+            // TODO : 스테이터스, 카메라 연출 기능 구현
+            mStatus = new Status();
+            mCharCamera = new CharacterCamera();
+            // TODOEND
+
+            instances.Add(this);
+        }
+        void OnDestroy()
+        {
+            instances.Remove(this);
+        }
     }
 }

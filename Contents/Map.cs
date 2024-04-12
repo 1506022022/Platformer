@@ -6,6 +6,7 @@ namespace RPG.Contents
 {
     public class Map : MonoBehaviour
     {
+        static Map mInstance;
         public static Map Instance
         {
             get
@@ -18,7 +19,6 @@ namespace RPG.Contents
                 mInstance = value;
             }
         }
-        static Map mInstance;
         [SerializeField] Stage mStage;
 
         public void AddListenerClearEvent(UnityAction action)
@@ -30,7 +30,7 @@ namespace RPG.Contents
             mInstance = this;
 #if DEVELOPMENT
             var maps = FindObjectsOfType<Map>();
-            Debug.Assert(maps.Count() == 1);
+            Debug.Assert(maps.Count() == 1, $"Map is not Unique : {maps.Count()}");
 #endif
         }
     }

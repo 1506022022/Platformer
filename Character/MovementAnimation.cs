@@ -1,22 +1,21 @@
-﻿using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 using static RPG.Character.AnimationTrigger;
 
 namespace RPG.Character
 {
-    public class CharacterAnimation
+    public class MovementAnimation : ITransitionAnimation
     {
-        readonly Animator mAnimator;
-        readonly Rigidbody mRigid;
-        readonly BlendTrigger mLandTrigger;
         float mMovement;
         string mTrigger;
         string mPrevTrigger;
         Vector2 m2DVelocity;
         Vector3 m3DVelocity;
         Vector3 mLookingDirection;
+        Animator mAnimator;
+        Rigidbody mRigid;
+        BlendTrigger mLandTrigger;
 
-        public CharacterAnimation(Animator animator, Rigidbody rigid)
+        public void SetAnimationTarget(Animator animator, Rigidbody rigid)
         {
             mAnimator = animator;
             mRigid = rigid;
@@ -24,8 +23,16 @@ namespace RPG.Character
             mLandTrigger = new BlendTrigger(LAND,
                               new string[] { WALK, RUN, IDLE });
         }
+        public bool IsTransitionAbleState(State currentState)
+        {
+            return currentState == State.Idle ||
+                   currentState == State.Running ||
+                   currentState == State.Falling ||
+                   currentState == State.Jumping;
+        }
         public State UpdateAndGetState()
         {
+            Debug.Assert(mAnimator && mRigid && mLandTrigger != null);
             mPrevTrigger = mTrigger;
 
             // GetState
@@ -62,29 +69,6 @@ namespace RPG.Character
             //
 
             return STATE_MAP[mTrigger];
-        }
-        public bool IsGround()
-        {
-            Vector3 origin = mRigid.transform.position;
-            origin.y += 0.5f;
-            var hitAll = Physics.BoxCastAll(origin, Vector3.one * 0.25f, Vector3.down, mRigid.transform.rotation, 0.3f);
-            var hitsExceptForMyself = hitAll.Where(x => !x.transform.Equals(mRigid.transform));
-
-#if DEVELOPMENT
-            if (hitsExceptForMyself.Any())
-            {
-
-                Debug.DrawRay(origin, Vector3.down, Color.yellow, hitsExceptForMyself.Min(x => x.distance));
-                DebugGizmos.DrawWireCube(origin + Vector3.down * hitsExceptForMyself.Min(x => x.distance), Vector3.one * 0.25f, mRigid.GetHashCode());
-            }
-            else
-            {
-                Debug.DrawRay(origin, Vector3.down, Color.red, 0.3f);
-                DebugGizmos.DrawWireCube(origin + Vector3.down * 0.3f, Vector3.one * 0.25f, mRigid.GetHashCode());
-            }
-#endif
-
-            return hitsExceptForMyself.Any();
         }
         string GetMovementState()
         {

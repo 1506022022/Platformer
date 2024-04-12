@@ -1,14 +1,11 @@
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace RPG.Input
 {
-    public abstract class InputInteraction : IInputInteraction
+    public class InputInteraction : IInputInteraction
     {
-        public virtual bool IsAble
-        {
-            get;
-        }
         public Dictionary<string, UnityAction<float>> InputEventMap
         {
             get;
@@ -18,8 +15,12 @@ namespace RPG.Input
         {
             MappingInputEvent();
         }
-        protected abstract void MappingInputEvent();
-
+        public virtual bool IsAble()
+        {
+            Debug.Assert(false, "Do not Override this Method");
+            return false;
+        }
+        protected virtual void MappingInputEvent() { }
     }
 }
 

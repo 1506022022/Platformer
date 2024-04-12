@@ -7,17 +7,33 @@ namespace RPG.Input.Controller
 {
     public class CharacterSwappingSystem : InputInteraction
     {
-        Controller mController;
-        public override bool IsAble => mController.IsActive &&
-                              delay + 0.5f <= Time.time;
         float delay;
         int mIndex;
+        Controller mController;
+        List<ControllableCharacter> mCharacters = new List<ControllableCharacter>();
 
         public CharacterSwappingSystem(Controller controller) : base()
         {
             mController = controller;
         }
-
+        public override bool IsAble()
+        {
+            return mController.IsActive &&
+                   delay + 0.5f <= Time.time;
+        }
+        public void BindCharacters(List<ControllableCharacter> characters)
+        {
+            mCharacters = characters;
+            mIndex = 0;
+            Debug.Assert(mCharacters.Count > 0);
+        }
+        protected override void MappingInputEvent()
+        {
+            InputEventMap = new Dictionary<string, UnityAction<float>>()
+            {
+                { TAB, Swapping }
+            };
+        }
         void Swapping(float input)
         {
             if (input.Equals(0f))
@@ -26,21 +42,17 @@ namespace RPG.Input.Controller
             }
 
             delay = Time.time;
+            var beforeTarget = mCharacters[mIndex++];
+            beforeTarget.OnReleaseControll();
+            mController.RemoveInputInteractionTarget(beforeTarget);
 
-            mController.AllControlledTargets[mIndex++].OnReleaseControll();
             // 루프 타일링
-            mIndex = mIndex == mController.AllControlledTargets.Count ? 0 :
-                                                      mIndex;
+            mIndex = (mIndex == mCharacters.Count) ? 0
+                                                   : mIndex;
             //
-            mController.BindObject(mController.AllControlledTargets[mIndex]);
-        }
-
-        protected override void MappingInputEvent()
-        {
-            InputEventMap = new Dictionary<string, UnityAction<float>>()
-            {
-                { TAB, Swapping }
-            };
+            var currentTarget = mCharacters[mIndex];
+            currentTarget.OnBindControll();
+            mController.AddInputInteractionTarget(currentTarget);
         }
     }
 }

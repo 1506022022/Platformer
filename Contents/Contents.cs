@@ -9,12 +9,12 @@ namespace RPG.Contents
     {
         UnityEvent OnLoadedScene = new UnityEvent();
         UnityEvent OnClearGame = new UnityEvent();
+        public bool EnableLoadScene { get; set; } = true;
+
         [Header("[Component]")]
         [SerializeField] Slider mProgressBar;
         [SerializeField] GameObject mLoadingCanvas;
         [SerializeField] TextMeshProUGUI mLoadSceneNameText;
-        [Header("[Option]")]
-        [SerializeField] bool mDisableSceneLoad;
 
         void Awake()
         {
@@ -27,14 +27,14 @@ namespace RPG.Contents
         }
         public void LoadScene(string sceneName)
         {
-            if(mDisableSceneLoad)
+            if (EnableLoadScene)
             {
-                ListeningMapClearEvent();
-                OnLoadedScene.Invoke();
+                SceneLoader.LoadScene(sceneName);
             }
             else
             {
-                SceneLoader.LoadScene(sceneName);
+                ListeningMapClearEvent();
+                OnLoadedScene.Invoke();
             }
         }
         public void AddListenerLoadedScene(UnityAction action)

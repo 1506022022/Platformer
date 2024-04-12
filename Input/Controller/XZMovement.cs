@@ -1,14 +1,11 @@
-using RPG.Input.Controller;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
-using static MovementInfo;
-using static RPG.Input.ActionKey;
+using static RPG.Input.Controller.MovementInfo;
 
-namespace RPG.Input
+namespace RPG.Input.Controller
 {
-    public class XZMovement : InputInteraction
+    public class XZMovement
     {
+        float mMoveSpeed;
         Vector3 mVertical;
         Vector3 mHorizontal;
         Vector3 mMoveDir;
@@ -16,22 +13,24 @@ namespace RPG.Input
         Vector3 mVelocity;
         Camera mObjectCam;
         Rigidbody mObjectRigid;
-        IControllableObject mObject;
-        public override bool IsAble => mObject != null &&
-                              mObject.IsControllable();
-        public void SetMovementObject(IControllableObject controlledTarget)
+
+        public XZMovement(Rigidbody rigid, Camera cam, float moveSpeed)
         {
-            mObject = controlledTarget;
-            mObjectRigid = mObject.GetRigidbody();
-            mObjectCam = mObject.GetCamera();
+            mObjectCam = cam;
+            mObjectRigid = rigid;
+            mMoveSpeed = moveSpeed;
         }
-        protected override void MappingInputEvent()
+        public void UpdateHorizontalMovement(float input)
         {
-            InputEventMap = new Dictionary<string, UnityAction<float>>()
-            {
-                { VERTICAL, UpdateVerticalMovement },
-                { HORIZONTAL, UpdateHorizontalMovement }
-            };
+            mHorizontal = mObjectCam.transform.right * input;
+            // TODO : Move를 동작시키기 위해서 추가함. 자연스럽지 않기 때문에 다른 방법을 모색.
+            // 외부에서 호출해 주는 방식은 일단 보류
+            Move();
+            // TODOEND
+        }
+        public void UpdateVerticalMovement(float input)
+        {
+            mVertical = mObjectCam.transform.forward * input;
         }
         void Move()
         {
@@ -45,7 +44,7 @@ namespace RPG.Input
             //
             else
             {
-                mMoveVector = mMoveDir * mObject.GetMoveSpeed() * Time.deltaTime * 1000f;
+                mMoveVector = mMoveDir * mMoveSpeed * Time.deltaTime * 1000f;
                 mObjectRigid.AddForce(mMoveVector);
             }
 
@@ -55,18 +54,6 @@ namespace RPG.Input
             mVelocity.z = Mathf.Clamp(mVelocity.z, -MAX_MOVE_VELOCITY, MAX_MOVE_VELOCITY);
             mObjectRigid.velocity = mVelocity;
             //
-        }
-        void UpdateHorizontalMovement(float input)
-        {
-            mHorizontal = mObjectCam.transform.right * input;
-            // TODO : Move를 동작시키기 위해서 추가함. 자연스럽지 않기 때문에 다른 방법을 모색.
-            // 외부에서 호출해 주는 방식은 일단 보류
-            Move();
-            // TODOEND
-        }
-        void UpdateVerticalMovement(float input)
-        {
-            mVertical = mObjectCam.transform.forward * input;
         }
     }
 }

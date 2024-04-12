@@ -2,38 +2,41 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class PortalStage : Stage
+namespace RPG.Contents
 {
-    Dictionary<GameObject, bool> mGoalCheck = new Dictionary<GameObject, bool>();
-    void Awake()
+    public class PortalStage : Stage
     {
-        // TODO : 플레이어 읽어오는 방식 변경
-        var playerList = GameObject.FindGameObjectsWithTag("Player");
-        // TODOEND
-        Debug.Assert(playerList.Count() > 0);
-        foreach (var player in playerList)
+        Dictionary<GameObject, bool> mGoalCheck = new Dictionary<GameObject, bool>();
+        void Awake()
         {
-            mGoalCheck.Add(player, false);
-        }
-    }
-    void OnTriggerEnter(Collider other)
-    {
-        GameObject player = other.gameObject;
-        if (player.tag.Equals("Player"))
-        {
-            mGoalCheck[player] = true;
-            if (mGoalCheck.All(x => x.Value))
+            // TODO : 플레이어 읽어오는 방식 변경
+            var playerList = GameObject.FindGameObjectsWithTag("Player");
+            // TODOEND
+            Debug.Assert(playerList.Count() > 0);
+            foreach (var player in playerList)
             {
-                Clear();
+                mGoalCheck.Add(player, false);
             }
         }
-    }
-    void OnTriggerExit(Collider other)
-    {
-        GameObject player = other.gameObject;
-        if (mGoalCheck.ContainsKey(player))
+        void OnTriggerEnter(Collider other)
         {
-            mGoalCheck[player] = false;
+            GameObject player = other.gameObject;
+            if (player.tag.Equals("Player"))
+            {
+                mGoalCheck[player] = true;
+                if (mGoalCheck.All(x => x.Value))
+                {
+                    Clear();
+                }
+            }
+        }
+        void OnTriggerExit(Collider other)
+        {
+            GameObject player = other.gameObject;
+            if (mGoalCheck.ContainsKey(player))
+            {
+                mGoalCheck[player] = false;
+            }
         }
     }
 }

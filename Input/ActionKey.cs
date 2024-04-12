@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+
 namespace RPG.Input
 {
     public static class ActionKey
@@ -8,21 +9,28 @@ namespace RPG.Input
         public static readonly string VERTICAL = "Vertical";
         public static readonly string JUMP = "Jump";
         public static readonly string TAB = "Tab";
+        public static readonly string ATTACK = "Attack";
+        public static readonly string GUARD = "Guard";
 
-        static Dictionary<string, float> AxisRawList = new Dictionary<string, float>
+        static Dictionary<string, float> mAxisRawMap  = new Dictionary<string, float>
         {
-            { HORIZONTAL, 0f },
-            { VERTICAL, 0f },
-            { JUMP, 0f },
-            { TAB, 0f }
+            { HORIZONTAL,   0f },
+            { VERTICAL,     0f },
+            { JUMP,         0f },
+            { TAB,          0f },
+            { ATTACK,       0f },
+            { GUARD,        0f }
         };
         public static Dictionary<string, float> GetAxisRawMap()
         {
-            foreach (var button in AxisRawList.ToList())
+            // TODO : 참조 복사본 반환
+            foreach (var button in mAxisRawMap.ToList())
             {
-                AxisRawList[button.Key] = UnityEngine.Input.GetAxisRaw(button.Key);
+                mAxisRawMap[button.Key] = UnityEngine.Input.GetAxisRaw(button.Key);
             }
-            return AxisRawList;
+            // TODOEND
+
+            return mAxisRawMap;
         }
     }
 }

@@ -1,32 +1,18 @@
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
-using static MovementInfo;
-using static RPG.Input.ActionKey;
+using static RPG.Input.Controller.MovementInfo;
 
 namespace RPG.Input.Controller
 {
-    public class JumpMovement : InputInteraction
+    public class JumpMovement
     {
-        public override bool IsAble => mObject != null &&
-                              mObject.IsControllable();
         float mJumpDelay;
         Vector3 mVelocity;
         Rigidbody mObjectRigid;
-        IControllableObject mObject;
-        public void SetMovementObject(IControllableObject controlledTarget)
+        public JumpMovement(Rigidbody rigid)
         {
-            mObject = controlledTarget;
-            mObjectRigid = mObject.GetRigidbody();
+            mObjectRigid = rigid;
         }
-        protected override void MappingInputEvent()
-        {
-            InputEventMap = new Dictionary<string, UnityAction<float>>()
-            {
-                { JUMP, Jump }
-            };
-        }
-        void Jump(float input)
+        public void Jump(float input)
         {
             if (input.Equals(0f))
             {
@@ -35,7 +21,7 @@ namespace RPG.Input.Controller
             if (mJumpDelay <= Time.time)
             {
                 mObjectRigid.AddForce(Vector3.up * JUMP_POWER);
-                mJumpDelay = Time.time + JUMP_Delay;
+                mJumpDelay = Time.time + JUMP_DELAY;
             }
             // 점프 속도 제한
             mVelocity = mObjectRigid.velocity;
