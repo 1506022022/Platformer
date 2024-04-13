@@ -3,7 +3,7 @@ using static RPG.Character.AnimationTrigger;
 
 namespace RPG.Character
 {
-    public class MovementAnimation : ITransitionAnimation
+    public class MovementAnimation : MonoBehaviour, ITransitionAnimation
     {
         float mMovement;
         string mTrigger;
@@ -11,14 +11,14 @@ namespace RPG.Character
         Vector2 m2DVelocity;
         Vector3 m3DVelocity;
         Vector3 mLookingDirection;
-        Animator mAnimator;
-        Rigidbody mRigid;
         BlendTrigger mLandTrigger;
+        [SerializeField] Rigidbody mRigid;
+        [SerializeField] Animator mAnimator;
 
-        public void SetAnimationTarget(Animator animator, Rigidbody rigid)
+        void Awake()
         {
-            mAnimator = animator;
-            mRigid = rigid;
+            Debug.Assert(mRigid);
+            Debug.Assert(mAnimator);
             mTrigger = IDLE;
             mLandTrigger = new BlendTrigger(LAND,
                               new string[] { WALK, RUN, IDLE });

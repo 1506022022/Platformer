@@ -4,14 +4,14 @@ using UnityEngine.Events;
 
 namespace RPG.Input
 {
-    public class InputInteraction : IInputInteraction
+    public class InputInteraction : MonoBehaviour, IInputInteraction
     {
         public Dictionary<string, UnityAction<float>> InputEventMap
         {
             get;
             protected set;
         }
-        public InputInteraction()
+        protected virtual void Awake()
         {
             MappingInputEvent();
         }

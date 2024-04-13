@@ -12,7 +12,7 @@ namespace RPG.Input
         public static readonly string ATTACK = "Attack";
         public static readonly string GUARD = "Guard";
 
-        static Dictionary<string, float> mAxisRawMap  = new Dictionary<string, float>
+        static Dictionary<string, float> mAxisRawMap = new Dictionary<string, float>
         {
             { HORIZONTAL,   0f },
             { VERTICAL,     0f },

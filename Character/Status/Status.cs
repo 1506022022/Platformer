@@ -1,4 +1,4 @@
-﻿namespace RPG.Character
+﻿namespace RPG.Character.Status
 {
     public class Status
     {

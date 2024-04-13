@@ -10,28 +10,28 @@ namespace RPG
     {
         bool bGameStart;
         int mSceneLevel = 0;
-        Controller mController;
         CharacterSwappingSystem mSwapSystem;
 
         [Header("로딩할 순서대로 씬 이름 입력")]
         [SerializeField] List<string> mLoadSceneNames;
 
         [Header("Components")]
+        [SerializeField] Controller mController;
         [SerializeField] Contents.Contents mContents;
 
         [Header("Options")]
-        [SerializeField] bool mbCharacterSwap;
-        [SerializeField] bool mbSingleState;
-        List<ControllableCharacter> mControllableCharacters = new List<ControllableCharacter>();
+        [Tooltip("선택하면 로딩 없이 현재 씬을 플레이 할 수 있습니다.")]
+        [SerializeField] bool mbSingleStage;
 
         void StartGame()
         {
             Debug.Assert(mLoadSceneNames.Count > 0);
 
             bGameStart = false;
-            string sceneName = mLoadSceneNames[mSceneLevel];
+            mController.IsActive = false;
+            string nextStage = mLoadSceneNames[mSceneLevel];
             mSceneLevel = Mathf.Min(mSceneLevel + 1, mLoadSceneNames.Count - 1);
-            mContents.LoadScene(sceneName);
+            mContents.LoadScene(nextStage);
 
 #if DEVELOPMENT
             var gms = FindObjectsOfType<GameManager>();
@@ -40,14 +40,8 @@ namespace RPG
         }
         void OnLoadedScene()
         {
-            mControllableCharacters.Clear();
-            foreach (var character in Character.Character.Instances)
-            {
-                var controllable = new ControllableCharacter(character);
-                mControllableCharacters.Add(controllable);
-            }
             SelectCharacterAndStartControll();
-            mSwapSystem.BindCharacters(mControllableCharacters);
+            mSwapSystem?.BindCharacters(Character.Character.Instances);
             bGameStart = true;
         }
         void OnClearGame()
@@ -58,33 +52,25 @@ namespace RPG
             }
             bGameStart = false;
             mController.IsActive = false;
-            foreach (var character in mControllableCharacters)
-            {
-                mController.RemoveInputInteractionTarget(character);
-            }
+            mSwapSystem?.ReleaseCharacters();
             StartCoroutine(GameEndProcess());
         }
         IEnumerator GameEndProcess()
         {
             yield return new WaitForSeconds(3.0f);
-            StartGame();
+            if(!mbSingleStage)
+            {
+                StartGame();
+            }
         }
         void SelectCharacterAndStartControll()
         {
-            Debug.Assert(mControllableCharacters.Count > 0, $"Cannot find character(Count : {mControllableCharacters.Count}).");
-            var firstCharacter = mControllableCharacters.First();
-            mController.AddInputInteractionTarget(firstCharacter);
-            firstCharacter.OnBindControll();
+            var selectedCharacter = Character.Character.Instances[0];
+            selectedCharacter.FocusOn();
+            var interactionTarget = IInputInteractionFactory
+                                            .ConvertFromCharacter(selectedCharacter);
+            mController.AddInputInteractionTargets(interactionTarget);
             mController.IsActive = true;
-        }
-        void CreateController()
-        {
-            mController = new Controller();
-            if (mbCharacterSwap)
-            {
-                mSwapSystem = new CharacterSwappingSystem(mController);
-                mController.AddInputInteractionTarget(mSwapSystem);
-            }
         }
         void BindContentsEvents()
         {
@@ -93,14 +79,14 @@ namespace RPG
         }
         void SetContentsOption()
         {
-            if (mbSingleState)
+            if (mbSingleStage)
             {
                 mContents.EnableLoadScene = false;
             }
         }
         void Awake()
         {
-            CreateController();
+            mSwapSystem = mController.GetComponent<CharacterSwappingSystem>();
             SetContentsOption();
             BindContentsEvents();
             DontDestroyOnLoad(gameObject);
@@ -108,11 +94,6 @@ namespace RPG
         void Start()
         {
             StartGame();
-        }
-        void Update()
-        {
-            if (!bGameStart) return;
-            mController.Update();
         }
     }
 }

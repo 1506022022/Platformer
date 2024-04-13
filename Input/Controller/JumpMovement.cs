@@ -1,32 +1,50 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using static RPG.Input.ActionKey;
 using static RPG.Input.Controller.MovementInfo;
 
 namespace RPG.Input.Controller
 {
-    public class JumpMovement
+    [DisallowMultipleComponent]
+    [RequireComponent(typeof(Rigidbody))]
+    public class JumpMovement : InputInteraction
     {
+        public Func<bool> ConditionOfMoveable;
         float mJumpDelay;
         Vector3 mVelocity;
-        Rigidbody mObjectRigid;
-        public JumpMovement(Rigidbody rigid)
+        Rigidbody mRigid;
+
+        public override bool IsAble()
         {
-            mObjectRigid = rigid;
+            return ConditionOfMoveable?.Invoke() ?? true &&
+                   RigidbodyUtil.IsGround(mRigid);
         }
-        public void Jump(float input)
+        protected override void MappingInputEvent()
         {
-            if (input.Equals(0f))
+            InputEventMap = new Dictionary<string, UnityAction<float>>()
             {
-                return;
-            }
-            if (mJumpDelay <= Time.time)
+                { JUMP, Jump }
+            };
+        }
+        protected override void Awake()
+        {
+            base.Awake();
+            mRigid = GetComponent<Rigidbody>();
+        }
+        void Jump(float input)
+        {
+            if (!input.Equals(0) &&
+                  mJumpDelay <= Time.time)
             {
-                mObjectRigid.AddForce(Vector3.up * JUMP_POWER);
+                mRigid.AddForce(Vector3.up * JUMP_POWER);
                 mJumpDelay = Time.time + JUMP_DELAY;
             }
             // 점프 속도 제한
-            mVelocity = mObjectRigid.velocity;
+            mVelocity = mRigid.velocity;
             mVelocity.y = Mathf.Clamp(mVelocity.y, -MAX_JUMP_VELOCITY, MAX_JUMP_VELOCITY);
-            mObjectRigid.velocity = mVelocity;
+            mRigid.velocity = mVelocity;
             //
         }
     }

@@ -11,7 +11,7 @@ namespace RPG.Character
         {
             get
             {
-                Debug.Assert(instances.Count > 0,$"Not found Character : {instances.Count}");
+                Debug.Assert(instances.Count > 0, $"Not found Character : {instances.Count}");
                 return instances.ToList();
             }
             private set
@@ -19,25 +19,15 @@ namespace RPG.Character
                 instances = value;
             }
         }
-        public Combat Combat
-        {
-            get;
-            private set;
-        }
+        [SerializeField] public State State { get; private set; } = State.Idle;
 
-        [Header("[Debug]")]
-        [SerializeField] protected State mState = State.Idle;
-
-        Status mStatus;
+        Status.Status mStatus;
         CharacterCamera mCharCamera;
         List<ITransitionAnimation> mTransitionAnimationList = new List<ITransitionAnimation>();
 
         [Header("[Component]")]
         [SerializeField] Camera mCam;
         [SerializeField] GameObject mUI;
-        [SerializeField] Rigidbody mRigid;
-        [SerializeField] Animator mAnimator;
-
 
         // TODO : 나중에 이동 관련 구조체(이동속도, 이동가능상태, 버프.. 등) 만들어서 대체
         public float MoveSpeed { get; } = 1.0f;
@@ -59,47 +49,25 @@ namespace RPG.Character
             mUI.SetActive(false);
             GetCamera().gameObject.SetActive(false);
         }
-        void CreateMovementAnimAndUse()
-        {
-            var MovementAnim = new MovementAnimation();
-            mTransitionAnimationList.Add(MovementAnim);
-        }
-        void CreateCombatAndUse()
-        {
-            Combat = new Combat();
-            mTransitionAnimationList.Add(Combat);
-        }
-        void BindTransitionAnimations()
-        {
-            foreach (var transitionAnim in mTransitionAnimationList)
-            {
-                transitionAnim.SetAnimationTarget(mAnimator, mRigid);
-            }
-        }
         void Update()
         {
-            // 애니메이션, 상태 업데이트
             foreach (var transitionAnim in mTransitionAnimationList)
             {
-                if (transitionAnim.IsTransitionAbleState(mState))
+                if (transitionAnim.IsTransitionAbleState(State))
                 {
-                    mState = transitionAnim.UpdateAndGetState();
+                    State = transitionAnim.UpdateAndGetState();
                 }
             }
-            //
         }
         void Awake()
         {
-            CreateCombatAndUse();
-            CreateMovementAnimAndUse();
-            BindTransitionAnimations();
-
+            instances.Add(this);
             // TODO : 스테이터스, 카메라 연출 기능 구현
-            mStatus = new Status();
+            mStatus = new Status.Status();
             mCharCamera = new CharacterCamera();
             // TODOEND
-
-            instances.Add(this);
+            var transitionAnims = GetComponents<ITransitionAnimation>().ToList();
+            mTransitionAnimationList.AddRange(transitionAnims);
         }
         void OnDestroy()
         {
