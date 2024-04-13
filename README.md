@@ -1,7 +1,7 @@
 # 과제
 
 <details><summary>이전 과제</summary> 
-<b>~ 24/04/12</b>
+<details><summary><b>~ 24/04/12</b></summary>
 
 **[영상]**
 
@@ -17,12 +17,12 @@
 캐릭터 애니메이션    : 
 
 <https://github.com/1506022022/RPG/blob/main/Character/CharacterAnimation.cs>
+</details>
 
-
-<b>~ 24/04/06</b>
+<details><summary><b>~ 24/04/06</b></summary>
   
 <https://youtu.be/bY9U0UJOR3U>
-
+</details>
 </details>
 
 
