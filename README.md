@@ -37,7 +37,7 @@
 해당 문서를 기록하고 있습니다.
 
 # RPG Base System
-![RPG](https://github.com/1506022022/RPG/assets/88864717/e15478b6-2b89-4343-91a1-a097096f2fdc)
+![RPG](https://github.com/1506022022/RPG/assets/88864717/7f74bd5a-782f-4c15-b54b-25c7173dd974)
 
 
 <details><summary> <b>업데이트 히스토리</b></summary>
@@ -48,7 +48,7 @@
 
 - **UML 수정** : 상속구조에서 위임구조로 변경하기 위해 수정했습니다.
   
-![RPG](https://github.com/1506022022/RPG/assets/88864717/e15478b6-2b89-4343-91a1-a097096f2fdc)
+![RPG](https://github.com/1506022022/RPG/assets/88864717/7f74bd5a-782f-4c15-b54b-25c7173dd974)
 </details>
 
 <!-- ==== 02 ==== -->
