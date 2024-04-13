@@ -71,6 +71,7 @@
 ```C#
 // 1의 상황과 동일하고,
 // Combat이 구현한 IInputInteraction을 Controller에 넣어주는 상황입니다.
+// [GameManager.cs]
     public class GameManager : MonoBehaviour
     {
         Controller mController;
