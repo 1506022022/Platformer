@@ -18,7 +18,6 @@
 
 <https://github.com/1506022022/RPG/blob/main/Character/CharacterAnimation.cs>
 </details>
-
 <details><summary><b>~ 24/04/06</b></summary>
   
 <https://youtu.be/bY9U0UJOR3U>
