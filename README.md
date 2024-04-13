@@ -39,6 +39,36 @@
 # RPG Base System
 ![RPG](https://github.com/1506022022/RPG/assets/88864717/7f74bd5a-782f-4c15-b54b-25c7173dd974)
 
+[설명]
+
+1. 인터페이스를 구현한 클래스를 스스로 추가하는 경우
+ ```C#
+// UML의 모든 클래스는 MonoBehaviour를 상속받고 있고,
+// Character와 Combat이 같은 오브젝트에 부착되어 있는 상태입니다.
+// [Character.cs]
+    public class Character : MonoBehaviour
+    {
+        List<ITransitionAnimation> mTransitionAnims;
+
+        void Awake()
+        {
+            mTransitionAnims = gameObject.GetComponents<ITransitionAnimation>().ToList();
+        }
+
+        void Update()
+        {
+            foreach(var anim in mTransitionAnims)
+            {
+                if(anim.IsTransitionAble())
+                {
+                    anim.Update();
+                }
+            }
+        }
+    }
+```
+3. 인터페이스를 구현한 클래스를 다른 클래스가 추가하는 경우
+
 
 <details><summary> <b>업데이트 히스토리</b></summary>
 
