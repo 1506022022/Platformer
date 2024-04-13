@@ -67,7 +67,24 @@
         }
     }
 ```
-3. 인터페이스를 구현한 클래스를 다른 클래스가 추가하는 경우
+2. 인터페이스를 구현한 클래스를 다른 클래스가 추가하는 경우
+```C#
+// 1의 상황과 동일하고,
+// Combat이 구현한 IInputInteraction을 Controller에 넣어주는 상황입니다.
+    public class GameManager : MonoBehaviour
+    {
+        Controller mController;
+        void OnSceneLoad()
+        {
+            var characters = Character.Character.Instances;
+            foreach(var character in characters)
+            {
+                IInputInteraction target = character.GetComponent<IInputInteraction>();
+                mController.AddInputInteractionTarget(target);
+            }
+        }
+    }
+```
 
 
 <details><summary> <b>업데이트 히스토리</b></summary>
