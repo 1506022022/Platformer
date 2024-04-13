@@ -1,5 +1,6 @@
 # 과제
 
+<details><summary>이전 과제</summary> 
 <b>~ 24/04/12</b>
 
 **[영상]**
@@ -17,7 +18,7 @@
 
 <https://github.com/1506022022/RPG/blob/main/Character/CharacterAnimation.cs>
 
-<details><summary>이전 과제</summary> 
+
 <b>~ 24/04/06</b>
   
 <https://youtu.be/bY9U0UJOR3U>
