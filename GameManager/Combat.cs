@@ -28,8 +28,9 @@ namespace RPG
                 return;
             }
             mTrigger = AnimationTrigger.ATTACK;
-            mDelay = Time.time + 0.6f;
             mAnimator.SetTrigger(mTrigger);
+            mDelay = Time.time + 0.533f;
+            
         }
         public void Guard()
         {
@@ -38,8 +39,8 @@ namespace RPG
                 return;
             }
             mTrigger = AnimationTrigger.GUARD;
-            mDelay = Time.time + 1.0f;
             mAnimator.SetTrigger(mTrigger);
+            mDelay = Time.time + 0.9f;
         }
         public State UpdateAndGetState()
         {

@@ -13,15 +13,20 @@ namespace RPG
             var characterInputInteractions = character.GetComponents<IInputInteraction>().ToList();
 
             var xzMovement = character.GetComponent<XZMovement>();
-            xzMovement.ConditionOfMoveable = () =>
-                character.State == State.Idle ||
-                character.State == State.Running;
+            if(xzMovement != null)
+            {
+                xzMovement.ConditionOfMoveable = () =>
+                    character.State == State.Idle ||
+                    character.State == State.Running;
+            }
 
             var jumpMovement = character.GetComponent<JumpMovement>();
-            jumpMovement.ConditionOfMoveable = () =>
-                character.State == State.Idle ||
-                character.State == State.Running;
-
+            if(jumpMovement != null)
+            {
+                jumpMovement.ConditionOfMoveable = () =>
+                    character.State == State.Idle ||
+                    character.State == State.Running;
+            }
             return characterInputInteractions;
         }
     }

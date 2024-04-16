@@ -43,7 +43,7 @@ namespace RPG.Input.Controller
         }
         void UpdateHorizontalMovement(float input)
         {
-            mHorizontal = mObjectCam.transform.right * input;
+            mHorizontal = transform.right * input;
             // TODO : Move를 동작시키기 위해서 추가함. 자연스럽지 않기 때문에 다른 방법을 모색.
             // 외부에서 호출해 주는 방식은 일단 보류
             Move();
@@ -51,7 +51,7 @@ namespace RPG.Input.Controller
         }
         void UpdateVerticalMovement(float input)
         {
-            mVertical = mObjectCam.transform.forward * input;
+            mVertical = transform.forward * input;
         }
         void Move()
         {
@@ -60,7 +60,7 @@ namespace RPG.Input.Controller
             // 감속
             if (mMoveDir == Vector3.zero)
             {
-                mRigid.velocity *= 0.96f;
+                mRigid.velocity *= 0.86f;
             }
             //
             else

@@ -1,18 +1,19 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class HitBox : MonoBehaviour
 {
-    GameObject attacker;
     int tick;
+    public UnityEvent hitedEvent;
     void OnTriggerEnter(Collider other)
     {
         var rigid = other.GetComponent<Rigidbody>();
         if (rigid != null && rigid.velocity.magnitude > 0f)
         {
-            Vector3 dir = Vector3.zero;
-            dir.x = rigid.velocity.x < 0 ? -1 : 1;
+            Vector3 dir = gameObject.transform.forward; 
             dir.y = 3;
             rigid.AddForce(dir * 300f);
+            hitedEvent.Invoke();
         }
     }
     void OnEnable()

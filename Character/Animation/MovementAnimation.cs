@@ -11,7 +11,6 @@ namespace RPG.Character
         Vector2 m2DVelocity;
         Vector3 m3DVelocity;
         Vector3 mLookingDirection;
-        BlendTrigger mLandTrigger;
         [SerializeField] Rigidbody mRigid;
         [SerializeField] Animator mAnimator;
 
@@ -20,8 +19,6 @@ namespace RPG.Character
             Debug.Assert(mRigid);
             Debug.Assert(mAnimator);
             mTrigger = IDLE;
-            mLandTrigger = new BlendTrigger(LAND,
-                              new string[] { WALK, RUN, IDLE });
         }
         public bool IsTransitionAbleState(State currentState)
         {
@@ -32,7 +29,7 @@ namespace RPG.Character
         }
         public State UpdateAndGetState()
         {
-            Debug.Assert(mAnimator && mRigid && mLandTrigger != null);
+            Debug.Assert(mAnimator && mRigid);
             mPrevTrigger = mTrigger;
 
             // GetState
@@ -41,7 +38,7 @@ namespace RPG.Character
                 mTrigger = GetMovementState();
                 if (mPrevTrigger == FALL)
                 {
-                    mTrigger = mLandTrigger.CheckORConditionsAndGetTrigger(mTrigger);
+                    mTrigger = IDLE;
                 }
             }
             else
@@ -51,19 +48,18 @@ namespace RPG.Character
             //
 
             //UpdateState
-            if (!mTrigger.Equals(mPrevTrigger))
+
+            foreach (var trigger in STATE_MAP)
             {
-                foreach (var trigger in STATE_MAP)
+                if (trigger.Key == mTrigger)
                 {
-                    if (trigger.Key == mTrigger)
-                    {
-                        mAnimator.SetTrigger(mTrigger);
-                    }
-                    else
-                    {
-                        mAnimator.ResetTrigger(trigger.Key);
-                    }
+                    mAnimator.SetTrigger(mTrigger);
                 }
+                else
+                {
+                    mAnimator.ResetTrigger(trigger.Key);
+                }
+
             }
             LookAtMovingDirection();
             //
@@ -91,6 +87,7 @@ namespace RPG.Character
             m3DVelocity = mRigid.velocity;
             m3DVelocity.y = 0;
             mLookingDirection = Vector3.RotateTowards(mAnimator.transform.forward, m3DVelocity, 90, 90);
+            mLookingDirection.z *= (mRigid.constraints & RigidbodyConstraints.FreezePositionZ) != 0 ? 1 : 0;
             if (mLookingDirection != Vector3.zero)
             {
                 mAnimator.transform.rotation = Quaternion.LookRotation(mLookingDirection);
