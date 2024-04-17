@@ -73,6 +73,7 @@
 15. 캐릭터의 이동속도는 변하지 않을 것이다.
 16. 캐릭터는 점프 중 이동할 수 없을 것이다.
 17. 캐릭터의 외형은 변할 수 있으나 종류는 하나일 것이다.
+18. 캐릭터를 이동시키는 연출이 추가될 수 있다.
 ```
 
 # Base System UML
@@ -387,7 +388,7 @@ public partial class Human;
 - 비트 플래그 열거형은 이름 뒤에 Flags를 붙인다.
 ```C++
  [Flags]
- public enum EVisibilityFlags
+ public enum VisibilityFlags
  {
      None = 0,
      Character = 1 << 0,
