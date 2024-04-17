@@ -74,7 +74,7 @@
 17. 캐릭터의 외형은 변할 수 있으나 종류는 하나일 것이다.
 ```
 
-# RPG Base System
+# Base System UML
 ![RPG](https://github.com/1506022022/RPG/assets/88864717/7f74bd5a-782f-4c15-b54b-25c7173dd974)
 
 
