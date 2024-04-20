@@ -1,4 +1,3 @@
-using RPG.Input.Controller;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,14 +9,14 @@ namespace RPG
     {
         bool bGameStart;
         int mSceneLevel = 0;
-        CharacterSwappingSystem mSwapSystem;
+        PlayerCharacterController mCharacterController;
+        CharacterSwapController mSwapController;
+
+        [Header("Components")]
+        [SerializeField] Contents.Contents mContents;
 
         [Header("로딩할 순서대로 씬 이름 입력")]
         [SerializeField] List<string> mLoadSceneNames;
-
-        [Header("Components")]
-        [SerializeField] Controller mController;
-        [SerializeField] Contents.Contents mContents;
 
         [Header("Options")]
         [Tooltip("선택하면 로딩 없이 현재 씬을 플레이 할 수 있습니다.")]
@@ -28,7 +27,6 @@ namespace RPG
             Debug.Assert(mLoadSceneNames.Count > 0);
 
             bGameStart = false;
-            mController.IsActive = false;
             string nextStage = mLoadSceneNames[mSceneLevel];
             mSceneLevel = Mathf.Min(mSceneLevel + 1, mLoadSceneNames.Count - 1);
             mContents.LoadScene(nextStage);
@@ -40,8 +38,7 @@ namespace RPG
         }
         void OnLoadedScene()
         {
-            SelectCharacterAndStartControll();
-            mSwapSystem?.BindCharacters(Character.Character.Instances);
+            SelectControllCharacter();
             bGameStart = true;
         }
         void OnClearGame()
@@ -51,8 +48,6 @@ namespace RPG
                 return;
             }
             bGameStart = false;
-            mController.IsActive = false;
-            mSwapSystem?.ReleaseCharacters();
             StartCoroutine(GameEndProcess());
         }
         IEnumerator GameEndProcess()
@@ -63,14 +58,10 @@ namespace RPG
                 StartGame();
             }
         }
-        void SelectCharacterAndStartControll()
+        void SelectControllCharacter()
         {
             var selectedCharacter = Character.Character.Instances[0];
-            selectedCharacter.FocusOn();
-            var interactionTarget = IInputInteractionFactory
-                                            .ConvertFromCharacter(selectedCharacter);
-            mController.AddInputInteractionTargets(interactionTarget);
-            mController.IsActive = true;
+            mCharacterController.SetControllCharacter(selectedCharacter);
         }
         void BindContentsEvents()
         {
@@ -84,9 +75,14 @@ namespace RPG
                 mContents.EnableLoadScene = false;
             }
         }
+        void SetControllers()
+        {
+            mCharacterController = new PlayerCharacterController();
+            mSwapController = new CharacterSwapController(mCharacterController);
+        }
         void Awake()
         {
-            mSwapSystem = mController.GetComponent<CharacterSwappingSystem>();
+            SetControllers();
             SetContentsOption();
             BindContentsEvents();
             DontDestroyOnLoad(gameObject);
@@ -94,6 +90,14 @@ namespace RPG
         void Start()
         {
             StartGame();
+        }
+        void Update()
+        {
+            if(bGameStart)
+            {
+                mCharacterController.Update();
+                mSwapController.Update();
+            }
         }
     }
 }

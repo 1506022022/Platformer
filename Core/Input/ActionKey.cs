@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace RPG.Input
 {
@@ -8,7 +9,7 @@ namespace RPG.Input
         public static readonly string HORIZONTAL = "Horizontal";
         public static readonly string VERTICAL = "Vertical";
         public static readonly string JUMP = "Jump";
-        public static readonly string TAB = "Tab";
+        public static readonly string SWAP = "Tab";
         public static readonly string ATTACK = "Attack";
         public static readonly string GUARD = "Guard";
 
@@ -17,20 +18,26 @@ namespace RPG.Input
             { HORIZONTAL,   0f },
             { VERTICAL,     0f },
             { JUMP,         0f },
-            { TAB,          0f },
+            { SWAP,         0f },
             { ATTACK,       0f },
             { GUARD,        0f }
         };
+
+        public static float lastUpdate;
         public static Dictionary<string, float> GetAxisRawMap()
         {
-            // TODO : 참조 복사본 반환
-            foreach (var button in mAxisRawMap.ToList())
+            if (lastUpdate < Time.time)
             {
-                mAxisRawMap[button.Key] = UnityEngine.Input.GetAxisRaw(button.Key);
+                foreach (var button in mAxisRawMap.ToList())
+                {
+                    mAxisRawMap[button.Key] = UnityEngine.Input.GetAxisRaw(button.Key);
+                }
+                lastUpdate = Time.time;
             }
-            // TODOEND
 
+            // TODO : 참조 복사본 반환해야 함
             return mAxisRawMap;
+            // TODOEND
         }
     }
 }

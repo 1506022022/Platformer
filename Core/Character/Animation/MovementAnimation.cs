@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Platformer;
+using UnityEngine;
 using static RPG.Character.AnimationTrigger;
 
 namespace RPG.Character
@@ -33,7 +34,7 @@ namespace RPG.Character
             mPrevTrigger = mTrigger;
 
             // GetState
-            if (RigidbodyUtil.IsGround(mRigid))
+            if (RigidbodyUtil.IsGrounded(mRigid))
             {
                 mTrigger = GetMovementState();
                 if (mPrevTrigger == FALL)

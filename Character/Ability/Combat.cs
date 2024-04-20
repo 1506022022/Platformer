@@ -8,7 +8,7 @@ namespace RPG
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Character.Character))]
-    public class Combat : MonoBehaviour, ITransitionAnimation, IInputInteraction
+    public class Combat : Ability, ITransitionAnimation
     {
         // ITransitionAnimation
         float mDelay;
@@ -52,18 +52,7 @@ namespace RPG
         }
 
         // IInputInteraction
-        public Dictionary<string, UnityAction<float>> InputEventMap
-        {
-            get;
-            private set;
-        }
-        Character.Character mCharacter;
-        public bool IsAble()
-        {
-            return mCharacter.State == State.Idle ||
-                    mCharacter.State == State.Running;
-        }
-        void MappingInputEvent()
+        protected override void MappingInputEvent()
         {
             InputEventMap = new Dictionary<string, UnityAction<float>>()
             {
@@ -71,10 +60,17 @@ namespace RPG
                 { ActionKey.GUARD,        (f) =>{ if(!f.Equals(0)) Guard(); } }
             };
         }
-        void Awake()
+
+        protected override void UpdateAbilityState()
         {
-            mCharacter = GetComponent<Character.Character>();
-            MappingInputEvent();
+            if (Time.time < mDelay)
+            {
+                mAbilityState = AbilityState.Action;
+            }
+            else
+            {
+                mAbilityState = AbilityState.Ready;
+            }
         }
     }
 }

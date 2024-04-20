@@ -5,7 +5,7 @@ namespace RPG.Input
 {
     public interface IInputInteraction
     {
-        public bool IsAble();
+        public bool IsAbleNow();
         public Dictionary<string, UnityAction<float>> InputEventMap { get; }
     }
 }

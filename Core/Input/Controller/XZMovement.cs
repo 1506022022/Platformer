@@ -1,4 +1,4 @@
-using System;
+using Platformer;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -9,9 +9,8 @@ namespace RPG.Input.Controller
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Rigidbody))]
-    public class XZMovement : InputInteraction
+    public class XZMovement : Ability
     {
-        float mMoveSpeed = MOVE_SPEED;
         Vector3 mVertical;
         Vector3 mHorizontal;
         Vector3 mMoveDir;
@@ -19,13 +18,7 @@ namespace RPG.Input.Controller
         Vector3 mVelocity;
         Rigidbody mRigid;
         [SerializeField] Camera mObjectCam;
-        public Func<bool> ConditionOfMoveable;
 
-        public override bool IsAble()
-        {
-            return ConditionOfMoveable?.Invoke() ?? true &&
-                   RigidbodyUtil.IsGround(mRigid);
-        }
         protected override void MappingInputEvent()
         {
             InputEventMap = new Dictionary<string, UnityAction<float>>()
@@ -33,13 +26,16 @@ namespace RPG.Input.Controller
                 { VERTICAL, UpdateVerticalMovement },
                 { HORIZONTAL, UpdateHorizontalMovement }
             };
-
+        }
+        protected override void UpdateAbilityState()
+        {
+            mAbilityState = AbilityState.Ready;
         }
         protected override void Awake()
         {
-            Debug.Assert(mObjectCam);
             base.Awake();
             mRigid = GetComponent<Rigidbody>();
+            Debug.Assert(mObjectCam && mRigid);
         }
         void UpdateHorizontalMovement(float input)
         {
@@ -56,7 +52,7 @@ namespace RPG.Input.Controller
         void Move()
         {
             mMoveDir = mVertical + mHorizontal;
-
+            float jumpDisspeed = RigidbodyUtil.IsGrounded(mRigid) ? 1f : 0.2f;
             // °¨¼Ó
             if (mMoveDir == Vector3.zero)
             {
@@ -65,7 +61,7 @@ namespace RPG.Input.Controller
             //
             else
             {
-                mMoveVector = mMoveDir * mMoveSpeed * Time.deltaTime * 1000f;
+                mMoveVector = mMoveDir * MOVE_SPEED * Time.deltaTime * 1000f * jumpDisspeed;
                 mRigid.AddForce(mMoveVector);
             }
 
@@ -76,6 +72,7 @@ namespace RPG.Input.Controller
             mRigid.velocity = mVelocity;
             //
         }
+
     }
 }
 
