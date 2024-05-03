@@ -1,3 +1,4 @@
+using Platformer;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,10 +7,6 @@ using UnityEngine.Events;
 
 namespace RPG.Input
 {
-    public enum AbilityState
-    {
-        Ready, Action, Colltime
-    }
     public abstract class Ability : MonoBehaviour, IInputInteraction
     {
         // Ability

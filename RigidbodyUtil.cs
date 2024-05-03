@@ -27,6 +27,6 @@ namespace Platformer
 #endif
             return hitsExceptForMyself.Any();
         }
-        
+
     }
 }

@@ -1,62 +1,32 @@
 using Platformer;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
-using static RPG.Input.ActionKey;
 using static RPG.Input.Controller.MovementInfo;
 
 namespace RPG.Input.Controller
 {
-    [DisallowMultipleComponent]
-    [RequireComponent(typeof(Rigidbody))]
-    public class XZMovement : Ability
+    public class XZMovement
     {
-        Vector3 mVertical;
-        Vector3 mHorizontal;
         Vector3 mMoveDir;
         Vector3 mMoveVector;
         Vector3 mVelocity;
         Rigidbody mRigid;
-        [SerializeField] Camera mObjectCam;
+        Camera mObjectCam;
+        public XZMovement(Rigidbody rigid, Camera cam)
+        {
+            mRigid = rigid;
+            mObjectCam = cam;
+        }
+        public void Move(Vector3 dir)
+        {
+            Debug.Assert(dir.y == 0);
+            mMoveDir = mObjectCam.transform.right * dir.x;
+            mMoveDir += mObjectCam.transform.forward * dir.z;
 
-        protected override void MappingInputEvent()
-        {
-            InputEventMap = new Dictionary<string, UnityAction<float>>()
-            {
-                { VERTICAL, UpdateVerticalMovement },
-                { HORIZONTAL, UpdateHorizontalMovement }
-            };
-        }
-        protected override void UpdateAbilityState()
-        {
-            mAbilityState = AbilityState.Ready;
-        }
-        protected override void Awake()
-        {
-            base.Awake();
-            mRigid = GetComponent<Rigidbody>();
-            Debug.Assert(mObjectCam && mRigid);
-        }
-        void UpdateHorizontalMovement(float input)
-        {
-            mHorizontal = transform.right * input;
-            // TODO : Move를 동작시키기 위해서 추가함. 자연스럽지 않기 때문에 다른 방법을 모색.
-            // 외부에서 호출해 주는 방식은 일단 보류
-            Move();
-            // TODOEND
-        }
-        void UpdateVerticalMovement(float input)
-        {
-            mVertical = transform.forward * input;
-        }
-        void Move()
-        {
-            mMoveDir = mVertical + mHorizontal;
             float jumpDisspeed = RigidbodyUtil.IsGrounded(mRigid) ? 1f : 0.2f;
             // 감속
-            if (mMoveDir == Vector3.zero)
+            if (mMoveDir == Vector3.zero && jumpDisspeed == 1f)
             {
-                mRigid.velocity *= 0.86f;
+                //mRigid.velocity *= 0.96f;
             }
             //
             else
@@ -72,7 +42,6 @@ namespace RPG.Input.Controller
             mRigid.velocity = mVelocity;
             //
         }
-
     }
 }
 

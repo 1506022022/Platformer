@@ -12,6 +12,7 @@ namespace RPG.Input
         public static readonly string SWAP = "Tab";
         public static readonly string ATTACK = "Attack";
         public static readonly string GUARD = "Guard";
+        public static readonly string PORTAL_JUMP = "PortalJump";
 
         static Dictionary<string, float> mAxisRawMap = new Dictionary<string, float>
         {
@@ -20,7 +21,8 @@ namespace RPG.Input
             { JUMP,         0f },
             { SWAP,         0f },
             { ATTACK,       0f },
-            { GUARD,        0f }
+            { GUARD,        0f },
+            { PORTAL_JUMP,  0f }
         };
 
         public static float lastUpdate;

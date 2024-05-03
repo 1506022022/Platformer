@@ -1,53 +1,45 @@
-using TMPro;
+using Platformer;
+using Platformer.Contents;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
 
 namespace RPG.Contents
 {
-    public class Contents : MonoBehaviour
+    public class Contents
     {
-        UnityEvent OnLoadedScene = new UnityEvent();
-        UnityEvent OnClearGame = new UnityEvent();
-        public bool EnableLoadScene { get; set; } = true;
+        static Contents mInstance;
+        public static Contents Instance => mInstance;
+        public AbilityState State => mLoader.State;
+        ILevelLoader mLoader;
 
-        [Header("[Component]")]
-        [SerializeField] Slider mProgressBar;
-        [SerializeField] GameObject mLoadingCanvas;
-        [SerializeField] TextMeshProUGUI mLoadSceneNameText;
-
-        void Awake()
+        public Contents(int loadType)
         {
-            SceneLoader.CoroutineRunner = this;
-            SceneLoader.LoadingCanvas = mLoadingCanvas;
-            SceneLoader.ProgressBar = mProgressBar;
-            SceneLoader.LoadSceneNameText = mLoadSceneNameText;
-            SceneLoader.AddListenerLoadedSceneEvent(OnLoadedScene.Invoke);
-            SceneLoader.AddListenerLoadedSceneEvent(ListeningMapClearEvent);
+            Debug.Assert(mInstance == null);
+            mInstance = this;
+            SetLoaderType(loadType);
         }
-        public void LoadScene(string sceneName)
+        public void LoadNextLevel()
         {
-            if (EnableLoadScene)
+            mLoader.LoadNext();
+        }
+        public void SetLoaderType(int i)
+        {
+            if(i ==0 )
             {
-                SceneLoader.LoadScene(sceneName);
+                mLoader = new StageLoader();
+            }
+            else if( i == 1)
+            {
+                mLoader = GameObject.FindObjectOfType<CubeLoader>();
+                Debug.Assert(mLoader != null);
             }
             else
             {
-                ListeningMapClearEvent();
-                OnLoadedScene.Invoke();
+                mLoader = new LevelLoader();
             }
         }
-        public void AddListenerLoadedScene(UnityAction action)
+        public void SetLoader(ILevelLoader loader)
         {
-            OnLoadedScene.AddListener(action);
-        }
-        public void AddListenerClearGame(UnityAction actoin)
-        {
-            OnClearGame.AddListener(actoin);
-        }
-        void ListeningMapClearEvent()
-        {
-            Map.Instance.AddListenerClearEvent(OnClearGame.Invoke);
+            mLoader = loader;
         }
     }
 }

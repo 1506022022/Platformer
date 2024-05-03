@@ -37,7 +37,7 @@ namespace RPG.Input.Controller
         {
             mControllTargets.Clear();
         }
-        public void Update()
+        public virtual void Update()
         {
             if(mControllTargets.Count== 0)
             {

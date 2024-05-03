@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace RPG.Character
 {
     [Serializable]
-    public enum State { Idle, Running, Jumping, Falling, Attack, Die }
+    public enum State { Idle, Walk, Running, Jumping, Falling, Land, Attack, Die }
 
     public struct AnimationTrigger
     {
@@ -18,17 +18,14 @@ namespace RPG.Character
         public static readonly string GUARD = "Guard";
         public static readonly string PARRYING = "Parrying";
 
-        public static readonly Dictionary<string, State> STATE_MAP = new Dictionary<string, State>()
+        public static readonly Dictionary<State, string> STATE_MAP = new Dictionary<State, string>()
         {
-            { IDLE,     State.Idle },
-            { FALL,     State.Falling },
-            { JUMP,     State.Jumping },
-            { LAND,     State.Falling },
-            { RUN,      State.Running },
-            { WALK,     State.Running },
-            { ATTACK,   State.Attack },
-            { GUARD,    State.Attack},
-            { PARRYING, State.Attack }
+            { State.Idle, IDLE },
+            { State.Falling , FALL },
+            { State.Jumping , JUMP },
+            { State.Land , LAND },
+            { State.Walk , WALK },
+            { State.Running , RUN }
         };
     }
 }

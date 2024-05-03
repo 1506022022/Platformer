@@ -4,14 +4,14 @@ using UnityEngine;
 
 namespace RPG.Character
 {
-    public class Character : MonoBehaviour
+    public abstract class Character<T> : MonoBehaviour where T : Character<T>
     {
-        static List<Character> instances = new List<Character>();
-        public static List<Character> Instances
+        static List<T> instances = new List<T>();
+        public static List<T> Instances
         {
             get
             {
-                Debug.Assert(instances.Count > 0, $"Not found Character : {instances.Count}");
+                Debug.Assert(instances.Count > 0, $"Not found {typeof(T).Name}");
                 return instances.ToList();
             }
             private set
@@ -19,37 +19,16 @@ namespace RPG.Character
                 instances = value;
             }
         }
-        [SerializeField] public State State { get; private set; } = State.Idle;
-
+        public State State { get; protected set; } = State.Idle;
         Status.Status mStatus;
         CharacterCamera mCharCamera;
         List<ITransitionAnimation> mTransitionAnimationList = new List<ITransitionAnimation>();
 
-        [Header("[Component]")]
-        [SerializeField] Camera mCam;
-        [SerializeField] GameObject mUI;
-
         // TODO : 나중에 이동 관련 구조체(이동속도, 이동가능상태, 버프.. 등) 만들어서 대체
         public float MoveSpeed { get; } = 1.0f;
         // TODOEND
-        public Camera GetCamera()
-        {
-            Debug.Assert(mCam);
-            return mCam;
-        }
-        public void FocusOn()
-        {
-            Debug.Assert(mUI);
-            mUI.SetActive(true);
-            GetCamera().gameObject.SetActive(true);
-        }
-        public void FocusOff()
-        {
-            Debug.Assert(mUI);
-            mUI.SetActive(false);
-            GetCamera().gameObject.SetActive(false);
-        }
-        void Update()
+
+        protected virtual void Update()
         {
             foreach (var transitionAnim in mTransitionAnimationList)
             {
@@ -59,9 +38,9 @@ namespace RPG.Character
                 }
             }
         }
-        void Awake()
+        protected virtual void Awake()
         {
-            instances.Add(this);
+            instances.Add((T)this);
             // TODO : 스테이터스, 카메라 연출 기능 구현
             mStatus = new Status.Status();
             mCharCamera = new CharacterCamera();
@@ -71,7 +50,7 @@ namespace RPG.Character
         }
         void OnDestroy()
         {
-            instances.Remove(this);
+            instances.Remove((T)this);
         }
     }
 }

@@ -1,44 +1,34 @@
 using RPG.Character;
 using RPG.Input;
-using RPG.Input.Controller;
-using System.Linq;
+using UnityEngine;
+using static RPG.Input.ActionKey;
 
-namespace RPG
+namespace Platformer.Core
 {
-    public class PlayerCharacterController : Controller
+    public static class PlayerCharacterController
     {
-        Character.Character mPlayerCharacter;
-        public void SetControllCharacter(Character.Character character)
+        public static void ControllTo(PlayerCharacter character)
         {
-            mPlayerCharacter = character;
-            mPlayerCharacter.FocusOn();
-
-            var characterAbilitys = character.GetComponents<Ability>()
-                                             .ToList<IInputInteraction>();
-
-            var xzMovement = character.GetComponent<XZMovement>();
-            if(xzMovement != null)
+            var map = ActionKey.GetAxisRawMap();
+            Vector3 moveDir = Vector3.zero;
+            moveDir.x += map[HORIZONTAL];
+            moveDir.z += map[VERTICAL];
+            if(moveDir!=Vector3.zero)
             {
-                xzMovement.PublicCondition += () =>
-                    character.State == State.Idle ||
-                    character.State == State.Running;
+                character.MoveDir(moveDir);
             }
 
-            var jumpMovement = character.GetComponent<JumpMovement>();
-            if(jumpMovement != null)
+            if(map[JUMP] != 0)
             {
-                jumpMovement.PublicCondition += () =>
-                    character.State == State.Idle ||
-                    character.State == State.Running;
+                character.Jump();
             }
 
-            ReleaseControll();
-            AddInputInteractions(characterAbilitys);
+            if (map[GUARD] != 0)
+            {
+                character.Combat(4290000001);
+            }
         }
-        public void ReleaseControll()
-        {
-            ClearInputInteractionTargets();
-        }
+
     }
 }
 

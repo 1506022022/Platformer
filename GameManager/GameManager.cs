@@ -1,104 +1,64 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+using Platformer.Core;
+using RPG.Character;
+using System.ComponentModel;
 using UnityEngine;
+using AbilityState = Platformer.AbilityState;
 
 namespace RPG
 {
     public class GameManager : MonoBehaviour
     {
-        bool bGameStart;
-        int mSceneLevel = 0;
-        PlayerCharacterController mCharacterController;
-        CharacterSwapController mSwapController;
+        public static GameManager Instance { get; private set; }
+        Contents.Contents mContents;
+        PlayerCharacter character;
 
-        [Header("Components")]
-        [SerializeField] Contents.Contents mContents;
+        [Header("[Debug]")]
+        [SerializeField, ReadOnly(false)] bool bSingleStage;
+        [SerializeField, ReadOnly(false)] bool bGameStart;
 
-        [Header("로딩할 순서대로 씬 이름 입력")]
-        [SerializeField] List<string> mLoadSceneNames;
-
-        [Header("Options")]
-        [Tooltip("선택하면 로딩 없이 현재 씬을 플레이 할 수 있습니다.")]
-        [SerializeField] bool mbSingleStage;
-
-        void StartGame()
+        public void LoadGame()
         {
-            Debug.Assert(mLoadSceneNames.Count > 0);
-
             bGameStart = false;
-            string nextStage = mLoadSceneNames[mSceneLevel];
-            mSceneLevel = Mathf.Min(mSceneLevel + 1, mLoadSceneNames.Count - 1);
-            mContents.LoadScene(nextStage);
-
-#if DEVELOPMENT
-            var gms = FindObjectsOfType<GameManager>();
-            Debug.Assert(gms.Count() == 1, $"GM is not Unique : {gms.Count()}");
-#endif
+            mContents.LoadNextLevel();
         }
+
         void OnLoadedScene()
         {
             SelectControllCharacter();
             bGameStart = true;
         }
-        void OnClearGame()
-        {
-            if (!bGameStart)
-            {
-                return;
-            }
-            bGameStart = false;
-            StartCoroutine(GameEndProcess());
-        }
-        IEnumerator GameEndProcess()
-        {
-            yield return new WaitForSeconds(3.0f);
-            if(!mbSingleStage)
-            {
-                StartGame();
-            }
-        }
         void SelectControllCharacter()
         {
-            var selectedCharacter = Character.Character.Instances[0];
-            mCharacterController.SetControllCharacter(selectedCharacter);
-        }
-        void BindContentsEvents()
-        {
-            mContents.AddListenerLoadedScene(OnLoadedScene);
-            mContents.AddListenerClearGame(OnClearGame);
-        }
-        void SetContentsOption()
-        {
-            if (mbSingleStage)
-            {
-                mContents.EnableLoadScene = false;
-            }
-        }
-        void SetControllers()
-        {
-            mCharacterController = new PlayerCharacterController();
-            mSwapController = new CharacterSwapController(mCharacterController);
+            character = Character.PlayerCharacter.Instances[0];
+            character.FocusOn();
         }
         void Awake()
         {
-            SetControllers();
-            SetContentsOption();
-            BindContentsEvents();
+            Debug.Assert(Instance == null);
+            Instance = this;
             DontDestroyOnLoad(gameObject);
+            // TODO : int -> enum ����
+            int loadType = bSingleStage ? 2 : 0;
+            mContents = new Contents.Contents(loadType);
+            // TODOEND
         }
         void Start()
         {
-            StartGame();
+            LoadGame();
         }
         void Update()
         {
-            if(bGameStart)
+            if (bGameStart)
             {
-                mCharacterController.Update();
-                mSwapController.Update();
+                PlayerCharacterController.ControllTo(character);
+            }
+            else
+            {
+                if (mContents.State == AbilityState.Ready)
+                {
+                    OnLoadedScene();
+                }
             }
         }
     }
 }
-
