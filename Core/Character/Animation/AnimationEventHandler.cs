@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace RPG.Character
+namespace PlatformGame.Tool.EventHandler
 {
     public class AnimationEventHandler : MonoBehaviour
     {

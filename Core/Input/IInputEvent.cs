@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine.Events;
 
-namespace RPG.Input
+namespace PlatformGame.Input
 {
-    public interface IInputInteraction
+    public interface IInputEvent
     {
         public bool IsAbleNow();
         public Dictionary<string, UnityAction<float>> InputEventMap { get; }

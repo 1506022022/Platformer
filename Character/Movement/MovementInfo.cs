@@ -1,4 +1,4 @@
-namespace RPG.Input.Controller
+namespace PlatformGame.Character.Status
 {
     public struct MovementInfo
     {
@@ -6,7 +6,7 @@ namespace RPG.Input.Controller
         public static readonly float MAX_JUMP_VELOCITY = 300f;
         public static readonly float JUMP_POWER = 300f;
         public static readonly float JUMP_DELAY = 0.5f;
-        public static readonly float MOVE_SPEED = 1.0f;
+        public static readonly float MOVE_SPEED = 1000f;
     }
 }
 

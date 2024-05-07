@@ -1,11 +1,12 @@
 using UnityEngine;
 
-public class Burn : MonoBehaviour
+namespace PlatformGame.Character.Combat
 {
-    private void OnTriggerEnter(Collider other)
+    public class Burn : MonoBehaviour
     {
-        if(other.gameObject.tag == "Fire")
+        private void OnTriggerEnter(Collider other)
         {
+            if (!other.gameObject.CompareTag("Fire")) return;
             var obj = Instantiate(other.gameObject);
             obj.transform.position = transform.position;
             Destroy(gameObject);

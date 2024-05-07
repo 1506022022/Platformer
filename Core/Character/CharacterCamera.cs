@@ -1,4 +1,4 @@
-﻿namespace RPG.Character
+﻿namespace PlatformGame.Character
 {
     public class CharacterCamera
     {

@@ -1,7 +1,7 @@
 using System.Linq;
 using UnityEngine;
 
-namespace Platformer
+namespace PlatformGame.Tool
 {
     public static class RigidbodyUtil
     {

@@ -1,117 +1,67 @@
-﻿using Platformer.Core;
-using RPG.Input.Controller;
+﻿using PlatformGame.Character.Collision;
+using PlatformGame.Character.Combat;
 using UnityEngine;
+using static PlatformGame.Character.Status.MovementInfo;
 
-namespace RPG.Character
+namespace PlatformGame.Character
 {
-    public class PlayerCharacter : Character<PlayerCharacter>
+    public class PlayerCharacter : Character
     {
-        Combat mCombat;
-        XZMovement mMovement;
-        JumpMovement mJumpMovement;
-        [Header("[Component]")]
-        [SerializeField] Camera mCam;
+        Ability mAbility;
+        [Header("[PlayerCharacter]")]
+        [SerializeField] AbilityDataList mHasAbilities;
+        public AbilityDataList HasAbilities => mHasAbilities;
         [SerializeField] GameObject mUI;
-        [SerializeField] MovementAnimation mCharacterAnim;
-        [SerializeField] Rigidbody mRigid;
-        [SerializeField] CombatDataList mCombatDatas;
+        public GameObject UI => mUI;
         [SerializeField] HitBox mAttackHitBox;
 
-        public void MovePos(Vector3 pos)
+        public void CombatTo(uint combatID)
         {
-            SetAbilityState(State.Running);
-        }
+            AbilityData combatData;
+            mHasAbilities.Library.TryGetValue(combatID, out combatData);
+            Debug.Assert(combatData.ID != 0);
 
-        public void MoveDir(Vector3 dir)
-        {
-            if (State == State.Attack)
+            if (!StateCheck.Equals(State, combatData.AllowedState))
             {
                 return;
             }
-            mMovement.Move(dir);
-        }
 
-        public void Jump()
-        {
-            if (State == State.Idle ||
-                State == State.Walk ||
-                State == State.Running)
+            if (mAbility.IsAction)
             {
-                mJumpMovement.Jump();
-                SetAbilityState(State.Jumping);
+                return;
             }
-            
-        }
 
-        public void Combat(uint combatID)
-        {
-            CombatData combatData;
-            mCombatDatas.Library.TryGetValue(combatID, out combatData);
-            Debug.Assert(combatData.ID != 0);
-            if (!mCombat.IsAction)
+            State = combatData.BeState;
+            mAbility.Action(combatData);
+
+            if (combatData.MovementAction == null)
             {
-                SetAbilityState(State.Attack);
-                mCombat.Action(combatData);
-                mCharacterAnim.PlayAnimation(combatData.AnimationName);
+                return;
             }
+            mMovement.PlayMovement(combatData.MovementAction);
         }
 
         protected override void Update()
         {
-            if (!mCombat.IsAction)
-            {
-                ReturnBasicState();
-                mCharacterAnim.UpdateAnimation(State);
-            }
-        }
-        void ReturnBasicState()
-        {
-            Debug.Assert(!mCombat.IsAction);
-            if ((Platformer.RigidbodyUtil.IsGrounded(mRigid) && mJumpMovement.IsDelay) ||
-                !Platformer.RigidbodyUtil.IsGrounded(mRigid))
-            {
-                State = (mRigid.velocity.y >= 0) ? State.Jumping :
-                                                    State.Falling;
-            }
-            else
-            {
-                State = (Mathf.Abs(mRigid.velocity.magnitude) < 0.01f) ? State.Idle :
-        (mRigid.velocity.magnitude < 2f) ? State.Walk :
-                                           State.Running;
-            }
-        }
-        protected override void Awake()
-        {
-            base.Awake();
-            mCombat = new Combat(mAttackHitBox);
-            mMovement = new XZMovement(mRigid, mCam);
-            mJumpMovement = new JumpMovement(mRigid);
-        }
-        void SetAbilityState(State state)
-        {
-            State = state;
+            if (mAbility.IsAction) return;
+            base.Update();
+            LimitMoveSpeed();
         }
 
-        // TODO : 제거
-        public Camera GetCamera()
+        void Awake()
         {
-            Debug.Assert(mCam);
-            return mCam;
+            mAbility = mAttackHitBox == null ?
+            new Ability() :
+            new Ability(mAttackHitBox);
         }
-        // TODOEND
 
-        // TODO : 캐릭터 컨트롤러로 이동
-        public void FocusOn()
+        // TODO : 분리
+        void LimitMoveSpeed()
         {
-            Debug.Assert(mUI);
-            mUI.SetActive(true);
-            GetCamera().gameObject.SetActive(true);
-        }
-        public void FocusOff()
-        {
-            Debug.Assert(mUI);
-            mUI.SetActive(false);
-            GetCamera().gameObject.SetActive(false);
+            var mVelocity = mRigid.velocity;
+            mVelocity.x = Mathf.Clamp(mVelocity.x, -MAX_MOVE_VELOCITY, MAX_MOVE_VELOCITY);
+            mVelocity.z = Mathf.Clamp(mVelocity.z, -MAX_MOVE_VELOCITY, MAX_MOVE_VELOCITY);
+            mRigid.velocity = mVelocity;
         }
         // TODOEND
     }

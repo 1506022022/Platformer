@@ -1,42 +1,44 @@
-using Platformer;
-using Platformer.Contents;
+using PlatformGame.Contents.Loader;
 using UnityEngine;
 
-namespace RPG.Contents
+namespace PlatformGame.Contents
 {
     public class Contents
     {
-        static Contents mInstance;
-        public static Contents Instance => mInstance;
-        public AbilityState State => mLoader.State;
+        public static Contents Instance { get; private set; }
+
+        public WorkState State => mLoader.State;
         ILevelLoader mLoader;
 
         public Contents(int loadType)
         {
-            Debug.Assert(mInstance == null);
-            mInstance = this;
+            Debug.Assert(Instance == null);
+            Instance = this;
             SetLoaderType(loadType);
         }
+
         public void LoadNextLevel()
         {
             mLoader.LoadNext();
         }
+
         public void SetLoaderType(int i)
         {
-            if(i ==0 )
+            switch (i)
             {
-                mLoader = new StageLoader();
-            }
-            else if( i == 1)
-            {
-                mLoader = GameObject.FindObjectOfType<CubeLoader>();
-                Debug.Assert(mLoader != null);
-            }
-            else
-            {
-                mLoader = new LevelLoader();
+                case 0:
+                    mLoader = new StageLoader();
+                    break;
+                case 1:
+                    mLoader = GameObject.FindObjectOfType<CubeLoader>();
+                    Debug.Assert(mLoader != null);
+                    break;
+                default:
+                    mLoader = new LevelLoader();
+                    break;
             }
         }
+
         public void SetLoader(ILevelLoader loader)
         {
             mLoader = loader;

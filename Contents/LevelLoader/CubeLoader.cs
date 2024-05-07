@@ -1,43 +1,39 @@
-﻿using UnityEngine;
+﻿using PlatformGame.Character.Controller;
+using PlatformGame.Input;
+using UnityEngine;
+using static PlatformGame.Input.ActionKey;
 
-namespace Platformer.Contents
+namespace PlatformGame.Contents.Loader
 {
     public class CubeLoader : MonoBehaviour, ILevelLoader
     {
-        public AbilityState State {  get; private set; }
-        float mLastStoped;
-        CubeController mController;
-        [SerializeField] RotateAbility mCube;
+        public WorkState State { get; private set; }
+        [SerializeField] PlayerCharacterController mCubeController;
+
         void Awake()
         {
-            mController = new CubeController(mCube);
+            Debug.Assert(mCubeController != null);
         }
+
         void Update()
         {
-            if( State == AbilityState.Colltime &&
-                mLastStoped + 1f < Time.time)
-            {
-                State = AbilityState.Ready;
-            }
-            if(State != AbilityState.Action)
+            if (State != WorkState.Action)
             {
                 return;
             }
-            if (mController.State == AbilityState.Action)
+            
+            var map = ActionKey.GetAxisRawMap();
+            if (map[GUARD])
             {
-                mController.Update();
-            }
-            else
-            {
-                State = AbilityState.Colltime;
-                mLastStoped = Time.time;
+                State = WorkState.Ready;
+                mCubeController.SetControll(false);
             }
         }
 
         public void LoadNext()
         {
-            State = AbilityState.Action;
-            mController.Start();
+            State = WorkState.Action;
+            mCubeController.SetControll(true);
         }
     }
 }

@@ -1,32 +1,34 @@
-using Platformer;
+using PlatformGame.Character;
+using PlatformGame.Contents.Loader;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace RPG.Contents
+namespace PlatformGame.Contents
 {
     public abstract class Portal : MonoBehaviour
     {
-        public AbilityState State { get; protected set; }
-        protected Dictionary<Character.PlayerCharacter, bool> mGoalCheck = new Dictionary<Character.PlayerCharacter, bool>();
+        public WorkState State { get; protected set; }
+        protected Dictionary<PlayerCharacter, bool> mGoalCheck = new Dictionary<PlayerCharacter, bool>();
         [SerializeField] UnityEvent mRunEvent;
 
         void Start()
         {
-            var playerList = Character.PlayerCharacter.Instances;
-            foreach (var player in playerList)
+            var needCharacters = GameManager.Instance.JoinCharacters;
+            Debug.Assert(needCharacters.Count > 0);
+            foreach (var player in needCharacters)
             {
                 mGoalCheck.Add(player, false);
             }
         }
         void OnTriggerEnter(Collider other)
         {
-            var player = other.GetComponent<Character.PlayerCharacter>();
+            var player = other.GetComponent<PlayerCharacter>();
             if (player)
             {
                 mGoalCheck[player] = true;
-                if (mGoalCheck.All(x => x.Value) && State == AbilityState.Ready)
+                if (mGoalCheck.All(x => x.Value) && State == WorkState.Ready)
                 {
                     RunPortal();
                 }
@@ -34,8 +36,8 @@ namespace RPG.Contents
         }
         void OnTriggerExit(Collider other)
         {
-            var player = other.GetComponent<Character.PlayerCharacter>();
-            if(player)
+            var player = other.GetComponent<PlayerCharacter>();
+            if (player)
             {
                 if (mGoalCheck.ContainsKey(player))
                 {
@@ -45,7 +47,7 @@ namespace RPG.Contents
         }
         protected virtual void RunPortal()
         {
-            State = AbilityState.Action;
+            State = WorkState.Action;
             mRunEvent.Invoke();
         }
     }

@@ -1,8 +1,8 @@
-﻿namespace Platformer.Contents
+﻿namespace PlatformGame.Contents.Loader
 {
     public interface ILevelLoader
     {
         public void LoadNext();
-        public AbilityState State { get; }
+        public WorkState State { get; }
     }
 }

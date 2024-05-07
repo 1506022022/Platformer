@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace RPG.Contents
+namespace PlatformGame.Contents
 {
     public class Stage : MonoBehaviour
     {

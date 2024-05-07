@@ -2,44 +2,54 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace RPG.Input
+namespace PlatformGame.Input
 {
     public static class ActionKey
     {
-        public static readonly string HORIZONTAL = "Horizontal";
-        public static readonly string VERTICAL = "Vertical";
+        public static readonly string UP = "Up";
+        public static readonly string DOWN = "Down";
+        public static readonly string RIGHT = "Right";
+        public static readonly string LEFT = "Left";
         public static readonly string JUMP = "Jump";
         public static readonly string SWAP = "Tab";
         public static readonly string ATTACK = "Attack";
         public static readonly string GUARD = "Guard";
         public static readonly string PORTAL_JUMP = "PortalJump";
 
-        static Dictionary<string, float> mAxisRawMap = new Dictionary<string, float>
+        static readonly Dictionary<string, bool> mAxisRawMap = new Dictionary<string, bool>
         {
-            { HORIZONTAL,   0f },
-            { VERTICAL,     0f },
-            { JUMP,         0f },
-            { SWAP,         0f },
-            { ATTACK,       0f },
-            { GUARD,        0f },
-            { PORTAL_JUMP,  0f }
+            { UP,           false },
+            { DOWN,         false },
+            { RIGHT,        false },
+            { LEFT,         false },
+            { JUMP,         false },
+            { SWAP,         false },
+            { ATTACK,       false },
+            { GUARD,        false },
+            { PORTAL_JUMP,  false }
         };
-
-        public static float lastUpdate;
-        public static Dictionary<string, float> GetAxisRawMap()
+        static Dictionary<string, bool> AxisRawMap
         {
-            if (lastUpdate < Time.time)
+            get
             {
-                foreach (var button in mAxisRawMap.ToList())
+                Debug.Assert(mAxisRawMap != null);
+                return mAxisRawMap;
+            }
+        }
+        public static List<string> InputKeys => AxisRawMap.Keys.ToList();
+        static float mLastUpdate;
+        public static Dictionary<string, bool> GetAxisRawMap()
+        {
+            if (mLastUpdate < Time.time)
+            {
+                foreach (var button in AxisRawMap.ToList())
                 {
-                    mAxisRawMap[button.Key] = UnityEngine.Input.GetAxisRaw(button.Key);
+                    mAxisRawMap[button.Key] = UnityEngine.Input.GetAxisRaw(button.Key) != 0;
                 }
-                lastUpdate = Time.time;
+                mLastUpdate = Time.time;
             }
 
-            // TODO : 참조 복사본 반환해야 함
             return mAxisRawMap;
-            // TODOEND
         }
     }
 }

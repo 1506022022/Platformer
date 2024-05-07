@@ -1,56 +1,42 @@
-using System.Collections.Generic;
-using System.Linq;
+using PlatformGame.Character.Movement;
+using PlatformGame.Tool;
 using UnityEngine;
 
-namespace RPG.Character
+namespace PlatformGame.Character
 {
-    public abstract class Character<T> : MonoBehaviour where T : Character<T>
+    public abstract class Character : MonoBehaviour
     {
-        static List<T> instances = new List<T>();
-        public static List<T> Instances
+        [Header("[Character]")]
+#if UNITY_EDITOR
+        [SerializeField]
+#endif
+        CharacterState mState;
+        public CharacterState State
         {
-            get
+            get => mState;
+            protected set => mState = value;
+        }
+        [SerializeField] protected Rigidbody mRigid;
+        [SerializeField] protected CharacterMovement mMovement;
+
+        protected void ReturnBasicState()
+        {
+            if (!RigidbodyUtil.IsGrounded(mRigid))
             {
-                Debug.Assert(instances.Count > 0, $"Not found {typeof(T).Name}");
-                return instances.ToList();
+                State = (mRigid.velocity.y >= 0) ? CharacterState.Jumping : CharacterState.Falling;
             }
-            private set
+            else
             {
-                instances = value;
+                State = (Mathf.Abs(mRigid.velocity.magnitude) < 0.01f) ? CharacterState.Idle :
+                    (mRigid.velocity.magnitude < 2f) ? CharacterState.Walk :
+                    CharacterState.Running;
             }
         }
-        public State State { get; protected set; } = State.Idle;
-        Status.Status mStatus;
-        CharacterCamera mCharCamera;
-        List<ITransitionAnimation> mTransitionAnimationList = new List<ITransitionAnimation>();
-
-        // TODO : 나중에 이동 관련 구조체(이동속도, 이동가능상태, 버프.. 등) 만들어서 대체
-        public float MoveSpeed { get; } = 1.0f;
-        // TODOEND
 
         protected virtual void Update()
         {
-            foreach (var transitionAnim in mTransitionAnimationList)
-            {
-                if (transitionAnim.IsTransitionAbleState(State))
-                {
-                    State = transitionAnim.UpdateAndGetState();
-                }
-            }
+            ReturnBasicState();
         }
-        protected virtual void Awake()
-        {
-            instances.Add((T)this);
-            // TODO : 스테이터스, 카메라 연출 기능 구현
-            mStatus = new Status.Status();
-            mCharCamera = new CharacterCamera();
-            // TODOEND
-            var transitionAnims = GetComponents<ITransitionAnimation>().ToList();
-            mTransitionAnimationList.AddRange(transitionAnims);
-        }
-        void OnDestroy()
-        {
-            instances.Remove((T)this);
-        }
+
     }
 }

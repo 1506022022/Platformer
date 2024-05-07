@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Numerics;
-using Unity.VisualScripting;
 
-namespace Platformer.Core
+namespace PlatformGame.Character.Collision
 {
     [Flags, Serializable]
     public enum HitBoxFlags
@@ -44,7 +42,7 @@ namespace Platformer.Core
         {
             return (Flags & flags) == flags;
         }
-        public static List<HitBoxCollider> GetCollidersAs(Dictionary<string, HitBoxCollider>list, List<string> filterColliderNames)
+        public static List<HitBoxCollider> GetCollidersAs(Dictionary<string, HitBoxCollider> list, List<string> filterColliderNames)
         {
             List<HitBoxCollider> colliders = new List<HitBoxCollider>();
 

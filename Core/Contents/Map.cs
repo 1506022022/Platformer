@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace RPG.Contents
+namespace PlatformGame.Contents
 {
     public class Map : MonoBehaviour
     {
@@ -14,10 +14,7 @@ namespace RPG.Contents
                 Debug.Assert(mInstance);
                 return mInstance;
             }
-            private set
-            {
-                mInstance = value;
-            }
+            private set => mInstance = value;
         }
         [SerializeField] Stage mStage;
 

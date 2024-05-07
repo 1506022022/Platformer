@@ -2,7 +2,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Platformer.Core
+namespace PlatformGame.Character.Collision
 {
     public delegate void HitBoxColliderCallback(HitBoxCollider victim, HitBoxCollider attacker);
 
@@ -17,7 +17,7 @@ namespace Platformer.Core
         {
             get => Time.time < mLastHitTime + HitDelay;
         }
-        
+
         [SerializeField] string mName;
         public string Name
         {

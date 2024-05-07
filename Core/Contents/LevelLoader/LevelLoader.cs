@@ -1,14 +1,14 @@
 ﻿using UnityEngine;
 
-namespace Platformer.Contents
+namespace PlatformGame.Contents.Loader
 {
     public class LevelLoader : ILevelLoader
     {
-        public AbilityState State
+        public WorkState State
         {
             get
             {
-                return mEndTime <= Time.time ? AbilityState.Ready : AbilityState.Action;
+                return mEndTime <= Time.time ? WorkState.Ready : WorkState.Action;
             }
         }
         float mEndTime;

@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Platformer.Core
+namespace PlatformGame.Character.Combat
 {
     [CreateAssetMenu(fileName = "CombatDataList", menuName = "Custom/CombatDataList")]
-    public class CombatDataList : ScriptableObject
+    public class AbilityDataList : ScriptableObject
     {
         [SerializeField]
-        List<CombatData> mCombats;
-        public List<CombatData> Combats
+        List<AbilityData> mCombats;
+        public List<AbilityData> Combats
         {
             get
             {
@@ -16,14 +16,14 @@ namespace Platformer.Core
                 return mCombats;
             }
         }
-        public Dictionary<uint,CombatData> Library
+        public Dictionary<uint, AbilityData> Library
         {
             get
             {
-                Dictionary<uint, CombatData> library = new Dictionary<uint, CombatData>();
-                foreach(var item in mCombats)
+                Dictionary<uint, AbilityData> library = new Dictionary<uint, AbilityData>();
+                foreach (var item in mCombats)
                 {
-                    Debug.Assert(!library.ContainsKey(item.ID), $"¡ﬂ∫πµ» ∞™ : {item}");
+                    Debug.Assert(!library.ContainsKey(item.ID), $"Ï§ëÎ≥µÎêú Í∞í : {item}");
                     library.Add(item.ID, item);
                 }
                 return library;

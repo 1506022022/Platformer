@@ -1,49 +1,55 @@
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using UnityEngine.Events;
 
-namespace RPG.Input.Controller
+namespace PlatformGame.Input
 {
-    [DisallowMultipleComponent]
-    public class Controller
+    public class InputEvent
     {
         string mInputName;
         float mInputValue;
         UnityAction<float> mInputInteraction;
         Dictionary<string, float> mInputAxisRawMap;
-        List<IInputInteraction> mControllTargets = new List<IInputInteraction>();
+        List<IInputEvent> mControllTargets = new List<IInputEvent>();
 
-        public void AddInputInteraction(IInputInteraction target)
+        public void AddInputInteraction(IInputEvent target)
         {
             mControllTargets.Add(target);
         }
-        public void AddInputInteractions(List<IInputInteraction> targets)
+
+        public void AddInputInteractions(List<IInputEvent> targets)
         {
             mControllTargets.AddRange(targets);
         }
-        public void RemoveInputInteractionTarget(IInputInteraction target)
+
+        public void RemoveInputInteractionTarget(IInputEvent target)
         {
             mControllTargets.Remove(target);
         }
-        public void RemoveInputInteractionTargets(List<IInputInteraction> targets)
+
+        public void RemoveInputInteractionTargets(List<IInputEvent> targets)
         {
             foreach (var target in targets)
             {
                 mControllTargets.Remove(target);
             }
         }
+
         public void ClearInputInteractionTargets()
         {
             mControllTargets.Clear();
         }
+
         public virtual void Update()
         {
-            if(mControllTargets.Count== 0)
+            if (mControllTargets.Count == 0)
             {
                 return;
             }
-            mInputAxisRawMap = ActionKey.GetAxisRawMap();
+
+            // TODO : ÀÔ·Â ¸Ê ¼öÁ¤
+            mInputAxisRawMap = new Dictionary<string, float>();
+            // 
             foreach (var interactionTarget in mControllTargets.ToList())
             {
                 if (!interactionTarget.IsAbleNow())
@@ -57,7 +63,7 @@ namespace RPG.Input.Controller
                     mInputInteraction = item.Value;
                     mInputValue = mInputAxisRawMap[mInputName];
 
-                    if(mInputValue != 0)
+                    if (mInputValue != 0)
                     {
                         mInputInteraction.Invoke(mInputValue);
                     }

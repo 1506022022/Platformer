@@ -1,9 +1,10 @@
+using PlatformGame.Character.Collision;
 using UnityEngine;
 
-namespace Platformer.Core
+namespace PlatformGame.Character.Combat
 {
-    [CreateAssetMenu(menuName ="Custom/CombatAction/ReflectionForce",fileName ="ReflectionForce")]
-    public class ReflectionForce : CombatAction
+    [CreateAssetMenu(menuName = "Custom/CombatAction/ReflectionForce", fileName = "ReflectionForce")]
+    public class ReflectionForce : AbilityAction
     {
         public override void Action(HitBox victim, HitBox attacker)
         {

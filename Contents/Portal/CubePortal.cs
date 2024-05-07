@@ -1,66 +1,84 @@
-using Platformer;
-using Platformer.Contents;
-using RPG;
-using RPG.Contents;
+using PlatformGame.Contents.Loader;
+using System;
 using UnityEngine;
-using static RPG.Input.ActionKey;
 
-public class CubePortal : Portal
+namespace PlatformGame.Contents
 {
-    [SerializeField] CubeLoader mLoader;
-    float mLastStoped;
-    protected override void RunPortal()
+    public class CubePortal : Portal
     {
-        base.RunPortal();
-        EnterCharacters();
-        RunCube();
-    }
-    void Update()
-    {
-        if (State == Platformer.AbilityState.Action)
+        [SerializeField] CubeLoader mLoader;
+        float mLastStop;
+
+        protected override void RunPortal()
         {
-            if (IsCubeActionComplete())
+            base.RunPortal();
+            EnterCharacters();
+            RunCube();
+        }
+
+        void Update()
+        {
+            switch (State)
             {
-                StopPortal();
+                case WorkState.Action:
+                    {
+                        if (IsCubeActionComplete())
+                        {
+                            StopPortal();
+                        }
+
+                        break;
+                    }
+                case WorkState.Cooltime:
+                    {
+                        if (mLastStop + 3f < Time.time)
+                        {
+                            State = WorkState.Ready;
+                        }
+
+                        break;
+                    }
+                case WorkState.Ready:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
-        if(State == Platformer.AbilityState.Colltime)
+
+        void StopPortal()
         {
-            if (mLastStoped + 3f < Time.time)
+            ExitsCharacters();
+            State = WorkState.Cooltime;
+            mLastStop = Time.time;
+        }
+
+        void RunCube()
+        {
+            Contents.Instance.SetLoader(mLoader);
+            GameManager.Instance.LoadGame();
+        }
+
+        void EnterCharacters()
+        {
+            var characters = mGoalCheck.Keys;
+            foreach (var character in characters)
             {
-                State = Platformer.AbilityState.Ready;
+                character.gameObject.SetActive(false);
             }
         }
-    }
-    void StopPortal()
-    {
-        ExitsCharacters();
-        State = Platformer.AbilityState.Colltime;
-        mLastStoped = Time.time;
-    }
-    void RunCube()
-    {
-        Contents.Instance.SetLoader(mLoader);
-        GameManager.Instance.LoadGame();
-    }
-    void EnterCharacters()
-    {
-        var characters = mGoalCheck.Keys;
-        foreach (var character in characters)
+
+        void ExitsCharacters()
         {
-            character.gameObject.SetActive(false);
+            var characters = mGoalCheck.Keys;
+            foreach (var character in characters)
+            {
+                character.gameObject.SetActive(true);
+            }
         }
-    }
-    void ExitsCharacters()
-    {
-        var characters = mGoalCheck.Keys;
-        foreach (var character in characters)
+
+        bool IsCubeActionComplete()
         {
-            character.gameObject.SetActive(true);
+            return mLoader.State == WorkState.Cooltime;
         }
-    }
-    bool IsCubeActionComplete()
-    {
-        return mLoader.State == Platformer.AbilityState.Colltime;
     }
 }

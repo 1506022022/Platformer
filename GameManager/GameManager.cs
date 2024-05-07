@@ -1,16 +1,20 @@
-using Platformer.Core;
-using RPG.Character;
+using PlatformGame.Character;
+using PlatformGame.Character.Controller;
+using PlatformGame.Contents.Loader;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using UnityEngine;
-using AbilityState = Platformer.AbilityState;
 
-namespace RPG
+namespace PlatformGame
 {
     public class GameManager : MonoBehaviour
     {
         public static GameManager Instance { get; private set; }
+        public List<PlayerCharacter> JoinCharacters => JoinCharactersController.Select(x => x.PlayerCharacter).ToList();
         Contents.Contents mContents;
-        PlayerCharacter character;
+        PlayerCharacterController mController;
+        [SerializeField] List<PlayerCharacterController> JoinCharactersController;
 
         [Header("[Debug]")]
         [SerializeField, ReadOnly(false)] bool bSingleStage;
@@ -19,46 +23,61 @@ namespace RPG
         public void LoadGame()
         {
             bGameStart = false;
+            ReleaseController();
             mContents.LoadNextLevel();
         }
 
         void OnLoadedScene()
         {
+            Debug.Assert(JoinCharactersController.Count > 0);
             SelectControllCharacter();
             bGameStart = true;
         }
+
         void SelectControllCharacter()
         {
-            character = Character.PlayerCharacter.Instances[0];
-            character.FocusOn();
+            Debug.Assert(JoinCharactersController.Count > 0);
+            mController?.SetControll(false);
+            mController = JoinCharactersController[0];
+            mController.SetControll(true);
         }
+
+        void ReleaseController()
+        {
+            mController?.SetControll(false);
+            mController = null;
+        }
+
         void Awake()
         {
             Debug.Assert(Instance == null);
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            // TODO : int -> enum º¯°æ
+            // TODO : int -> enum
             int loadType = bSingleStage ? 2 : 0;
             mContents = new Contents.Contents(loadType);
             // TODOEND
         }
+
         void Start()
         {
             LoadGame();
         }
+
         void Update()
         {
             if (bGameStart)
             {
-                PlayerCharacterController.ControllTo(character);
+                // PlayerCharacterController.ControllTo(character);
             }
             else
             {
-                if (mContents.State == AbilityState.Ready)
+                if (mContents.State == WorkState.Ready)
                 {
                     OnLoadedScene();
                 }
             }
         }
+
     }
 }

@@ -1,20 +1,23 @@
 using UnityEngine;
 
-public class LifeTime : MonoBehaviour
+namespace PlatformGame.Character
 {
-    public Vector2 mLifeRange;
-    float mlife;
-    private void Awake()
+    public class LifeTime : MonoBehaviour
     {
-        Debug.Assert(mLifeRange.x <= mLifeRange.y);
-        mlife = Random.Range(mLifeRange.x,mLifeRange.y);
-    }
-    void Update()
-    {
-        mlife -= Time.deltaTime;
-        if(mlife <= 0)
+        public Vector2 mLifeRange;
+        float mLife;
+        private void Awake()
         {
-            Destroy(gameObject);
+            Debug.Assert(mLifeRange.x <= mLifeRange.y);
+            mLife = Random.Range(mLifeRange.x, mLifeRange.y);
+        }
+        void Update()
+        {
+            mLife -= Time.deltaTime;
+            if (mLife <= 0)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

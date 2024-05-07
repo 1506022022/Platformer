@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static Platformer.Core.HitBoxFlag;
+using static PlatformGame.Character.Collision.HitBoxFlag;
 
-namespace Platformer.Core
+namespace PlatformGame.Character.Collision
 {
     public delegate void HitBoxCallback(HitBox victim, HitBox attacker);
     public class HitBox : MonoBehaviour
@@ -21,7 +21,7 @@ namespace Platformer.Core
             ClearAttackCallback();
             mAttackedCallback = attackedCallback;
             var HBColliders = GetCollidersAs(mHBCollidersDictionary, filterColliderNames);
-            foreach ( var collider in HBColliders )
+            foreach (var collider in HBColliders)
             {
                 Debug.Assert(collider.Flags.IsAttacker());
                 collider.enabled = true;
@@ -32,7 +32,7 @@ namespace Platformer.Core
         {
             mAttackedCallback = null;
             var HBColliders = GetCollidersAs(mHitBoxColliders, HitBoxFlags.Attacker);
-            foreach(var collider in HBColliders)
+            foreach (var collider in HBColliders)
             {
                 collider.enabled = false;
             }
@@ -45,7 +45,7 @@ namespace Platformer.Core
             CreateDictionary();
             mHitBoxColliders.ForEach(x => x.HitedEventCallback = OnHited);
             mHitBoxColliders.ForEach(x => x.Flags = Flags);
-            if(UseSyncDelay)
+            if (UseSyncDelay)
             {
                 mHitBoxColliders.ForEach(x => x.HitDelay = HitDelay);
             }
@@ -61,14 +61,14 @@ namespace Platformer.Core
             mHBCollidersDictionary = new Dictionary<string, HitBoxCollider>();
             foreach (var HBCollider in mHitBoxColliders)
             {
-                Debug.Assert(!mHBCollidersDictionary.ContainsKey(HBCollider.Name),$"{HBCollider.Name} is Duplicate.");
+                Debug.Assert(!mHBCollidersDictionary.ContainsKey(HBCollider.Name), $"{HBCollider.Name} is Duplicate.");
                 mHBCollidersDictionary.Add(HBCollider.Name, HBCollider);
             }
         }
         void OnHited(HitBoxCollider victim, HitBoxCollider attacker)
         {
             HitBox victimHitBox = mHitedInstances.Where(hitBox => hitBox.mHitBoxColliders.Any(coll => coll.Equals(victim)))
-                                                 .FirstOrDefault(); 
+                                                 .FirstOrDefault();
             Debug.Assert(victimHitBox);
 
             HitBox attackerHitBox = mHitedInstances.Where(hitBox => hitBox.mHitBoxColliders.Any(coll => coll.Equals(attacker)))

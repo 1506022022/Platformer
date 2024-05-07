@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Platformer.Core
+namespace PlatformGame.Character.Collision
 {
     [Serializable]
     public class HitBoxData

@@ -1,20 +1,24 @@
 using UnityEngine;
 
-public class Floating : MonoBehaviour
+namespace PlatformGame.Character.Combat
 {
-    Rigidbody mRigid;
-    public float power;
-    void Start()
+    public class Floating : MonoBehaviour
     {
-        mRigid = GetComponent<Rigidbody>();
-    }
+        Rigidbody mRigid;
+        public float power;
 
-    // Update is called once per frame
-    void Update()
-    {
-        if(mRigid.velocity.magnitude == 0)
+        void Start()
         {
-            mRigid.AddForce(Vector3.up * power);
+            mRigid = GetComponent<Rigidbody>();
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+            if (mRigid.velocity.magnitude == 0)
+            {
+                mRigid.AddForce(Vector3.up * power);
+            }
         }
     }
 }

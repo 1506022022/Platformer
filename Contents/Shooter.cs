@@ -6,16 +6,14 @@ public class Shooter : MonoBehaviour
     [SerializeField] Vector3 mDir;
     [SerializeField] float mPower;
     [SerializeField] float mDelay;
-    float nextTime;
+    float mNextTime;
     void Update()
     {
-        if (nextTime <= Time.time)
-        {
-            nextTime = Time.time + mDelay;
-            var instance = Instantiate(mBullet);
-            instance.transform.position = gameObject.transform.position;
-            instance.transform.rotation= Quaternion.identity;
-            instance.GetComponent<Rigidbody>().AddForce(mDir * mPower);
-        }
+        if (!(mNextTime <= Time.time)) return;
+        mNextTime = Time.time + mDelay;
+        var instance = Instantiate(mBullet);
+        instance.transform.position = gameObject.transform.position;
+        instance.transform.rotation = Quaternion.identity;
+        instance.GetComponent<Rigidbody>().AddForce(mDir * mPower);
     }
 }

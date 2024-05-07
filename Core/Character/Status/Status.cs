@@ -1,4 +1,4 @@
-﻿namespace RPG.Character.Status
+﻿namespace PlatformGame.Character.Status
 {
     public class Status
     {

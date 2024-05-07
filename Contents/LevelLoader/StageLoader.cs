@@ -1,20 +1,21 @@
-﻿using TMPro;
-using UnityEngine.SceneManagement;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using PlatformGame.Contents.Loader;
 using System.Collections;
+using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
-namespace Platformer.Contents
+namespace PlatformGame.Contents
 {
     public class StageLoader : ILevelLoader
     {
-        public AbilityState State { get; private set; }
+        public WorkState State { get; private set; }
         int mStageLevel;
-        StageList Stages;
-        Slider mProgressBar;
-        TextMeshProUGUI mTitle;
-        LoadingWindow mLoadingWindow;
-        MonoBehaviour mCoroutineRunner;
+        readonly StageList Stages;
+        readonly Slider mProgressBar;
+        readonly TextMeshProUGUI mTitle;
+        readonly LoadingWindow mLoadingWindow;
+        readonly MonoBehaviour mCoroutineRunner;
 
         public StageLoader()
         {
@@ -31,16 +32,16 @@ namespace Platformer.Contents
         {
             var sceneName = Stages.Names[mStageLevel];
             mStageLevel = Mathf.Min(mStageLevel + 1, Stages.Names.Count - 1);
-            mLoadingWindow.ShowWindow(true);
             mCoroutineRunner.StartCoroutine(LoadSceneProcess(sceneName));
         }
 
         IEnumerator LoadSceneProcess(string sceneName)
         {
             mTitle.text = sceneName;
-            float timer = 0f;
-            State = AbilityState.Action;
-            AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
+            var timer = 0f;
+            State = WorkState.Action;
+            var asyncOperation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
+            mLoadingWindow.ShowWindow(true);
 #if DEVELOPMENT
             while (true)
             {
@@ -75,7 +76,7 @@ namespace Platformer.Contents
             }
 #endif
             mLoadingWindow.ShowWindow(false);
-            State = AbilityState.Ready;
+            State = WorkState.Ready;
         }
     }
 }
