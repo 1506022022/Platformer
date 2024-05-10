@@ -12,63 +12,63 @@ namespace PlatformGame.Character.Collision
         public void SetAttackCallback(List<string> filterColliderNames, HitEvent hitCallback)
         {
             var colliders = GetCollidersAs(filterColliderNames, mAttackControll);
-            foreach (var collider in colliders)
+            foreach (var hitBoxCollider in colliders)
             {
-                collider.SetHitEvnet(hitCallback);
+                hitBoxCollider.SetHitEvent(hitCallback);
             }
         }
 
         public void SetHitCallback(List<string> filterColliderNames, HitEvent hitCallback)
         {
             var colliders = GetCollidersAs(filterColliderNames, mHitControll);
-            foreach (var collider in colliders)
+            foreach (var hitBoxCollider in colliders)
             {
-                collider.SetHitEvnet(hitCallback);
+                hitBoxCollider.SetHitEvent(hitCallback);
             }
         }
 
         public void SetAttackCollidersFlags(List<string> filterColliderNames, HitBoxFlags flags)
         {
             var colliders = GetCollidersAs(filterColliderNames, mAttackControll);
-            foreach (var collider in colliders)
+            foreach (var hitBoxCollider in colliders)
             {
-                collider.HitBoxFlag.SetFlag(flags);
+                hitBoxCollider.HitBoxFlag.SetFlag(flags);
             }
         }
 
         public void EnableAttackColliders(List<string> filterColliderNames)
         {
             var colliders = GetCollidersAs(filterColliderNames, mAttackControll);
-            foreach (var collider in colliders)
+            foreach (var hitBoxCollider in colliders)
             {
-                collider.enabled = true;
+                hitBoxCollider.enabled = true;
             }
         }
 
         public void DisableAttackColliders(List<string> filterColliderNames)
         {
             var colliders = GetCollidersAs(filterColliderNames, mAttackControll);
-            foreach (var collider in colliders)
+            foreach (var hitBoxCollider in colliders)
             {
-                collider.enabled = false;
+                hitBoxCollider.enabled = false;
             }
         }
 
         public void EnableHitColliders(List<string> filterColliderNames)
         {
             var colliders = GetCollidersAs(filterColliderNames, mHitControll);
-            foreach (var collider in colliders)
+            foreach (var hitBoxCollider in colliders)
             {
-                collider.enabled = true;
+                hitBoxCollider.enabled = true;
             }
         }
 
         public void DisableHitColliders(List<string> filterColliderNames)
         {
             var colliders = GetCollidersAs(filterColliderNames, mHitControll);
-            foreach (var collider in colliders)
+            foreach (var hitBoxCollider in colliders)
             {
-                collider.enabled = false;
+                hitBoxCollider.enabled = false;
             }
         }
 
@@ -82,33 +82,32 @@ namespace PlatformGame.Character.Collision
             mAttackControll.StartDelay();
         }
 
-        void DI(HitBoxControll controll)
+        void DI(HitBoxControll hitBoxControll)
         {
-            controll.SetActor(mCharacter);
+            hitBoxControll.SetActor(mCharacter);
 
-            foreach (var collider in controll.Colliders)
+            foreach (var hitBoxCollider in hitBoxControll.Colliders)
             {
-                Debug.Assert(collider.HitCallback == null);
-                collider.HitCallback = collider.HitBoxFlag.IsAttacker() ?
-                                       OnAttack :
-                                       OnHit;
+                Debug.Assert(hitBoxCollider.HitCallback == null);
+                hitBoxCollider.HitCallback = hitBoxCollider.HitBoxFlag.IsAttacker() ? OnAttack : OnHit;
             }
         }
 
-        List<HitBoxCollider> GetCollidersAs(List<string> filterColliderNames, HitBoxControll controll)
+        List<HitBoxCollider> GetCollidersAs(List<string> filterColliderNames, HitBoxControll hitBoxControll)
         {
-            List<HitBoxCollider> list = new List<HitBoxCollider>();
+            var list = new List<HitBoxCollider>();
             foreach (var filter in filterColliderNames)
             {
-                var colliders = controll.GetCollidersAs(filter);
-                foreach (var collider in colliders)
+                var colliders = hitBoxControll.GetCollidersAs(filter);
+                foreach (var hitBoxCollider in colliders)
                 {
-                    if (!list.Contains(collider))
+                    if (!list.Contains(hitBoxCollider))
                     {
-                        list.Add(collider);
+                        list.Add(hitBoxCollider);
                     }
                 }
             }
+
             return list;
         }
 
@@ -118,6 +117,5 @@ namespace PlatformGame.Character.Collision
             DI(mHitControll);
             DI(mAttackControll);
         }
-
     }
 }

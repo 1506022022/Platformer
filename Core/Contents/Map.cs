@@ -7,6 +7,7 @@ namespace PlatformGame.Contents
     public class Map : MonoBehaviour
     {
         static Map mInstance;
+
         public static Map Instance
         {
             get
@@ -16,12 +17,14 @@ namespace PlatformGame.Contents
             }
             private set => mInstance = value;
         }
+
         [SerializeField] Stage mStage;
 
         public void AddListenerClearEvent(UnityAction action)
         {
             mStage.AddListenerClearEvent(action);
         }
+
         void Awake()
         {
             mInstance = this;

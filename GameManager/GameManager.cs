@@ -17,11 +17,12 @@ namespace PlatformGame
         Contents.Contents mContents;
         PlayerCharacterController mController;
         [SerializeField] List<PlayerCharacterController> mJoinCharactersController;
+
         List<PlayerCharacterController> JoinCharactersController
         {
             get
             {
-                Debug.Assert(mJoinCharactersController.Count > 0,$"{gameObject.name}ø° ƒ¡∆Æ∑—∑Ø∞° «“¥Áµ«¡ˆ æ ¿Ω.");
+                Debug.Assert(mJoinCharactersController.Count > 0, $"{gameObject.name}Ïóê Ïª®Ìä∏Î°§Îü¨Í∞Ä Ìï†ÎãπÎêòÏßÄ ÏïäÏùå.");
                 return mJoinCharactersController;
             }
             set
@@ -29,9 +30,12 @@ namespace PlatformGame
                 mJoinCharactersController = value;
             }
         }
+
         float mLastSwapTime;
-        [Header("[Debug]")]
-        [SerializeField, ReadOnly(false)] bool bSingleStage;
+
+        [Header("[Debug]")] [SerializeField, ReadOnly(false)]
+        bool bSingleStage;
+
         [SerializeField, ReadOnly(false)] bool bGameStart;
 
         public void LoadGame()
@@ -43,24 +47,24 @@ namespace PlatformGame
 
         void OnLoadedScene()
         {
-            
             SelectControllCharacter();
             bGameStart = true;
         }
 
         public void SelectControllCharacter()
         {
-            mController?.SetControll(false);
+            mController?.SetActive(false);
             mController = JoinCharactersController.First();
-            mController.SetControll(true);
+            mController.SetActive(true);
         }
 
         void SwapCharacter()
         {
-            if(JoinCharactersController.Count < 2)
+            if (JoinCharactersController.Count < 2)
             {
                 return;
             }
+
             var first = JoinCharactersController.First();
             JoinCharactersController.RemoveAt(0);
             JoinCharactersController.Add(first);
@@ -69,7 +73,7 @@ namespace PlatformGame
 
         void ReleaseController()
         {
-            mController?.SetControll(false);
+            mController?.SetActive(false);
             mController = null;
         }
 
@@ -93,17 +97,19 @@ namespace PlatformGame
         {
             if (bGameStart)
             {
-                // TODO : ∫–∏Æ
-                if(Time.time < mLastSwapTime + 0.5f)
+                // TODO : Î∂ÑÎ¶¨
+                if (Time.time < mLastSwapTime + 0.5f)
                 {
                     return;
                 }
+
                 mLastSwapTime = Time.time;
-                var map = ActionKey.GetAxisRawMap();
+                var map = ActionKey.GetKeyDownMap();
                 if (!map[SWAP])
                 {
                     return;
                 }
+
                 SwapCharacter();
                 // TODOEND
             }
@@ -115,6 +121,5 @@ namespace PlatformGame
                 }
             }
         }
-
     }
 }

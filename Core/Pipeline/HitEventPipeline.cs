@@ -5,12 +5,12 @@ namespace PlatformGame.Character.Collision
 {
     public class HitEventPipeline
     {
-        List<HitEvent> Layers = new List<HitEvent>();
+        readonly List<HitEvent> mLayers = new List<HitEvent>();
 
         public HitEventPipeline(int layerCapacity)
         {
             Debug.Assert(0 <= layerCapacity);
-            for (int i = 0; i < layerCapacity; i++)
+            for (var i = 0; i < layerCapacity; i++)
             {
                 AddLayer();
             }
@@ -24,41 +24,41 @@ namespace PlatformGame.Character.Collision
         public void AddProcessTo(int layer, HitEvent process)
         {
             Debug.Assert(0 <= layer);
-            Debug.Assert(layer < Layers.Count, $"layer : {layer} Capacity : {Layers.Count}");
+            Debug.Assert(layer < mLayers.Count, $"layer : {layer} Capacity : {mLayers.Count}");
 
-            if (Layers[layer] == null)
+            if (mLayers[layer] == null)
             {
-                Layers[layer] = process;
+                mLayers[layer] = process;
             }
             else
             {
-                Layers[layer] += process;
+                mLayers[layer] += process;
             }
         }
         public void RemoveProcessTo(int layer, HitEvent process)
         {
             Debug.Assert(0 <= layer);
-            Debug.Assert(layer < Layers.Count, $"layer : {layer} Capacity : {Layers.Count}");
+            Debug.Assert(layer < mLayers.Count, $"layer : {layer} Capacity : {mLayers.Count}");
 
-            Layers[layer] -= process;
+            mLayers[layer] -= process;
         }
 
         public void RemoveAllProcessTo(int layer)
         {
             Debug.Assert(0 <= layer);
-            Debug.Assert(layer < Layers.Count);
+            Debug.Assert(layer < mLayers.Count);
 
-            Layers[layer] = null;
+            mLayers[layer] = null;
         }
 
         public void AddLayer()
         {
-            Layers.Add(null);
+            mLayers.Add(null);
         }
 
         public void Invoke(CollisionData collision)
         {
-            foreach (HitEvent process in Layers)
+            foreach (HitEvent process in mLayers)
             {
                 process?.Invoke(collision);
             }

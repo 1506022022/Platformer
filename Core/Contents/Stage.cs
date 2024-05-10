@@ -11,6 +11,7 @@ namespace PlatformGame.Contents
         {
             mClearEvent.AddListener(action);
         }
+
         protected void Clear()
         {
             mClearEvent.Invoke();

@@ -9,17 +9,22 @@ namespace PlatformGame.Character.Movement
         MovementAction mBeforeAction;
         [SerializeField] MovementAction mDefaultActionOrNull;
 
-        public void PlayMovement(MovementAction action)
+        public void PlayMovement(MovementAction movement)
         {
             RemoveMovement();
-            mBeforeAction = action;
-            action.PlayAction(mRigid, this);
+            mBeforeAction = movement;
+            movement.PlayAction(mRigid, this);
         }
 
         public void RemoveMovement()
         {
             StopAllCoroutines();
-            mBeforeAction?.StopAction(mRigid, this);
+            if (!mBeforeAction)
+            {
+                return;
+            }
+
+            mBeforeAction.StopAction(mRigid, this);
         }
 
         void Awake()
@@ -30,6 +35,6 @@ namespace PlatformGame.Character.Movement
                 PlayMovement(mDefaultActionOrNull);
             }
         }
-
+        
     }
 }

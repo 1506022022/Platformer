@@ -5,7 +5,9 @@ using UnityEngine.Events;
 namespace PlatformGame.Character.Collision
 {
     public delegate void HitBoxColliderCallback(HitBoxCollider subject);
+
     public delegate void HitEvent(CollisionData collision);
+
     public struct CollisionData
     {
         public Character Victim;
@@ -23,15 +25,20 @@ namespace PlatformGame.Character.Collision
         public Character Actor;
         public HitBoxFlag HitBoxFlag;
         public HitBoxColliderCallback HitCallback;
+
         public bool IsDelay
         {
-            get => Time.time < mLastHitTime + HitDelay;
+            get
+            {
+                return Time.time < mLastHitTime + HitDelay;
+            }
         }
+
         float mLastHitTime;
-        HitEventPipeline mHitPipeline = new HitEventPipeline(3);
+        readonly HitEventPipeline mHitPipeline = new HitEventPipeline(3);
         [SerializeField] UnityEvent<CollisionData> mFixedHitEvent;
 
-        public void SetHitEvnet(HitEvent hitEvent)
+        public void SetHitEvent(HitEvent hitEvent)
         {
             mHitPipeline.RemoveAllProcessTo(LAYER_EVENT);
             mHitPipeline.AddProcessTo(LAYER_EVENT, hitEvent);
@@ -49,11 +56,12 @@ namespace PlatformGame.Character.Collision
                 return;
             }
 
-            HitBoxCollider victim = other.GetComponent<HitBoxCollider>();
+            var victim = other.GetComponent<HitBoxCollider>();
             if (!victim)
             {
                 return;
             }
+
             if (victim.Actor.Equals(Actor))
             {
                 return;
@@ -64,8 +72,8 @@ namespace PlatformGame.Character.Collision
                 return;
             }
 
-            HitBoxCollider attacker = this;
-            CollisionData collsion = new CollisionData()
+            var attacker = this;
+            var collsion = new CollisionData()
             {
                 Attacker = attacker.Actor,
                 Victim = victim.Actor
@@ -85,8 +93,8 @@ namespace PlatformGame.Character.Collision
 #if UNITY_EDITOR
         void Start()
         {
-            string hitLog = HitBoxFlag.IsAttacker() ? "°ø°Ý" : "ÇÇ°Ý";
-            // mHitPipeline.AddProcessTo(LOG_LAYER, (collision) => { Debug.Log($"{Actor.name}°¡ {hitLog}. {collision.Attacker.name}->{collision.Victim.name}."); });
+            // var hitLog = HitBoxFlag.IsAttacker() ? "ê³µê²©" : "í”¼ê²©";
+            // mHitPipeline.AddProcessTo(LOG_LAYER, (collision) => { Debug.Log($"{Actor.name}ê°€ {hitLog}. {collision.Attacker.name}->{collision.Victim.name}."); });
             Debug.Assert(GetComponents<Collider>().Any(x => x.isTrigger), $"Not found Trigger in {gameObject.name}");
             Debug.Assert(GetComponent<Rigidbody>().isKinematic, $"Object : {gameObject.name}");
             Debug.Assert(Actor, $"Object : {gameObject.name}");
@@ -97,6 +105,5 @@ namespace PlatformGame.Character.Collision
             mLastHitTime = Time.time + 0.5f;
             mHitPipeline.AddProcessTo(LAYER_EVENT_FIXED, (collision) => mFixedHitEvent.Invoke(collision));
         }
-
     }
 }

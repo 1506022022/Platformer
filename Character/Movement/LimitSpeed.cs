@@ -7,24 +7,29 @@ namespace PlatformGame.Character.Movement
     public class LimitSpeed : MonoBehaviour
     {
         Rigidbody mRigid;
+
         void Awake()
         {
             mRigid = GetComponent<Rigidbody>();
         }
 
-        void Update()
+        void FixedUpdate()
         {
             LimitMoveSpeed();
         }
 
         void LimitMoveSpeed()
         {
-            var mVelocity = mRigid.velocity;
-            mVelocity.x = Mathf.Clamp(mVelocity.x, -MAX_MOVE_VELOCITY, MAX_MOVE_VELOCITY);
-            mVelocity.z = Mathf.Clamp(mVelocity.z, -MAX_MOVE_VELOCITY, MAX_MOVE_VELOCITY);
-            mRigid.velocity = mVelocity;
+            var currentVelocity = mRigid.velocity;
+            var currentSpeed = currentVelocity.magnitude;
+            
+            if (currentSpeed <= MAX_MOVE_VELOCITY)
+            {
+                return;
+            }
+            
+            var limitedVelocity = currentVelocity.normalized * MAX_MOVE_VELOCITY;
+            mRigid.velocity = limitedVelocity;
         }
-
     }
-
 }

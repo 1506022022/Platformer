@@ -11,9 +11,9 @@ namespace PlatformGame.Character.Combat
 
     public class Ability
     {
-        Character mActor;
+        readonly Character mActor;
         float mLastActionTime;
-        AbilityData mLastAbilitytData;
+        AbilityData mLastAbilityData;
 
         public Ability(Character actor)
         {
@@ -22,18 +22,13 @@ namespace PlatformGame.Character.Combat
 
         public bool IsAction
         {
-            get
-            {
-                return mLastAbilitytData.ID == 0 ?
-                    false :
-                    Time.time < mLastActionTime + mLastAbilitytData.ActionDelay;
-            }
+            get { return mLastAbilityData.ID != 0 && Time.time < mLastActionTime + mLastAbilityData.ActionDelay; }
         }
 
         public void Action(AbilityData abilityData)
         {
             mLastActionTime = Time.time;
-            mLastAbilitytData = abilityData;
+            mLastAbilityData = abilityData;
             var hitBoxData = abilityData.HitBoxData;
 
             var filter = hitBoxData.Filter;
@@ -48,18 +43,19 @@ namespace PlatformGame.Character.Combat
                 hitBox = mActor.HitBox;
             }
 
-            if (hitBox == null)
+            if (!hitBox)
             {
                 return;
             }
+
             hitBox.SetAttackCollidersFlags(filter, abilityData.HitBoxData.Flags);
 
-            if(abilityData.Ability == null)
+            if (!abilityData.Ability)
             {
                 return;
             }
+
             hitBox.SetAttackCallback(filter, abilityData.Ability.Action);
         }
-
     }
 }

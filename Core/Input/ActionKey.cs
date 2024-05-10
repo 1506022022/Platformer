@@ -16,41 +16,47 @@ namespace PlatformGame.Input
         public static readonly string GUARD = "Guard";
         public static readonly string PORTAL_JUMP = "PortalJump";
 
-        static readonly Dictionary<string, bool> mAxisRawMap = new Dictionary<string, bool>
+        static readonly Dictionary<string, bool> mKeyDownMap = new Dictionary<string, bool>
         {
-            { UP,           false },
-            { DOWN,         false },
-            { RIGHT,        false },
-            { LEFT,         false },
-            { JUMP,         false },
-            { SWAP,         false },
-            { ATTACK,       false },
-            { GUARD,        false },
-            { PORTAL_JUMP,  false }
+            { UP, false },
+            { DOWN, false },
+            { RIGHT, false },
+            { LEFT, false },
+            { JUMP, false },
+            { SWAP, false },
+            { ATTACK, false },
+            { GUARD, false },
+            { PORTAL_JUMP, false }
         };
-        static Dictionary<string, bool> AxisRawMap
+
+        static Dictionary<string, bool> KeyDownMap
         {
             get
             {
-                Debug.Assert(mAxisRawMap != null);
-                return mAxisRawMap;
+                Debug.Assert(mKeyDownMap != null);
+                return mKeyDownMap;
             }
         }
-        public static List<string> InputKeys => AxisRawMap.Keys.ToList();
+
+        public static List<string> InputKeys => KeyDownMap.Keys.ToList();
         static float mLastUpdate;
-        public static Dictionary<string, bool> GetAxisRawMap()
+
+        public static Dictionary<string, bool> GetKeyDownMap()
         {
-            if (mLastUpdate < Time.time)
+            if (!(mLastUpdate < Time.time))
             {
-                foreach (var button in AxisRawMap.ToList())
-                {
-                    mAxisRawMap[button.Key] = UnityEngine.Input.GetAxisRaw(button.Key) != 0;
-                }
-                mLastUpdate = Time.time;
+                return mKeyDownMap;
             }
 
-            return mAxisRawMap;
+            foreach (var button in KeyDownMap.ToList())
+            {
+                mKeyDownMap[button.Key] = UnityEngine.Input.GetAxisRaw(button.Key) != 0;
+            }
+
+            mLastUpdate = Time.time;
+
+            return mKeyDownMap;
         }
+        
     }
 }
-

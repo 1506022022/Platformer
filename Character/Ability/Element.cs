@@ -31,6 +31,6 @@ namespace PlatformGame.Character.Combat
             obj.transform.position = victim.transform.position;
             Destroy(victim.gameObject);
         }
-
+        
     }
 }

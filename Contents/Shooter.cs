@@ -7,6 +7,7 @@ public class Shooter : MonoBehaviour
     [SerializeField] float mPower;
     [SerializeField] float mDelay;
     float mNextTime;
+
     void Update()
     {
         if (!(mNextTime <= Time.time)) return;

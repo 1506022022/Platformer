@@ -10,7 +10,7 @@ namespace PlatformGame.Contents
     public abstract class Portal : MonoBehaviour
     {
         public WorkState State { get; protected set; }
-        protected Dictionary<PlayerCharacter, bool> mGoalCheck = new Dictionary<PlayerCharacter, bool>();
+        protected readonly Dictionary<PlayerCharacter, bool> mGoalCheck = new();
         [SerializeField] UnityEvent mRunEvent;
 
         void Start()
@@ -22,33 +22,41 @@ namespace PlatformGame.Contents
                 mGoalCheck.Add(player, false);
             }
         }
+
         void OnTriggerEnter(Collider other)
         {
             var player = other.GetComponent<PlayerCharacter>();
-            if (player)
+            if (!player)
             {
-                mGoalCheck[player] = true;
-                if (mGoalCheck.All(x => x.Value) && State == WorkState.Ready)
-                {
-                    RunPortal();
-                }
+                return;
+            }
+            
+            mGoalCheck[player] = true;
+            if (mGoalCheck.All(x => x.Value) && State == WorkState.Ready)
+            {
+                RunPortal();
             }
         }
+
         void OnTriggerExit(Collider other)
         {
             var player = other.GetComponent<PlayerCharacter>();
-            if (player)
+            if (!player)
             {
-                if (mGoalCheck.ContainsKey(player))
-                {
-                    mGoalCheck[player] = false;
-                }
+                return;
+            }
+            
+            if (mGoalCheck.ContainsKey(player))
+            {
+                mGoalCheck[player] = false;
             }
         }
+
         protected virtual void RunPortal()
         {
             State = WorkState.Action;
             mRunEvent.Invoke();
         }
+        
     }
 }

@@ -12,8 +12,8 @@ namespace PlatformGame.Character.Combat
 
         public override void Action(CollisionData collision)
         {
-            Debug.Assert(mSatellite, "À§¼º ÇÁ¸®ÆéÀ» Ã£À» ¼ö ¾øÀ½.");
-            Debug.Assert(mMovement, "±Ëµµ ¼øÈ¸ ¹«ºê¸ÕÆ®¸¦ Ã£À» ¼ö ¾øÀ½.");
+            Debug.Assert(mSatellite, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.");
+            Debug.Assert(mMovement, "ï¿½Ëµï¿½ ï¿½ï¿½È¸ ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.");
 
             var attacker = collision.Attacker;
             var owner = attacker.transform;
@@ -21,6 +21,6 @@ namespace PlatformGame.Character.Combat
             var satellite = Instantiate(mSatellite, owner) as Character;
             satellite.Movement.PlayMovement(mMovement);
         }
-
     }
+    
 }

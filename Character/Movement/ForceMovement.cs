@@ -11,6 +11,6 @@ namespace PlatformGame.Character.Movement
         {
             rigid.AddForce(Force);
         }
-
+        
     }
 }

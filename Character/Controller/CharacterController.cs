@@ -4,14 +4,16 @@ namespace PlatformGame.Character.Controller
 {
     public class CharacterController : MonoBehaviour
     {
-        public bool IsAble
+        public bool IsActive
         {
             get; private set;
         }
         public Character Target;
-        public virtual void SetControll(bool able)
+
+        public virtual void SetActive(bool able)
         {
-            IsAble = able;
+            IsActive = able;
         }
+        
     }
 }

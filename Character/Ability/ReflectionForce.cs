@@ -12,18 +12,22 @@ namespace PlatformGame.Character.Combat
         {
             var attacker = collision.Attacker;
             var victim = collision.Victim;
+            
             if (victim.transform.parent != null)
             {
                 victim.transform.SetParent(null, true);
             }
+            
             victim.Movement.RemoveMovement();
+            
             var rigid = victim.GetComponent<Rigidbody>();
-            if (rigid != null)
+            if (rigid == null)
             {
-                Vector3 dir = attacker.transform.forward;
-                dir.y = UpperPower;
-                rigid.AddForce(dir * PowerMultiply);
+                return;
             }
+            var dir = attacker.transform.forward;
+            dir.y = UpperPower;
+            rigid.AddForce(dir * PowerMultiply);
         }
 
     }

@@ -6,18 +6,18 @@ namespace PlatformGame.Character.Movement
     [CreateAssetMenu(menuName = "Custom/MovementAction/Rotate")]
     public class RotateCube : MovementAction
     {
-        [SerializeField, Range(-1f, 1f)] int mHorizontal;
-        [SerializeField, Range(-1f, 1f)] int mVertical;
         Vector3 forward;
         Vector3 right;
         Vector3 up;
         Vector3 FixedRightAxis;
         Vector3 FixedUpAxis;
-        Vector3[] mDirArr = new Vector3[3];
-        float mRotationAmount = 90f;
-        float mRotationSpeed = 1f;
         Transform mTransform;
         MonoBehaviour mCoroutine;
+        float mRotationAmount = 90f;
+        readonly Vector3[] mDirArr = new Vector3[3];
+        [SerializeField] float mRotationSpeed = 1f;
+        [SerializeField, Range(-1f, 1f)] int mVertical;
+        [SerializeField, Range(-1f, 1f)] int mHorizontal;
 
         public override void PlayAction(Rigidbody rigid, MonoBehaviour coroutine)
         {
@@ -28,6 +28,7 @@ namespace PlatformGame.Character.Movement
             {
                 RotateHorizontal(mHorizontal);
             }
+
             if (mVertical != 0)
             {
                 RotateVertical(mVertical);
@@ -77,11 +78,11 @@ namespace PlatformGame.Character.Movement
         {
             var max = Mathf.Max(vector.x * vector.x, vector.y * vector.y, vector.z * vector.z);
 
-            if (max == vector.x * vector.x)
+            if (max.Equals(vector.x * vector.x))
             {
                 vector = Vector3.right * (vector.x > 0 ? 1 : -1);
             }
-            else if (max == vector.y * vector.y)
+            else if (max.Equals(vector.y * vector.y))
             {
                 vector = Vector3.up * (vector.y > 0 ? 1 : -1);
             }
@@ -96,7 +97,7 @@ namespace PlatformGame.Character.Movement
 
         IEnumerator RotateObject(Vector3 axis)
         {
-            float time = 0f;
+            var time = 0f;
             var startRotation = mTransform.rotation;
             var endRotation = Quaternion.AngleAxis(mRotationAmount, axis) * startRotation;
 
@@ -109,6 +110,5 @@ namespace PlatformGame.Character.Movement
 
             mTransform.rotation = endRotation;
         }
-
     }
 }

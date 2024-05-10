@@ -21,9 +21,9 @@ namespace PlatformGame.Character.Movement
                 {
                     rigid.AddForce(Vector3.up * power);
                 }
+
                 yield return new WaitForSeconds(0.1f);
             }
         }
-
     }
 }

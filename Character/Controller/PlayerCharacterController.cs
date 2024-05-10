@@ -16,15 +16,23 @@ namespace PlatformGame.Character.Controller
 
     public class PlayerCharacterController : CharacterController
     {
+        public PlayerCharacter PlayerCharacter
+        {
+            get
+            {
+                Debug.Assert(Target, $"{gameObject.name}에 캐릭터가 할당되지 않았습니다.");
+                return Target as PlayerCharacter;
+            }
+        }
+
+        public UnityEvent<string, AbilityData> KeyInputEvent;
         [HideInInspector] public List<AbilityKey> EditorInputMap;
         [HideInInspector] public PlayerCharacter BeforeTarget;
         Dictionary<string, AbilityData> mInputMap;
-        public PlayerCharacter PlayerCharacter => Target as PlayerCharacter;
-        public UnityEvent<string, AbilityData> KeyInputEvent;
 
-        public override void SetControll(bool able)
+        public override void SetActive(bool able)
         {
-            base.SetControll(able);
+            base.SetActive(able);
             FocusOn(able);
         }
 
@@ -55,24 +63,25 @@ namespace PlatformGame.Character.Controller
 
         void Update()
         {
-            if (!IsAble)
+            if (!IsActive)
             {
                 return;
             }
 
-            var map = ActionKey.GetAxisRawMap();
+            var map = ActionKey.GetKeyDownMap();
 
             foreach (var input_Ability in mInputMap)
             {
                 var input = map[input_Ability.Key];
-                if (input)
+                if (!input)
                 {
-                    var abilityID = input_Ability.Value.ID;
-                    PlayerCharacter.CombatTo(abilityID);
-                    KeyInputEvent.Invoke(input_Ability.Key, input_Ability.Value);
+                    continue;
                 }
+                
+                var abilityID = input_Ability.Value.ID;
+                PlayerCharacter.DoAction(abilityID);
+                KeyInputEvent.Invoke(input_Ability.Key, input_Ability.Value);
             }
         }
-
     }
 }

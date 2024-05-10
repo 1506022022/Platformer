@@ -17,6 +17,7 @@ public class HitBoxColliderPair
 public class HitBoxControll
 {
     [SerializeField] List<HitBoxColliderPair> pairs;
+
     List<HitBoxColliderPair> Pairs
     {
         get
@@ -25,13 +26,14 @@ public class HitBoxControll
             Dictionary<HitBoxCollider, string> duplicates = new();
             foreach (var pair in pairs)
             {
-                Debug.Assert(!duplicates.ContainsKey(pair.Collider), $"ÁßÃ¸µÈ °ª : {pair.Collider.name}");
+                Debug.Assert(!duplicates.ContainsKey(pair.Collider), $"ï¿½ï¿½Ã¸ï¿½ï¿½ ï¿½ï¿½ : {pair.Collider.name}");
                 duplicates.Add(pair.Collider, pair.Name);
             }
 #endif
             return pairs;
         }
     }
+
     public List<HitBoxCollider> Colliders => Pairs.Select(x => x.Collider).ToList();
     public float Delay;
     public bool UseSyncDelay;
@@ -73,8 +75,7 @@ public class HitBoxControll
     public List<HitBoxCollider> GetCollidersAs(string x)
     {
         return Pairs.Where(c => c.Name.Equals(x))
-                    .Select(c => c.Collider)
-                    .ToList();
+            .Select(c => c.Collider)
+            .ToList();
     }
-
 }

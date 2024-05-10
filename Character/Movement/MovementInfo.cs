@@ -9,4 +9,3 @@ namespace PlatformGame.Character.Status
         public static readonly float MOVE_SPEED = 1000f;
     }
 }
-

@@ -43,9 +43,11 @@ namespace PlatformGame.Character.Collision
         {
             return (Flags & flags) == flags;
         }
-        public static List<HitBoxCollider> GetCollidersAs(Dictionary<string, HitBoxCollider> list, List<string> filterColliderNames)
+
+        public static List<HitBoxCollider> GetCollidersAs(Dictionary<string, HitBoxCollider> list,
+            List<string> filterColliderNames)
         {
-            List<HitBoxCollider> colliders = new List<HitBoxCollider>();
+            var colliders = new List<HitBoxCollider>();
 
             if (filterColliderNames.Any(x => x.Equals("*")))
             {
@@ -65,8 +67,8 @@ namespace PlatformGame.Character.Collision
 
         public static List<HitBoxCollider> GetCollidersAs(List<HitBoxCollider> list, HitBoxFlags filterFlags)
         {
-            List<HitBoxCollider> colliders = list.Where(x => x.HitBoxFlag.IsInclude(filterFlags))
-                                                 .ToList();
+            var colliders = list.Where(x => x.HitBoxFlag.IsInclude(filterFlags))
+                .ToList();
             return colliders;
         }
     }

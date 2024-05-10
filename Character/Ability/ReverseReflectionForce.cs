@@ -8,12 +8,9 @@ namespace PlatformGame.Character.Combat
     {
         public override void Action(CollisionData collision)
         {
-            var temp = collision.Victim;
-            collision.Victim = collision.Attacker;
-            collision.Attacker = temp;
+            (collision.Victim, collision.Attacker) = (collision.Attacker, collision.Victim);
 
             base.Action(collision);
         }
     }
-
 }

@@ -7,24 +7,19 @@ namespace PlatformGame.Character.Movement
     public class Walk : MovementAction
     {
         public Vector3 mDir;
-        Vector3 mMoveForce;
-        Transform mCamTransform;
 
         public override void PlayAction(Rigidbody rigid, MonoBehaviour coroutine)
         {
-            mCamTransform = GetCamera();
+            Debug.Assert(Camera.main);
             Debug.Assert(mDir.y == 0);
-            Debug.Assert(mCamTransform);
-            mMoveForce = mCamTransform.right * mDir.x;
-            mMoveForce += mCamTransform.forward * mDir.z;
-            mMoveForce = mMoveForce * Time.deltaTime * MOVE_SPEED;
-            rigid.AddForce(mMoveForce);
+            var camTransform = Camera.main.transform;
+            Debug.Assert(camTransform);
+            var moveForce = camTransform.right * mDir.x;
+            moveForce += camTransform.forward * mDir.z;
+            moveForce = moveForce.normalized * (Time.deltaTime * MOVE_SPEED);
+            rigid.AddForce(moveForce);
         }
-
-        Transform GetCamera()
-        {
-            return Camera.main.transform;
-        }
+        
     }
 }
 

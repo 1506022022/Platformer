@@ -12,7 +12,7 @@ public static class LookAtDirection
         {
             return;
         }
+
         transform.forward = m3DVelocity;
     }
-
 }

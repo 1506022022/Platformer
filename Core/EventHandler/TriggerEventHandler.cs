@@ -11,13 +11,14 @@ public class TriggerEventHandler : MonoBehaviour
     {
         mOnCollisionEnter.Invoke();
     }
+
     void OnTriggerExit(Collider coll)
     {
         mOnCollisionExit.Invoke();
     }
+
     void OnTriggerStay(Collider coll)
     {
         mOnCollisionStay.Invoke();
     }
-
 }

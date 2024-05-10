@@ -23,7 +23,6 @@ namespace PlatformGame.Character.Combat
         {
             GameObject.Destroy(collision.Attacker.gameObject);
         }
-
+        
     }
-
 }

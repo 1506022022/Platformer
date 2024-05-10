@@ -15,8 +15,11 @@ namespace PlatformGame.Character
 
     public class CubeMapObject : MonoBehaviour
     {
-        static List<CubeMapObject> mObjects = new();
-        public static List<CubeMapObject> Objects => mObjects;
+        public static List<CubeMapObject> Objects
+        {
+            get;
+            private set;
+        } = new();
 
         public UnityEvent ForwardChange;
         public UnityEvent BackwardChange;
@@ -28,33 +31,32 @@ namespace PlatformGame.Character
         public void OnChanged(CubeMapState state)
         {
             var change = new UnityEvent();
-            switch(state)
+            switch (state)
             {
                 case CubeMapState.Forward:
                     change = ForwardChange;
                     break;
-                    case CubeMapState.Backward:
+                case CubeMapState.Backward:
                     change = BackwardChange;
                     break;
-                    case CubeMapState.Left:
+                case CubeMapState.Left:
                     change = LeftChange;
                     break;
-                    case CubeMapState.Right:
+                case CubeMapState.Right:
                     change = RightChange;
                     break;
-                    case CubeMapState.Up:
+                case CubeMapState.Up:
                     change = UpChange;
                     break;
-                    case CubeMapState.Down:
+                case CubeMapState.Down:
                     change = DownChange;
                     break;
                 default:
-                    Debug.Assert(false, $"Á¤ÀÇµÇÁö ¾ÊÀº °ª : {nameof(CubeMapState)}, {state}.");
+                    Debug.Assert(false, $"ï¿½ï¿½ï¿½Çµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ : {nameof(CubeMapState)}, {state}.");
                     break;
             }
 
             change.Invoke();
-
         }
 
         void Awake()
@@ -71,7 +73,5 @@ namespace PlatformGame.Character
         {
             Objects.Remove(this);
         }
-
     }
 }
-

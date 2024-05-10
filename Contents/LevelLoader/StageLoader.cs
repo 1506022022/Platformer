@@ -28,6 +28,7 @@ namespace PlatformGame.Contents
             mTitle = mLoadingWindow.LoadSceneNameText;
             mProgressBar = mLoadingWindow.ProgressBar;
         }
+
         public void LoadNext()
         {
             var sceneName = Stages.Names[mStageLevel];
@@ -51,6 +52,7 @@ namespace PlatformGame.Contents
                     asyncOperation.allowSceneActivation = true;
                     break;
                 }
+
                 mProgressBar.normalizedValue = timer / 5f;
 
                 yield return null;

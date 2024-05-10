@@ -6,7 +6,12 @@ namespace PlatformGame.Character
 {
     public enum CubeMapState
     {
-        Forward, Backward, Left, Right, Up, Down
+        Forward,
+        Backward,
+        Left,
+        Right,
+        Up,
+        Down
     }
 
     public class CubeMap : MonoBehaviour
@@ -15,17 +20,18 @@ namespace PlatformGame.Character
 
         [SerializeField] CubeMapState mState;
         [SerializeField] PlayerCharacterController cubeMapController;
+
         public CubeMapState State
         {
             get => mState;
-            set => mState = value;
+            private set => mState = value;
         }
 
         [VisibleEnum(typeof(CubeMapState))]
         public void ChangeState(int newState)
         {
             Debug.Assert(0 <= newState &&
-                newState < Enum.GetValues(typeof(CubeMapState)).Length);
+                         newState < Enum.GetValues(typeof(CubeMapState)).Length);
             State = (CubeMapState)newState;
             foreach (var obj in CubeMapObject.Objects)
             {
@@ -45,8 +51,7 @@ namespace PlatformGame.Character
         void Awake()
         {
             Instance = this;
-            cubeMapController.KeyInputEvent.AddListener((a,b)=>OnChanging());
+            cubeMapController.KeyInputEvent.AddListener((a, b) => OnChanging());
         }
-
     }
 }

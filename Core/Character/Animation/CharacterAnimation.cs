@@ -35,14 +35,11 @@ namespace PlatformGame.Character.Animation
             }
 
             var state = mCharacter.State;
-            if(!mStateMap.ContainsKey(state))
+            if (!mStateMap.ContainsKey(state))
             {
                 return;
             }
-            if(state == CharacterState.Attack)
-            {
-                Debug.Log("ㄱ");
-            }
+
             var trigger = mStateMap[state];
             mAnimator.SetTrigger(trigger);
         }
@@ -58,14 +55,14 @@ namespace PlatformGame.Character.Animation
                 mStateMap.Add(pair.State, pair.Trigger);
             }
         }
+
         void Update()
         {
             UpdateAnimation();
             var state = mCharacter.State;
-            if (state == CharacterState.Walk ||
-                state == CharacterState.Running)
+            if (state is CharacterState.Walk or CharacterState.Running)
             {
-                LookAtDirection.LookAtMovingDirection(mAnimator.transform, mCharacter.Rigidbody);
+                LookAtDirection.LookAtMovingDirection(mAnimator.transform, mCharacter.Rigid);
             }
         }
     }

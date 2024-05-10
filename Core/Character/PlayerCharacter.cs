@@ -5,22 +5,22 @@ namespace PlatformGame.Character
 {
     public class PlayerCharacter : Character
     {
-        [Header("[PlayerCharacter]")]
-        [SerializeField] AbilityDataList mHasAbilities;
+        [Header("[PlayerCharacter]")] [SerializeField]
+        AbilityDataList mHasAbilities;
+
         public AbilityDataList HasAbilities => mHasAbilities;
         [SerializeField] GameObject mUI;
         public GameObject UI => mUI;
         Ability mAbility;
 
-        public void CombatTo(uint combatID)
+        public void DoAction(uint combatID)
         {
             if (mAbility.IsAction)
             {
                 return;
             }
 
-            AbilityData abilityData;
-            mHasAbilities.Library.TryGetValue(combatID, out abilityData);
+            mHasAbilities.Library.TryGetValue(combatID, out var abilityData);
             Debug.Assert(abilityData.ID != 0);
 
             if (!StateCheck.Equals(State, abilityData.AllowedState))
@@ -29,16 +29,18 @@ namespace PlatformGame.Character
             }
 
             State = abilityData.BeState;
-            if(!State.Equals(CharacterState.Attack) && !State.Equals(CharacterState.Jumping))
+            if (!State.Equals(CharacterState.Attack) && !State.Equals(CharacterState.Jumping))
             {
                 ReturnBasicState();
             }
+
             mAbility.Action(abilityData);
 
-            if (abilityData.Movement == null)
+            if (!abilityData.Movement)
             {
                 return;
             }
+
             Movement.PlayMovement(abilityData.Movement);
         }
 
@@ -49,8 +51,8 @@ namespace PlatformGame.Character
                 State = CharacterState.AttackDelay;
                 return;
             }
+
             base.Update();
-            Debug.Log(State);
         }
 
         protected override void Awake()
@@ -58,6 +60,5 @@ namespace PlatformGame.Character
             base.Awake();
             mAbility = new Ability(this);
         }
-
     }
 }

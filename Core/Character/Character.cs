@@ -16,35 +16,28 @@ namespace PlatformGame.Character
         [SerializeField]
 #endif
         CharacterState mState;
+
         public CharacterState State
         {
             get => mState;
             protected set => mState = value;
         }
-        public HitBox HitBox
-        {
-            get; private set;
-        }
-        public Rigidbody Rigidbody
-        {
-            get; private set;
-        }
-        public MovementComponent Movement
-        {
-            get; private set;
-        }
+
+        public HitBox HitBox { get; private set; }
+        public Rigidbody Rigid { get; private set; }
+        public MovementComponent Movement { get; private set; }
 
         protected void ReturnBasicState()
         {
-            var velY = Math.Round(Rigidbody.velocity.y, 1);
-            if (!RigidbodyUtil.IsGrounded(Rigidbody) && velY != 0)
+            var velY = Math.Round(Rigid.velocity.y, 1);
+            if (!RigidbodyUtil.IsGrounded(Rigid) && velY != 0)
             {
                 State = (velY > 0) ? CharacterState.Jumping : CharacterState.Falling;
             }
             else
             {
-                State = (Mathf.Abs(Rigidbody.velocity.magnitude) < 0.01f) ? CharacterState.Idle :
-                    (Rigidbody.velocity.magnitude < 2f) ? CharacterState.Walk :
+                State = (Mathf.Abs(Rigid.velocity.magnitude) < 0.01f) ? CharacterState.Idle :
+                    (Rigid.velocity.magnitude < 2f) ? CharacterState.Walk :
                     CharacterState.Running;
             }
         }
@@ -52,7 +45,7 @@ namespace PlatformGame.Character
         protected virtual void Awake()
         {
             HitBox = GetComponent<HitBox>();
-            Rigidbody = GetComponent<Rigidbody>();
+            Rigid = GetComponent<Rigidbody>();
             Movement = GetComponent<MovementComponent>();
         }
 
@@ -60,6 +53,5 @@ namespace PlatformGame.Character
         {
             ReturnBasicState();
         }
-
     }
 }

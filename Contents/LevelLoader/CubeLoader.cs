@@ -22,18 +22,20 @@ namespace PlatformGame.Contents.Loader
                 return;
             }
 
-            var map = ActionKey.GetAxisRawMap();
-            if (map[GUARD])
+            var map = ActionKey.GetKeyDownMap();
+            if (!map[GUARD])
             {
-                State = WorkState.Ready;
-                mCubeController.SetControll(false);
+                return;
             }
+            
+            State = WorkState.Ready;
+            mCubeController.SetActive(false);
         }
 
         public void LoadNext()
         {
             State = WorkState.Action;
-            mCubeController.SetControll(true);
+            mCubeController.SetActive(true);
         }
     }
 }

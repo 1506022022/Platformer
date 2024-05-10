@@ -27,6 +27,7 @@ namespace PlatformGame.Character
         AttackDelay,
         Die
     }
+
     public static class StateCheck
     {
         public static bool Equals(CharacterState state, CharacterStateFlags flags)
@@ -39,9 +40,9 @@ namespace PlatformGame.Character
                 case CharacterState.Jumping: return (flags & CharacterStateFlags.Jump) == CharacterStateFlags.Jump;
                 case CharacterState.Falling: return (flags & CharacterStateFlags.Fall) == CharacterStateFlags.Fall;
                 case CharacterState.Attack: return (flags & CharacterStateFlags.Action) == CharacterStateFlags.Action;
-                case CharacterState.AttackDelay: return (flags & CharacterStateFlags.Action) == CharacterStateFlags.Action;
+                case CharacterState.AttackDelay:
+                    return (flags & CharacterStateFlags.Action) == CharacterStateFlags.Action;
                 default: return false;
-
             }
         }
     }
