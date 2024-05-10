@@ -8,5 +8,9 @@ namespace PlatformGame.Character.Movement
         Coroutine mCoroutine;
 
         public abstract void PlayAction(Rigidbody rigid, MonoBehaviour coroutine);
+        public virtual void StopAction(Rigidbody rigid, MonoBehaviour coroutine)
+        {
+
+        }
     }
 }

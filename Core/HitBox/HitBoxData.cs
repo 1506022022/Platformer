@@ -11,7 +11,7 @@ namespace PlatformGame.Character.Collision
         [SerializeField] List<string> mHitBoxNames;
         [SerializeField] HitBoxFlags mFlags;
         [SerializeField] bool mUseSelfHitBox;
-        public List<string> HitBoxNames => mHitBoxNames.ToList();
+        public List<string> Filter => mHitBoxNames.ToList();
         public HitBoxFlags Flags => mFlags;
         public bool UseSelfHitBox => mUseSelfHitBox;
     }

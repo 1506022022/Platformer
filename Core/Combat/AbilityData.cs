@@ -12,8 +12,8 @@ namespace PlatformGame.Character.Combat
         public float ActionDelay;
         public CharacterState BeState;
         public CharacterStateFlags AllowedState;
-        public AbilityAction HitedEvent;
-        public MovementAction MovementAction;
+        public AbilityAction Ability;
+        public MovementAction Movement;
         public HitBoxData HitBoxData;
     }
 }

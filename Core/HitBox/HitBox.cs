@@ -1,86 +1,123 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using static PlatformGame.Character.Collision.HitBoxFlag;
 
 namespace PlatformGame.Character.Collision
 {
-    public delegate void HitBoxCallback(HitBox victim, HitBox attacker);
     public class HitBox : MonoBehaviour
     {
-        static List<HitBox> mHitedInstances = new List<HitBox>();
-        public bool UseSyncDelay;
-        public float HitDelay;
-        public HitBoxFlag Flags;
-        HitBoxCallback mAttackedCallback;
-        Dictionary<string, HitBoxCollider> mHBCollidersDictionary;
-        [SerializeField] List<HitBoxCollider> mHitBoxColliders;
+        [SerializeField] HitBoxControll mHitControll;
+        [SerializeField] HitBoxControll mAttackControll;
+        Character mCharacter;
 
-        public void SetAttackCallback(List<string> filterColliderNames, HitBoxCallback attackedCallback)
+        public void SetAttackCallback(List<string> filterColliderNames, HitEvent hitCallback)
         {
-            ClearAttackCallback();
-            mAttackedCallback = attackedCallback;
-            var HBColliders = GetCollidersAs(mHBCollidersDictionary, filterColliderNames);
-            foreach (var collider in HBColliders)
+            var colliders = GetCollidersAs(filterColliderNames, mAttackControll);
+            foreach (var collider in colliders)
             {
-                Debug.Assert(collider.Flags.IsAttacker());
+                collider.SetHitEvnet(hitCallback);
+            }
+        }
+
+        public void SetHitCallback(List<string> filterColliderNames, HitEvent hitCallback)
+        {
+            var colliders = GetCollidersAs(filterColliderNames, mHitControll);
+            foreach (var collider in colliders)
+            {
+                collider.SetHitEvnet(hitCallback);
+            }
+        }
+
+        public void SetAttackCollidersFlags(List<string> filterColliderNames, HitBoxFlags flags)
+        {
+            var colliders = GetCollidersAs(filterColliderNames, mAttackControll);
+            foreach (var collider in colliders)
+            {
+                collider.HitBoxFlag.SetFlag(flags);
+            }
+        }
+
+        public void EnableAttackColliders(List<string> filterColliderNames)
+        {
+            var colliders = GetCollidersAs(filterColliderNames, mAttackControll);
+            foreach (var collider in colliders)
+            {
                 collider.enabled = true;
             }
         }
 
-        public void ClearAttackCallback()
+        public void DisableAttackColliders(List<string> filterColliderNames)
         {
-            mAttackedCallback = null;
-            var HBColliders = GetCollidersAs(mHitBoxColliders, HitBoxFlags.Attacker);
-            foreach (var collider in HBColliders)
+            var colliders = GetCollidersAs(filterColliderNames, mAttackControll);
+            foreach (var collider in colliders)
             {
                 collider.enabled = false;
             }
         }
 
+        public void EnableHitColliders(List<string> filterColliderNames)
+        {
+            var colliders = GetCollidersAs(filterColliderNames, mHitControll);
+            foreach (var collider in colliders)
+            {
+                collider.enabled = true;
+            }
+        }
+
+        public void DisableHitColliders(List<string> filterColliderNames)
+        {
+            var colliders = GetCollidersAs(filterColliderNames, mHitControll);
+            foreach (var collider in colliders)
+            {
+                collider.enabled = false;
+            }
+        }
+
+        void OnHit(HitBoxCollider subject)
+        {
+            mHitControll.StartDelay();
+        }
+
+        void OnAttack(HitBoxCollider subject)
+        {
+            mAttackControll.StartDelay();
+        }
+
+        void DI(HitBoxControll controll)
+        {
+            controll.SetActor(mCharacter);
+
+            foreach (var collider in controll.Colliders)
+            {
+                Debug.Assert(collider.HitCallback == null);
+                collider.HitCallback = collider.HitBoxFlag.IsAttacker() ?
+                                       OnAttack :
+                                       OnHit;
+            }
+        }
+
+        List<HitBoxCollider> GetCollidersAs(List<string> filterColliderNames, HitBoxControll controll)
+        {
+            List<HitBoxCollider> list = new List<HitBoxCollider>();
+            foreach (var filter in filterColliderNames)
+            {
+                var colliders = controll.GetCollidersAs(filter);
+                foreach (var collider in colliders)
+                {
+                    if (!list.Contains(collider))
+                    {
+                        list.Add(collider);
+                    }
+                }
+            }
+            return list;
+        }
+
         void Awake()
         {
-            Debug.Assert(mHitBoxColliders != null);
-            Debug.Assert(mHitBoxColliders.Count > 0);
-            CreateDictionary();
-            mHitBoxColliders.ForEach(x => x.HitedEventCallback = OnHited);
-            mHitBoxColliders.ForEach(x => x.Flags = Flags);
-            if (UseSyncDelay)
-            {
-                mHitBoxColliders.ForEach(x => x.HitDelay = HitDelay);
-            }
-            ClearAttackCallback();
-            mHitedInstances.Add(this);
+            mCharacter = GetComponent<Character>();
+            DI(mHitControll);
+            DI(mAttackControll);
         }
-        void OnDestroy()
-        {
-            mHitedInstances.Remove(this);
-        }
-        void CreateDictionary()
-        {
-            mHBCollidersDictionary = new Dictionary<string, HitBoxCollider>();
-            foreach (var HBCollider in mHitBoxColliders)
-            {
-                Debug.Assert(!mHBCollidersDictionary.ContainsKey(HBCollider.Name), $"{HBCollider.Name} is Duplicate.");
-                mHBCollidersDictionary.Add(HBCollider.Name, HBCollider);
-            }
-        }
-        void OnHited(HitBoxCollider victim, HitBoxCollider attacker)
-        {
-            HitBox victimHitBox = mHitedInstances.Where(hitBox => hitBox.mHitBoxColliders.Any(coll => coll.Equals(victim)))
-                                                 .FirstOrDefault();
-            Debug.Assert(victimHitBox);
 
-            HitBox attackerHitBox = mHitedInstances.Where(hitBox => hitBox.mHitBoxColliders.Any(coll => coll.Equals(attacker)))
-                                                   .FirstOrDefault();
-            Debug.Assert(attackerHitBox);
-
-            if (UseSyncDelay)
-            {
-                mHitBoxColliders.ForEach(x => x.StartDelay());
-            }
-
-            mAttackedCallback?.Invoke(victimHitBox, attackerHitBox);
-        }
     }
 }

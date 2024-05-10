@@ -9,7 +9,7 @@ namespace PlatformGame.Tool
         {
             Vector3 origin = rigid.transform.position;
             origin.y += 0.5f;
-            var hitAll = Physics.BoxCastAll(origin, Vector3.one * 0.25f, Vector3.down, rigid.transform.rotation, 0.3f);
+            var hitAll = Physics.BoxCastAll(origin, Vector3.one * 0.25f, Vector3.down, rigid.transform.rotation, 0.5f);
             var hitsExceptForMyself = hitAll.Where(x => !x.transform.Equals(rigid.transform));
 
 #if DEVELOPMENT

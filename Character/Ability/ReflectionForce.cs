@@ -3,18 +3,28 @@ using UnityEngine;
 
 namespace PlatformGame.Character.Combat
 {
-    [CreateAssetMenu(menuName = "Custom/CombatAction/ReflectionForce", fileName = "ReflectionForce")]
+    [CreateAssetMenu(menuName = "Custom/AbilityAction/ReflectionForce")]
     public class ReflectionForce : AbilityAction
     {
-        public override void Action(HitBox victim, HitBox attacker)
+        public float PowerMultiply = 300f;
+        public float UpperPower = 3f;
+        public override void Action(CollisionData collision)
         {
+            var attacker = collision.Attacker;
+            var victim = collision.Victim;
+            if (victim.transform.parent != null)
+            {
+                victim.transform.SetParent(null, true);
+            }
+            victim.Movement.RemoveMovement();
             var rigid = victim.GetComponent<Rigidbody>();
-            if (rigid != null && rigid.velocity.magnitude > 0f)
+            if (rigid != null)
             {
                 Vector3 dir = attacker.transform.forward;
-                dir.y = 3;
-                rigid.AddForce(dir * 300f);
+                dir.y = UpperPower;
+                rigid.AddForce(dir * PowerMultiply);
             }
         }
+
     }
 }

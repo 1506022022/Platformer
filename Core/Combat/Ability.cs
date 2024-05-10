@@ -3,20 +3,23 @@ using UnityEngine;
 
 namespace PlatformGame.Character.Combat
 {
+    public struct CoolTime
+    {
+        public float EndTime;
+        public uint ID;
+    }
+
     public class Ability
     {
-        HitBox mHitBox;
+        Character mActor;
         float mLastActionTime;
         AbilityData mLastAbilitytData;
 
-        public Ability(HitBox hitBox)
+        public Ability(Character actor)
         {
-            mHitBox = hitBox;
+            mActor = actor;
         }
-        public Ability()
-        {
 
-        }
         public bool IsAction
         {
             get
@@ -32,21 +35,31 @@ namespace PlatformGame.Character.Combat
             mLastActionTime = Time.time;
             mLastAbilitytData = abilityData;
             var hitBoxData = abilityData.HitBoxData;
-            HitBox hitBox = null;
-            if (hitBoxData.UseSelfHitBox)
-            {
-                hitBox = mHitBox;
-            }
 
-            if (hitBox == null ||
-                hitBoxData.HitBoxNames.Count == 0)
+            var filter = hitBoxData.Filter;
+            if (filter.Count == 0)
             {
                 return;
             }
 
-            Debug.Assert(hitBox != null);
-            hitBox.Flags.SetFlag(abilityData.HitBoxData.Flags);
-            hitBox.SetAttackCallback(hitBoxData.HitBoxNames, abilityData.HitedEvent.Action);
+            HitBox hitBox = null;
+            if (hitBoxData.UseSelfHitBox)
+            {
+                hitBox = mActor.HitBox;
+            }
+
+            if (hitBox == null)
+            {
+                return;
+            }
+            hitBox.SetAttackCollidersFlags(filter, abilityData.HitBoxData.Flags);
+
+            if(abilityData.Ability == null)
+            {
+                return;
+            }
+            hitBox.SetAttackCallback(filter, abilityData.Ability.Action);
         }
+
     }
 }

@@ -21,7 +21,7 @@ namespace PlatformGame.Contents.Loader
             {
                 return;
             }
-            
+
             var map = ActionKey.GetAxisRawMap();
             if (map[GUARD])
             {

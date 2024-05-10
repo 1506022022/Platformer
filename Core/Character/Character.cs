@@ -1,10 +1,15 @@
+using PlatformGame.Character.Collision;
 using PlatformGame.Character.Movement;
 using PlatformGame.Tool;
+using System;
 using UnityEngine;
 
 namespace PlatformGame.Character
 {
-    public abstract class Character : MonoBehaviour
+    [RequireComponent(typeof(HitBox))]
+    [RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(MovementComponent))]
+    public class Character : MonoBehaviour
     {
         [Header("[Character]")]
 #if UNITY_EDITOR
@@ -16,21 +21,39 @@ namespace PlatformGame.Character
             get => mState;
             protected set => mState = value;
         }
-        [SerializeField] protected Rigidbody mRigid;
-        [SerializeField] protected CharacterMovement mMovement;
+        public HitBox HitBox
+        {
+            get; private set;
+        }
+        public Rigidbody Rigidbody
+        {
+            get; private set;
+        }
+        public MovementComponent Movement
+        {
+            get; private set;
+        }
 
         protected void ReturnBasicState()
         {
-            if (!RigidbodyUtil.IsGrounded(mRigid))
+            var velY = Math.Round(Rigidbody.velocity.y, 1);
+            if (!RigidbodyUtil.IsGrounded(Rigidbody) && velY != 0)
             {
-                State = (mRigid.velocity.y >= 0) ? CharacterState.Jumping : CharacterState.Falling;
+                State = (velY > 0) ? CharacterState.Jumping : CharacterState.Falling;
             }
             else
             {
-                State = (Mathf.Abs(mRigid.velocity.magnitude) < 0.01f) ? CharacterState.Idle :
-                    (mRigid.velocity.magnitude < 2f) ? CharacterState.Walk :
+                State = (Mathf.Abs(Rigidbody.velocity.magnitude) < 0.01f) ? CharacterState.Idle :
+                    (Rigidbody.velocity.magnitude < 2f) ? CharacterState.Walk :
                     CharacterState.Running;
             }
+        }
+
+        protected virtual void Awake()
+        {
+            HitBox = GetComponent<HitBox>();
+            Rigidbody = GetComponent<Rigidbody>();
+            Movement = GetComponent<MovementComponent>();
         }
 
         protected virtual void Update()

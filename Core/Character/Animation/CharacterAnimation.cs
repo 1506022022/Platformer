@@ -17,29 +17,31 @@ namespace PlatformGame.Character.Animation
         public Animator EditorAnimator => mAnimator == null ? null : mAnimator;
         [HideInInspector] public RuntimeAnimatorController BeforeController;
         [HideInInspector] public List<StateTriggerPair> EditorStateTriggers = new List<StateTriggerPair>();
-
         Character mCharacter;
-        CharacterState mLastState;
         Dictionary<CharacterState, string> mStateMap;
-        [SerializeField] Rigidbody mRigid;
         [SerializeField] Animator mAnimator;
 
 
         public void UpdateAnimation()
         {
-            var state = mCharacter.State;
-            if (mLastState == state)
-            {
-                return;
-            }
-            mLastState = state;
             if (mAnimator == null)
             {
                 return;
             }
+
             foreach (var t in mStateMap.Values)
             {
                 mAnimator.ResetTrigger(t);
+            }
+
+            var state = mCharacter.State;
+            if(!mStateMap.ContainsKey(state))
+            {
+                return;
+            }
+            if(state == CharacterState.Attack)
+            {
+                Debug.Log("ㄱ");
             }
             var trigger = mStateMap[state];
             mAnimator.SetTrigger(trigger);
@@ -47,7 +49,6 @@ namespace PlatformGame.Character.Animation
 
         void Awake()
         {
-            Debug.Assert(mRigid);
             Debug.Assert(mAnimator);
             mCharacter = GetComponent<Character>();
             mStateMap = new Dictionary<CharacterState, string>();
@@ -60,10 +61,11 @@ namespace PlatformGame.Character.Animation
         void Update()
         {
             UpdateAnimation();
-            if (mLastState == CharacterState.Walk ||
-                mLastState == CharacterState.Running)
+            var state = mCharacter.State;
+            if (state == CharacterState.Walk ||
+                state == CharacterState.Running)
             {
-                LookAtDirection.LookAtMovingDirection(mAnimator.transform, mRigid);
+                LookAtDirection.LookAtMovingDirection(mAnimator.transform, mCharacter.Rigidbody);
             }
         }
     }

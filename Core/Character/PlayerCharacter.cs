@@ -1,68 +1,63 @@
-﻿using PlatformGame.Character.Collision;
-using PlatformGame.Character.Combat;
+﻿using PlatformGame.Character.Combat;
 using UnityEngine;
-using static PlatformGame.Character.Status.MovementInfo;
 
 namespace PlatformGame.Character
 {
     public class PlayerCharacter : Character
     {
-        Ability mAbility;
         [Header("[PlayerCharacter]")]
         [SerializeField] AbilityDataList mHasAbilities;
         public AbilityDataList HasAbilities => mHasAbilities;
         [SerializeField] GameObject mUI;
         public GameObject UI => mUI;
-        [SerializeField] HitBox mAttackHitBox;
+        Ability mAbility;
 
         public void CombatTo(uint combatID)
         {
-            AbilityData combatData;
-            mHasAbilities.Library.TryGetValue(combatID, out combatData);
-            Debug.Assert(combatData.ID != 0);
-
-            if (!StateCheck.Equals(State, combatData.AllowedState))
-            {
-                return;
-            }
-
             if (mAbility.IsAction)
             {
                 return;
             }
 
-            State = combatData.BeState;
-            mAbility.Action(combatData);
+            AbilityData abilityData;
+            mHasAbilities.Library.TryGetValue(combatID, out abilityData);
+            Debug.Assert(abilityData.ID != 0);
 
-            if (combatData.MovementAction == null)
+            if (!StateCheck.Equals(State, abilityData.AllowedState))
             {
                 return;
             }
-            mMovement.PlayMovement(combatData.MovementAction);
+
+            State = abilityData.BeState;
+            if(!State.Equals(CharacterState.Attack) && !State.Equals(CharacterState.Jumping))
+            {
+                ReturnBasicState();
+            }
+            mAbility.Action(abilityData);
+
+            if (abilityData.Movement == null)
+            {
+                return;
+            }
+            Movement.PlayMovement(abilityData.Movement);
         }
 
         protected override void Update()
         {
-            if (mAbility.IsAction) return;
+            if (mAbility.IsAction)
+            {
+                State = CharacterState.AttackDelay;
+                return;
+            }
             base.Update();
-            LimitMoveSpeed();
+            Debug.Log(State);
         }
 
-        void Awake()
+        protected override void Awake()
         {
-            mAbility = mAttackHitBox == null ?
-            new Ability() :
-            new Ability(mAttackHitBox);
+            base.Awake();
+            mAbility = new Ability(this);
         }
 
-        // TODO : 분리
-        void LimitMoveSpeed()
-        {
-            var mVelocity = mRigid.velocity;
-            mVelocity.x = Mathf.Clamp(mVelocity.x, -MAX_MOVE_VELOCITY, MAX_MOVE_VELOCITY);
-            mVelocity.z = Mathf.Clamp(mVelocity.z, -MAX_MOVE_VELOCITY, MAX_MOVE_VELOCITY);
-            mRigid.velocity = mVelocity;
-        }
-        // TODOEND
     }
 }

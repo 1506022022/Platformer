@@ -1,10 +1,12 @@
 using PlatformGame.Character;
 using PlatformGame.Character.Controller;
 using PlatformGame.Contents.Loader;
+using PlatformGame.Input;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using UnityEngine;
+using static PlatformGame.Input.ActionKey;
 
 namespace PlatformGame
 {
@@ -14,8 +16,20 @@ namespace PlatformGame
         public List<PlayerCharacter> JoinCharacters => JoinCharactersController.Select(x => x.PlayerCharacter).ToList();
         Contents.Contents mContents;
         PlayerCharacterController mController;
-        [SerializeField] List<PlayerCharacterController> JoinCharactersController;
-
+        [SerializeField] List<PlayerCharacterController> mJoinCharactersController;
+        List<PlayerCharacterController> JoinCharactersController
+        {
+            get
+            {
+                Debug.Assert(mJoinCharactersController.Count > 0,$"{gameObject.name}에 컨트롤러가 할당되지 않음.");
+                return mJoinCharactersController;
+            }
+            set
+            {
+                mJoinCharactersController = value;
+            }
+        }
+        float mLastSwapTime;
         [Header("[Debug]")]
         [SerializeField, ReadOnly(false)] bool bSingleStage;
         [SerializeField, ReadOnly(false)] bool bGameStart;
@@ -29,17 +43,28 @@ namespace PlatformGame
 
         void OnLoadedScene()
         {
-            Debug.Assert(JoinCharactersController.Count > 0);
+            
             SelectControllCharacter();
             bGameStart = true;
         }
 
-        void SelectControllCharacter()
+        public void SelectControllCharacter()
         {
-            Debug.Assert(JoinCharactersController.Count > 0);
             mController?.SetControll(false);
-            mController = JoinCharactersController[0];
+            mController = JoinCharactersController.First();
             mController.SetControll(true);
+        }
+
+        void SwapCharacter()
+        {
+            if(JoinCharactersController.Count < 2)
+            {
+                return;
+            }
+            var first = JoinCharactersController.First();
+            JoinCharactersController.RemoveAt(0);
+            JoinCharactersController.Add(first);
+            SelectControllCharacter();
         }
 
         void ReleaseController()
@@ -68,7 +93,19 @@ namespace PlatformGame
         {
             if (bGameStart)
             {
-                // PlayerCharacterController.ControllTo(character);
+                // TODO : 분리
+                if(Time.time < mLastSwapTime + 0.5f)
+                {
+                    return;
+                }
+                mLastSwapTime = Time.time;
+                var map = ActionKey.GetAxisRawMap();
+                if (!map[SWAP])
+                {
+                    return;
+                }
+                SwapCharacter();
+                // TODOEND
             }
             else
             {

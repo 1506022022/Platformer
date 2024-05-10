@@ -1,24 +1,29 @@
+using System.Collections;
 using UnityEngine;
 
-namespace PlatformGame.Character.Combat
+namespace PlatformGame.Character.Movement
 {
-    public class Floating : MonoBehaviour
+    [CreateAssetMenu(menuName = "Custom/MovementAction/Floating")]
+    public class Floating : MovementAction
     {
-        Rigidbody mRigid;
         public float power;
 
-        void Start()
+        public override void PlayAction(Rigidbody rigid, MonoBehaviour coroutine)
         {
-            mRigid = GetComponent<Rigidbody>();
+            coroutine.StartCoroutine(DoMove(rigid));
         }
 
-        // Update is called once per frame
-        void Update()
+        IEnumerator DoMove(Rigidbody rigid)
         {
-            if (mRigid.velocity.magnitude == 0)
+            while (true)
             {
-                mRigid.AddForce(Vector3.up * power);
+                if (rigid.velocity.magnitude == 0)
+                {
+                    rigid.AddForce(Vector3.up * power);
+                }
+                yield return new WaitForSeconds(0.1f);
             }
         }
+
     }
 }
