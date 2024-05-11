@@ -5,12 +5,14 @@ namespace PlatformGame.Character
 {
     public class PlayerCharacter : Character
     {
-        [Header("[PlayerCharacter]")] [SerializeField]
+        [Header("[PlayerCharacter]")]
+        [SerializeField]
         AbilityDataList mHasAbilities;
 
         public AbilityDataList HasAbilities => mHasAbilities;
         [SerializeField] GameObject mUI;
         public GameObject UI => mUI;
+        public bool IsAction => mAbility.IsAction;
         Ability mAbility;
 
         public void DoAction(uint combatID)
@@ -27,12 +29,7 @@ namespace PlatformGame.Character
             {
                 return;
             }
-
             State = abilityData.BeState;
-            if (!State.Equals(CharacterState.Attack) && !State.Equals(CharacterState.Jumping))
-            {
-                ReturnBasicState();
-            }
 
             mAbility.Action(abilityData);
 
@@ -40,19 +37,7 @@ namespace PlatformGame.Character
             {
                 return;
             }
-
             Movement.PlayMovement(abilityData.Movement);
-        }
-
-        protected override void Update()
-        {
-            if (mAbility.IsAction)
-            {
-                State = CharacterState.AttackDelay;
-                return;
-            }
-
-            base.Update();
         }
 
         protected override void Awake()

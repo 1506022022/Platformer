@@ -1,11 +1,11 @@
 using PlatformGame.Character.Collision;
 using PlatformGame.Character.Movement;
-using System;
+using UnityEngine;
 
 namespace PlatformGame.Character.Combat
 {
-    [Serializable]
-    public struct AbilityData
+    [CreateAssetMenu(menuName = "Custom/AbilityData")]
+    public class AbilityData : ScriptableObject
     {
         public uint ID;
         public string Name;

@@ -27,21 +27,6 @@ namespace PlatformGame.Character
         public Rigidbody Rigid { get; private set; }
         public MovementComponent Movement { get; private set; }
 
-        protected void ReturnBasicState()
-        {
-            var velY = Math.Round(Rigid.velocity.y, 1);
-            if (!RigidbodyUtil.IsGrounded(Rigid) && velY != 0)
-            {
-                State = (velY > 0) ? CharacterState.Jumping : CharacterState.Falling;
-            }
-            else
-            {
-                State = (Mathf.Abs(Rigid.velocity.magnitude) < 0.01f) ? CharacterState.Idle :
-                    (Rigid.velocity.magnitude < 2f) ? CharacterState.Walk :
-                    CharacterState.Running;
-            }
-        }
-
         protected virtual void Awake()
         {
             HitBox = GetComponent<HitBox>();
@@ -49,9 +34,5 @@ namespace PlatformGame.Character
             Movement = GetComponent<MovementComponent>();
         }
 
-        protected virtual void Update()
-        {
-            ReturnBasicState();
-        }
     }
 }
