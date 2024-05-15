@@ -1,5 +1,7 @@
 # 코드리뷰
-[게임 로드 로직]
+**게임 로드 로직**   
+- 기본적으로 GameMaanger의 Awake 이벤트 때 GameManager.LoadGame()을 실행합니다.
+
 ![image](https://github.com/1506022022/Platformer/assets/88864717/39c3ea28-e56f-48ff-9fad-eba48031be68)
 - [Portal.cs](https://github.com/1506022022/Platformer/blob/main/Contents/Portal/Portal.cs)   
 - [GoalPortal.cs](https://github.com/1506022022/Platformer/blob/main/Contents/Portal/GoalPortal.cs)   
