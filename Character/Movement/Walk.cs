@@ -19,7 +19,7 @@ namespace PlatformGame.Character.Movement
             moveForce = moveForce.normalized * (Time.deltaTime * MOVE_SPEED);
             rigid.AddForce(moveForce);
         }
-        
+
     }
 }
 

@@ -6,11 +6,9 @@ namespace PlatformGame.Contents.Loader
     {
         public WorkState State
         {
-            get
-            {
-                return mEndTime <= Time.time ? WorkState.Ready : WorkState.Action;
-            }
+            get { return mEndTime <= Time.time ? WorkState.Ready : WorkState.Action; }
         }
+
         float mEndTime;
 
         public void LoadNext()

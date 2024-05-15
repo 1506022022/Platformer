@@ -21,10 +21,9 @@ namespace PlatformGame.Character.Animation
         Dictionary<CharacterState, string> mStateMap;
         [SerializeField] Animator mAnimator;
 
-
-        public void UpdateAnimation()
+        void UpdateAnimation(CharacterState state)
         {
-            if (mAnimator == null)
+            if (!mStateMap.ContainsKey(state))
             {
                 return;
             }
@@ -34,12 +33,6 @@ namespace PlatformGame.Character.Animation
                 mAnimator.ResetTrigger(t);
             }
 
-            var state = mCharacter.State;
-            if (!mStateMap.ContainsKey(state))
-            {
-                return;
-            }
-
             var trigger = mStateMap[state];
             mAnimator.SetTrigger(trigger);
         }
@@ -47,22 +40,15 @@ namespace PlatformGame.Character.Animation
         void Awake()
         {
             Debug.Assert(mAnimator);
+
             mCharacter = GetComponent<Character>();
+            mCharacter.OnChangedState.AddListener(UpdateAnimation);
+
             mStateMap = new Dictionary<CharacterState, string>();
             foreach (var pair in EditorStateTriggers)
             {
                 Debug.Assert(!mStateMap.ContainsKey(pair.State), $"{pair.State}");
                 mStateMap.Add(pair.State, pair.Trigger);
-            }
-        }
-
-        void Update()
-        {
-            UpdateAnimation();
-            var state = mCharacter.State;
-            if (state is CharacterState.Walk or CharacterState.Running)
-            {
-                LookAtDirection.LookAtMovingDirection(mAnimator.transform, mCharacter.Rigid);
             }
         }
     }

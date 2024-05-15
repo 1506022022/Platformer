@@ -1,62 +1,86 @@
-using PlatformGame.Character.Combat;
 using PlatformGame.Tool;
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Events;
+using static PlatformGame.Character.Status.MovementInfo;
 
 namespace PlatformGame.Character.Controller
 {
     [RequireComponent(typeof(Character))]
     public class DefaultStateController : MonoBehaviour
     {
-        PlayerCharacter mCharacter;
-        public AbilityData Fall;
-        public AbilityData Land;
-        public AbilityData Idle;
-        public AbilityData Walk;
-        public AbilityData Run;
+        const uint STATE_IDLE = 4290000000;
+        const uint STATE_WALK = 4290000001;
+        const uint STATE_RUNNING = 4290000002;
+        const uint STATE_JUMPING = 4290000003;
+        const uint STATE_FALLING = 4290000004;
+        const uint STATE_LAND = 4290000005;
+        Character mCharacter;
 
-        void Awake()
+        void ReturnBasicState()
         {
-            Debug.Assert(Fall.ID != 0);
-            Debug.Assert(Land.ID != 0);
-            Debug.Assert(Idle.ID != 0);
-            Debug.Assert(Walk.ID != 0);
-            Debug.Assert(Run.ID != 0);
+            var velY = Math.Round(mCharacter.Rigid.velocity.y, 1);
+            uint actionID;
 
-            mCharacter = GetComponent<PlayerCharacter>();
-        }
+            if (mCharacter.State is CharacterState.Attack)
+            {
+                mCharacter.SetAttackDelayState();
+            }
 
-        void Update()
-        {
             if (mCharacter.IsAction)
             {
                 return;
             }
 
-            var velY = Math.Round(mCharacter.Rigid.velocity.y, 1);
-            if (!RigidbodyUtil.IsGrounded(mCharacter.Rigid) && velY != 0)
+            else if (IsLandState())
             {
-                mCharacter.DoAction(Fall.ID);
-                return;
+                actionID = STATE_LAND;
             }
 
-            if (Mathf.Abs(mCharacter.Rigid.velocity.magnitude) < 0.01f)
+            else if (IsJumpState(velY))
             {
-                mCharacter.DoAction(Idle.ID);
-                return;
-            }
-
-            if (mCharacter.Rigid.velocity.magnitude < 2f)
-            {
-                mCharacter.DoAction(Walk.ID);
-                return;
+                actionID = (velY > 0) ? STATE_JUMPING : STATE_FALLING;
             }
 
             else
             {
-                mCharacter.DoAction(Run.ID);
+                actionID = IsStopped() ? STATE_IDLE :
+                           IsWalked() ? STATE_WALK :
+                                        STATE_RUNNING;
             }
+
+            mCharacter.DoAction(actionID);
+        }
+
+        bool IsWalked()
+        {
+            return (mCharacter.Rigid.velocity.magnitude < MAX_RUN_VELOCITY);
+        }
+
+        bool IsStopped()
+        {
+            return (Mathf.Abs(mCharacter.Rigid.velocity.magnitude) < MIN_WALK_VELOCITY);
+        }
+
+        bool IsJumpState(double velY)
+        {
+            return !RigidbodyUtil.IsGrounded(mCharacter.Rigid) && !IsStopped();
+        }
+
+        bool IsLandState()
+        {
+            return RigidbodyUtil.IsGrounded(mCharacter.Rigid)
+                            && mCharacter.State is CharacterState.Falling;
+        }
+
+        void Awake()
+        {
+            mCharacter = GetComponent<Character>();
+        }
+
+        void Update()
+        {
+            ReturnBasicState();
         }
 
     }

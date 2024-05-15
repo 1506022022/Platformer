@@ -43,6 +43,6 @@ namespace PlatformGame.Character.Movement
                 yield return null;
             }
         }
-        
+
     }
 }

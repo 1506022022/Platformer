@@ -5,7 +5,7 @@ namespace PlatformGame.Character
     public class LifeTime : MonoBehaviour
     {
         public Vector2 mLifeRange;
-        public float mLife;
+        float mLife;
 
         void Awake()
         {

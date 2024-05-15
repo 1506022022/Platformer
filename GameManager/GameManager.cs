@@ -1,5 +1,5 @@
-using PlatformGame.Character;
 using PlatformGame.Character.Controller;
+using PlatformGame.Contents;
 using PlatformGame.Contents.Loader;
 using PlatformGame.Input;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ namespace PlatformGame
     public class GameManager : MonoBehaviour
     {
         public static GameManager Instance { get; private set; }
-        public List<PlayerCharacter> JoinCharacters => JoinCharactersController.Select(x => x.PlayerCharacter).ToList();
+        public List<Character.Character> JoinCharacters => JoinCharactersController.Select(x => x.ControlledCharacter).ToList();
         Contents.Contents mContents;
         PlayerCharacterController mController;
         [SerializeField] List<PlayerCharacterController> mJoinCharactersController;
@@ -22,40 +22,59 @@ namespace PlatformGame
         {
             get
             {
-                Debug.Assert(mJoinCharactersController.Count > 0, $"{gameObject.name}에 컨트롤러가 할당되지 않음.");
+                Debug.Assert(mJoinCharactersController.Count > 0 && mJoinCharactersController.All(x => x),
+                    $"{gameObject.name}에 컨트롤러가 할당되지 않음.");
                 return mJoinCharactersController;
             }
-            set
-            {
-                mJoinCharactersController = value;
-            }
+            set => mJoinCharactersController = value;
         }
 
         float mLastSwapTime;
 
-        [Header("[Debug]")] [SerializeField, ReadOnly(false)]
-        bool bSingleStage;
-
+        [Header("[Debug]")]
+        [SerializeField, ReadOnly(false)] LoaderType mLoaderType;
         [SerializeField, ReadOnly(false)] bool bGameStart;
 
-        public void LoadGame()
+        void ReplaceControlWith(PlayerCharacterController controller)
+        {
+            mController?.SetActive(false);
+            mController = controller;
+            mController.SetActive(true);
+        }
+
+        void PauseGame()
         {
             bGameStart = false;
             ReleaseController();
+        }
+
+        public void ExitGame()
+        {
+            Application.Quit();
+        }
+
+        public void LoadGame()
+        {
+            PauseGame();
             mContents.LoadNextLevel();
         }
 
-        void OnLoadedScene()
+        void StartGame()
         {
-            SelectControllCharacter();
             bGameStart = true;
+            ControlDefaultCharacter();
         }
 
-        public void SelectControllCharacter()
+        void ControlDefaultCharacter()
+        {
+            var defaultCharacter = JoinCharactersController.First();
+            ReplaceControlWith(defaultCharacter);
+        }
+
+        void ReleaseController()
         {
             mController?.SetActive(false);
-            mController = JoinCharactersController.First();
-            mController.SetActive(true);
+            mController = null;
         }
 
         void SwapCharacter()
@@ -68,13 +87,7 @@ namespace PlatformGame
             var first = JoinCharactersController.First();
             JoinCharactersController.RemoveAt(0);
             JoinCharactersController.Add(first);
-            SelectControllCharacter();
-        }
-
-        void ReleaseController()
-        {
-            mController?.SetActive(false);
-            mController = null;
+            ControlDefaultCharacter();
         }
 
         void Awake()
@@ -82,10 +95,7 @@ namespace PlatformGame
             Debug.Assert(Instance == null);
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            // TODO : int -> enum
-            int loadType = bSingleStage ? 2 : 0;
-            mContents = new Contents.Contents(loadType);
-            // TODOEND
+            mContents = new Contents.Contents(mLoaderType);
         }
 
         void Start()
@@ -103,23 +113,24 @@ namespace PlatformGame
                     return;
                 }
 
-                mLastSwapTime = Time.time;
                 var map = ActionKey.GetKeyDownMap();
                 if (!map[SWAP])
                 {
                     return;
                 }
-
                 SwapCharacter();
+
+                mLastSwapTime = Time.time;
                 // TODOEND
             }
             else
             {
                 if (mContents.State == WorkState.Ready)
                 {
-                    OnLoadedScene();
+                    StartGame();
                 }
             }
         }
+
     }
 }

@@ -3,6 +3,13 @@ using UnityEngine;
 
 namespace PlatformGame.Contents
 {
+    public enum LoaderType
+    {
+        StageLoader,
+        CubeLoader,
+        LevelLoader
+    }
+
     public class Contents
     {
         public static Contents Instance { get; private set; }
@@ -10,11 +17,11 @@ namespace PlatformGame.Contents
         public WorkState State => mLoader.State;
         ILevelLoader mLoader;
 
-        public Contents(int loadType)
+        public Contents(LoaderType type)
         {
             Debug.Assert(Instance == null);
             Instance = this;
-            SetLoaderType(loadType);
+            SetLoaderType(type);
         }
 
         public void LoadNextLevel()
@@ -22,26 +29,25 @@ namespace PlatformGame.Contents
             mLoader.LoadNext();
         }
 
-        public void SetLoaderType(int i)
+        [VisibleEnum(typeof(LoaderType))]
+        public void SetLoaderType(LoaderType type)
         {
-            switch (i)
+            switch (type)
             {
-                case 0:
+                case LoaderType.StageLoader:
                     mLoader = new StageLoader();
                     break;
-                case 1:
-                    mLoader = GameObject.FindObjectOfType<CubeLoader>();
+                case LoaderType.CubeLoader:
+                    mLoader = Object.FindObjectOfType<CubeLoader>();
                     Debug.Assert(mLoader != null);
                     break;
-                default:
+                case LoaderType.LevelLoader:
                     mLoader = new LevelLoader();
                     break;
+                default:
+                    Debug.Assert(false, $"Undefined value : {type}");
+                    break;
             }
-        }
-
-        public void SetLoader(ILevelLoader loader)
-        {
-            mLoader = loader;
         }
     }
 }

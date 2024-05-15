@@ -19,8 +19,11 @@ namespace PlatformGame.Contents
 
         public StageLoader()
         {
+            // TODO : 래핑
             Stages = Resources.Load<StageList>("StageLevels");
             Debug.Assert(Stages);
+            // TODOEND
+            
             Debug.Assert(Stages.Names.Count > 0);
 
             mLoadingWindow = UIWindowContainer.GetLoadingWindow();

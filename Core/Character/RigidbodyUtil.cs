@@ -7,10 +7,11 @@ namespace PlatformGame.Tool
     {
         public static bool IsGrounded(Rigidbody rigid)
         {
-            var origin = rigid.transform.position;
+            var transform = rigid.transform;
+            var origin = transform.position;
             origin.y += 0.5f;
-            var hitAll = Physics.BoxCastAll(origin, Vector3.one * 0.25f, Vector3.down, rigid.transform.rotation, 0.5f);
-            var hitsExceptForMyself = hitAll.Where(x => !x.transform.Equals(rigid.transform));
+            var hitAll = Physics.BoxCastAll(origin, Vector3.one * 0.25f, Vector3.down, transform.rotation, 0.5f);
+            var hitsExceptForMyself = hitAll.Where(x => !x.transform.Equals(rigid.transform)).ToList();
 
 #if DEVELOPMENT
             if (hitsExceptForMyself.Any())

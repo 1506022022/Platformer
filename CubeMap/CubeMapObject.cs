@@ -1,25 +1,12 @@
-using PlatformGame.Character.Combat;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace PlatformGame.Character
 {
-    [Serializable]
-    public struct CubMapChange
-    {
-        public List<AbilityActionPair> Abilities;
-        public UnityEvent ChangeEvent;
-    }
-
     public class CubeMapObject : MonoBehaviour
     {
-        public static List<CubeMapObject> Objects
-        {
-            get;
-            private set;
-        } = new();
+        public static List<CubeMapObject> Objects { get; private set; } = new();
 
         public UnityEvent ForwardChange;
         public UnityEvent BackwardChange;
@@ -52,7 +39,7 @@ namespace PlatformGame.Character
                     change = DownChange;
                     break;
                 default:
-                    Debug.Assert(false, $"���ǵ��� ���� �� : {nameof(CubeMapState)}, {state}.");
+                    Debug.Assert(false, $"Undefined value : {nameof(CubeMapState)}, {state}.");
                     break;
             }
 

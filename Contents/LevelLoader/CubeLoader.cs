@@ -13,6 +13,7 @@ namespace PlatformGame.Contents.Loader
         void Awake()
         {
             Debug.Assert(mCubeController != null);
+            mCubeController.SetActive(false);
         }
 
         void Update()
@@ -27,7 +28,7 @@ namespace PlatformGame.Contents.Loader
             {
                 return;
             }
-            
+
             State = WorkState.Ready;
             mCubeController.SetActive(false);
         }

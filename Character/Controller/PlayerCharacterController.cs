@@ -1,64 +1,75 @@
 using PlatformGame.Character.Combat;
 using PlatformGame.Input;
+using PlatformGame.Pipeline;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace PlatformGame.Character.Controller
 {
     [Serializable]
-    public class AbilityKey
+    public class ActionDataKeyPair
     {
         public string Key;
-        public AbilityData Ability;
+        public ActionData ActionData;
     }
 
-    public class PlayerCharacterController : CharacterController
+    public class PlayerCharacterController : MonoBehaviour
     {
-        public PlayerCharacter PlayerCharacter
+        [FormerlySerializedAs("InputMap")]
+        [HideInInspector] public List<ActionDataKeyPair> InputMap;
+        [FormerlySerializedAs("BeforeTarget")]
+        [HideInInspector] public Character BeforeTarget;
+        public UnityEvent<ActionDataKeyPair> InputEvents;
+        public bool IsActive
         {
-            get
-            {
-                Debug.Assert(Target, $"{gameObject.name}에 캐릭터가 할당되지 않았습니다.");
-                return Target as PlayerCharacter;
-            }
+            get; private set;
         }
+        public Character ControlledCharacter;
+        Dictionary<string, ActionData> mInputMap;
+        Pipeline<ActionDataKeyPair> mInputPipeline;
 
-        public UnityEvent<string, AbilityData> KeyInputEvent;
-        [HideInInspector] public List<AbilityKey> EditorInputMap;
-        [HideInInspector] public PlayerCharacter BeforeTarget;
-        Dictionary<string, AbilityData> mInputMap;
-
-        public override void SetActive(bool able)
+        public void SetActive(bool able)
         {
-            base.SetActive(able);
+            IsActive = able;
             FocusOn(able);
         }
 
-        public void SetAbilityKeys(List<AbilityKey> abilityKeys)
+        void SetInputAction(List<ActionDataKeyPair> actionKeys)
         {
-            mInputMap = new Dictionary<string, AbilityData>();
-            foreach (var item in abilityKeys)
+            mInputMap = new Dictionary<string, ActionData>();
+            foreach (var item in actionKeys)
             {
-                Debug.Assert(!mInputMap.ContainsKey(item.Key), $"중복된 요소 : {item.Key}");
-                mInputMap.Add(item.Key, item.Ability);
+                Debug.Assert(!mInputMap.ContainsKey(item.Key), $"duplicate elements : {item.Key}");
+                mInputMap.Add(item.Key, item.ActionData);
             }
+        }
+
+        void DoCommand(ActionDataKeyPair input)
+        {
+            var actionID = input.ActionData.ID;
+            ControlledCharacter.DoAction(actionID);
         }
 
         void FocusOn(bool on)
         {
-            if (!PlayerCharacter.UI)
+            if (!ControlledCharacter.UI)
             {
                 return;
             }
 
-            PlayerCharacter.UI.SetActive(on);
+            ControlledCharacter.UI.SetActive(on);
         }
 
         void Awake()
         {
-            SetAbilityKeys(EditorInputMap);
+            SetInputAction(InputMap);
+
+            mInputPipeline = Pipelines.Instance.PlayerCharacterControllerPipeline;
+            mInputPipeline.InsertPipe(DoCommand);
+            mInputPipeline.InsertPipe((x) => InputEvents.Invoke(x));
         }
 
         void Update()
@@ -69,19 +80,18 @@ namespace PlatformGame.Character.Controller
             }
 
             var map = ActionKey.GetKeyDownMap();
-
-            foreach (var input_Ability in mInputMap)
+            foreach (var input_Action in mInputMap)
             {
-                var input = map[input_Ability.Key];
+                var input = map[input_Action.Key];
                 if (!input)
                 {
                     continue;
                 }
-                
-                var abilityID = input_Ability.Value.ID;
-                PlayerCharacter.DoAction(abilityID);
-                KeyInputEvent.Invoke(input_Ability.Key, input_Ability.Value);
+
+                mInputPipeline.Invoke(new ActionDataKeyPair()
+                    { Key = input_Action.Key, ActionData = input_Action.Value });
             }
         }
+        
     }
 }

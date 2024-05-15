@@ -1,6 +1,7 @@
 using PlatformGame.Character.Controller;
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace PlatformGame.Character
 {
@@ -16,11 +17,17 @@ namespace PlatformGame.Character
 
     public class CubeMap : MonoBehaviour
     {
-        public static CubeMap Instance { get; private set; }
-
+        static CubeMap mInstance;
+        public static CubeMap Instance
+        {
+            get
+            {
+                Debug.Assert(mInstance, $"CubeMap not unique : {mInstance.name}");
+                return mInstance;
+            }
+            private set  =>mInstance = value;
+        }
         [SerializeField] CubeMapState mState;
-        [SerializeField] PlayerCharacterController cubeMapController;
-
         public CubeMapState State
         {
             get => mState;
@@ -51,7 +58,6 @@ namespace PlatformGame.Character
         void Awake()
         {
             Instance = this;
-            cubeMapController.KeyInputEvent.AddListener((a, b) => OnChanging());
         }
     }
 }

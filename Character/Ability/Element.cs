@@ -1,35 +1,30 @@
 using PlatformGame.Character.Collision;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace PlatformGame.Character.Combat
 {
-    [CreateAssetMenu(menuName = "Custom/AbilityAction/Element")]
-    public class Element : AbilityAction
+    [CreateAssetMenu(menuName = "Custom/Ability/Element")]
+    public class Element : Ability
     {
         public string TargetTag = "Fire";
-        public UnityEvent<CollisionData> CollisionEvent;
 
-        public override void Action(CollisionData collision)
+        public override void UseAbility(CollisionData collision)
         {
             var attacker = collision.Attacker;
-
             if (!attacker.CompareTag(TargetTag))
             {
                 return;
             }
 
-            CollisionEvent.Invoke(collision);
+            var victim = collision.Victim;
+            Burn(victim, attacker);
         }
 
-        public void Burn(CollisionData collision)
+        public static void Burn(Character victim, Character attacker)
         {
-            var attacker = collision.Attacker;
-            var victim = collision.Victim;
-
             var obj = Instantiate(attacker);
             obj.transform.position = victim.transform.position;
-            Destroy(victim.gameObject);
+            Combat.Destroy.DestroyTo(victim.gameObject);
         }
         
     }

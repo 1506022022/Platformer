@@ -1,52 +1,70 @@
+using PlatformGame.Pipeline;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace PlatformGame.Character.Collision
 {
-    public delegate void HitBoxColliderCallback(HitBoxCollider subject);
-
     public delegate void HitEvent(CollisionData collision);
 
     public struct CollisionData
     {
         public Character Victim;
         public Character Attacker;
+        public HitBoxCollider Subject;
     }
 
     [RequireComponent(typeof(Collider))]
     [RequireComponent(typeof(Rigidbody))]
     public class HitBoxCollider : MonoBehaviour
     {
-        static readonly int LOG_LAYER = 0;
-        static readonly int LAYER_EVENT = 1;
-        static readonly int LAYER_EVENT_FIXED = 2;
         public float HitDelay;
+        [SerializeField] HitBoxFlag mHitBoxFlag;
+        public HitBoxFlag HitBoxFlag => mHitBoxFlag;
         public Character Actor;
-        public HitBoxFlag HitBoxFlag;
-        public HitBoxColliderCallback HitCallback;
 
-        public bool IsDelay
-        {
-            get
-            {
-                return Time.time < mLastHitTime + HitDelay;
-            }
-        }
+        public bool IsDelay => Time.time < mLastHitTime + HitDelay;
 
         float mLastHitTime;
-        readonly HitEventPipeline mHitPipeline = new HitEventPipeline(3);
         [SerializeField] UnityEvent<CollisionData> mFixedHitEvent;
+        HitEvent mAttackEvent;
+        HitEvent mHitCallback;
+        Pipeline<CollisionData> mHitPipeline;
+
+        public void AddCallback(HitEvent callback)
+        {
+            mHitCallback += callback;
+        }
 
         public void SetHitEvent(HitEvent hitEvent)
         {
-            mHitPipeline.RemoveAllProcessTo(LAYER_EVENT);
-            mHitPipeline.AddProcessTo(LAYER_EVENT, hitEvent);
+            mAttackEvent = hitEvent;
         }
 
         public void StartDelay()
         {
             mLastHitTime = Time.time;
+        }
+
+        void InvokeHitCallback(CollisionData collision)
+        {
+            mHitCallback?.Invoke(collision);
+        }
+
+        void InvokeHitEvent(CollisionData collision)
+        {
+            mAttackEvent?.Invoke(collision);
+        }
+
+        void InvokeFixedHitEvent(CollisionData collision)
+        {
+            mFixedHitEvent.Invoke(collision);
+        }
+
+        void DoHit(CollisionData collision)
+        {
+            StartDelay();
+            mHitPipeline.Invoke(collision);
         }
 
         void OnTriggerStay(Collider other)
@@ -76,34 +94,29 @@ namespace PlatformGame.Character.Collision
             var collsion = new CollisionData()
             {
                 Attacker = attacker.Actor,
-                Victim = victim.Actor
+                Victim = victim.Actor,
+                Subject = this
             };
 
             attacker.DoHit(collsion);
             victim.DoHit(collsion);
         }
 
-        void DoHit(CollisionData collision)
-        {
-            StartDelay();
-            HitCallback?.Invoke(this);
-            mHitPipeline.Invoke(collision);
-        }
-
-#if UNITY_EDITOR
         void Start()
         {
-            // var hitLog = HitBoxFlag.IsAttacker() ? "공격" : "피격";
-            // mHitPipeline.AddProcessTo(LOG_LAYER, (collision) => { Debug.Log($"{Actor.name}가 {hitLog}. {collision.Attacker.name}->{collision.Victim.name}."); });
-            Debug.Assert(GetComponents<Collider>().Any(x => x.isTrigger), $"Not found Trigger in {gameObject.name}");
-            Debug.Assert(GetComponent<Rigidbody>().isKinematic, $"Object : {gameObject.name}");
-            Debug.Assert(Actor, $"Object : {gameObject.name}");
+            Debug.Assert(Actor, $"Actor not found : {gameObject.name}");
+            Debug.Assert(GetComponents<Collider>().Any(x => x.isTrigger), $"Trigger not found : {gameObject.name}");
+            Debug.Assert(GetComponent<Rigidbody>().isKinematic, $"Not set Kinematic : {gameObject.name}");
         }
-#endif
+
         void Awake()
         {
-            mLastHitTime = Time.time + 0.5f;
-            mHitPipeline.AddProcessTo(LAYER_EVENT_FIXED, (collision) => mFixedHitEvent.Invoke(collision));
+            mLastHitTime = Time.time - HitDelay + 0.1f;
+
+            mHitPipeline = Pipelines.Instance.HitBoxColliderPipeline;
+            mHitPipeline.InsertPipe(InvokeHitEvent);
+            mHitPipeline.InsertPipe(InvokeFixedHitEvent);
+            mHitPipeline.InsertPipe(InvokeHitCallback);
         }
     }
 }

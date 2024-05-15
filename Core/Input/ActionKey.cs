@@ -6,15 +6,15 @@ namespace PlatformGame.Input
 {
     public static class ActionKey
     {
-        public static readonly string UP = "Up";
-        public static readonly string DOWN = "Down";
-        public static readonly string RIGHT = "Right";
-        public static readonly string LEFT = "Left";
-        public static readonly string JUMP = "Jump";
-        public static readonly string SWAP = "Tab";
-        public static readonly string ATTACK = "Attack";
-        public static readonly string GUARD = "Guard";
-        public static readonly string PORTAL_JUMP = "PortalJump";
+        public const string UP = "Up";
+        public const string DOWN = "Down";
+        public const string RIGHT = "Right";
+        public const string LEFT = "Left";
+        public const string JUMP = "Jump";
+        public const string SWAP = "Tab";
+        public const string ATTACK = "Attack";
+        public const string GUARD = "Guard";
+        public const string PORTAL_JUMP = "PortalJump";
 
         static readonly Dictionary<string, bool> mKeyDownMap = new Dictionary<string, bool>
         {
@@ -57,6 +57,5 @@ namespace PlatformGame.Input
 
             return mKeyDownMap;
         }
-        
     }
 }

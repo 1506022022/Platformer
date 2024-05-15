@@ -12,6 +12,6 @@ namespace PlatformGame.Character.Movement
         public virtual void StopAction(Rigidbody rigid, MonoBehaviour coroutine)
         {
         }
-        
+
     }
 }

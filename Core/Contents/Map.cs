@@ -30,7 +30,7 @@ namespace PlatformGame.Contents
             mInstance = this;
 #if DEVELOPMENT
             var maps = FindObjectsOfType<Map>();
-            Debug.Assert(maps.Count() == 1, $"Map is not Unique : {maps.Count()}");
+            Debug.Assert(maps.Count() == 1, $"Not unique : {gameObject.name}, {maps.Count()}");
 #endif
         }
     }

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class LoadingWindow : MonoBehaviour
 {
     [SerializeField] Slider mProgressBar;
+
     public Slider ProgressBar
     {
         get
@@ -12,12 +13,11 @@ public class LoadingWindow : MonoBehaviour
             Debug.Assert(mProgressBar);
             return mProgressBar;
         }
-        private set
-        {
-            mProgressBar = value;
-        }
+        private set { mProgressBar = value; }
     }
+
     [SerializeField] TextMeshProUGUI mLoadSceneNameText;
+
     public TextMeshProUGUI LoadSceneNameText
     {
         get
@@ -25,11 +25,9 @@ public class LoadingWindow : MonoBehaviour
             Debug.Assert(mLoadSceneNameText);
             return mLoadSceneNameText;
         }
-        private set
-        {
-            mLoadSceneNameText = value;
-        }
+        private set { mLoadSceneNameText = value; }
     }
+
     public MonoBehaviour CoroutineRunner => this;
 
     public void ShowWindow(bool show)
@@ -37,6 +35,7 @@ public class LoadingWindow : MonoBehaviour
         Debug.Assert(FindObjectsOfType<LoadingWindow>(true).Length == 1);
         gameObject.SetActive(show);
     }
+
     void Awake()
     {
         DontDestroyOnLoad(gameObject);

@@ -1,37 +1,80 @@
-using PlatformGame.Character.Collision;
+﻿using PlatformGame.Character.Collision;
+using PlatformGame.Character.Combat;
 using PlatformGame.Character.Movement;
-using PlatformGame.Tool;
-using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace PlatformGame.Character
 {
-    [RequireComponent(typeof(HitBox))]
-    [RequireComponent(typeof(Rigidbody))]
-    [RequireComponent(typeof(MovementComponent))]
     public class Character : MonoBehaviour
     {
-        [Header("[Character]")]
-#if UNITY_EDITOR
-        [SerializeField]
-#endif
+        public bool IsAction => mAgent.InAction;
         CharacterState mState;
-
         public CharacterState State
         {
             get => mState;
-            protected set => mState = value;
+            set
+            {
+                if (mState != value)
+                {
+                    OnChangedState.Invoke(value);
+                }
+                mState = value;
+            }
         }
 
-        public HitBox HitBox { get; private set; }
-        public Rigidbody Rigid { get; private set; }
-        public MovementComponent Movement { get; private set; }
+        [Header("References")]
+        [SerializeField] GameObject mUI;
+        [SerializeField] HitBoxGroup mHitBox;
+        public GameObject UI => mUI;
+        [SerializeField] Rigidbody mRigid;
+        public Rigidbody Rigid => mRigid;
+        [SerializeField] MovementComponent mMovement;
+        public MovementComponent Movement => mMovement;
+        [SerializeField] Transform mModel;
+        public Transform Model => mModel;
 
-        protected virtual void Awake()
+
+        [Header("Controls")]
+        [SerializeField] AbilityAgent mAgent;
+        [SerializeField] ActionDataList mHasAbilities;
+        public ActionDataList HasAbilities => mHasAbilities;
+        [SerializeField] UnityEvent<CharacterState> mOnChangedState;
+        public UnityEvent<CharacterState> OnChangedState => mOnChangedState;
+
+
+        public void DoAction(uint actionID)
         {
-            HitBox = GetComponent<HitBox>();
-            Rigid = GetComponent<Rigidbody>();
-            Movement = GetComponent<MovementComponent>();
+            mHasAbilities.Library.TryGetValue(actionID, out var action);
+            Debug.Assert(action, $"{actionID}가 {gameObject.name}의 능력으로 등록되지 않음.");
+
+            if (!StateCheck.Equals(State, action.AllowedState))
+            {
+                return;
+            }
+            State = action.BeState;
+            mAgent.UseAbility(action);
+
+            if (!action.Movement)
+            {
+                return;
+            }
+            Movement.PlayMovement(action.Movement);
+        }
+
+        public void SetAttackDelayState()
+        {
+            State = CharacterState.AttackDelay;
+        }
+
+        void Awake()
+        {
+            Debug.Assert(mHitBox, $"HitBox reference not found : {gameObject.name}");
+            Debug.Assert(Rigid, $"Rigidbody reference not found : {gameObject.name}");
+            Debug.Assert(mMovement, $"Movement reference not found : {gameObject.name}");
+            Debug.Assert(mModel, $"Model reference not found : {gameObject.name}");
+            mAgent = new AbilityAgent(mHitBox);
+            OnChangedState.Invoke(State);
         }
 
     }

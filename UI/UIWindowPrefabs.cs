@@ -9,15 +9,17 @@ public class UIWindowPrefabs : ScriptableObject
 
 public static class UIWindowContainer
 {
-    static UIWindowPrefabs mPrefabs = Resources.Load<UIWindowPrefabs>("UIWindows");
+    static readonly UIWindowPrefabs mPrefabs = Resources.Load<UIWindowPrefabs>("UIWindows");
     static LoadingWindow mLoadingWindowInstance;
+
     public static LoadingWindow GetLoadingWindow()
     {
         Debug.Assert(mPrefabs);
         if (mLoadingWindowInstance == null)
         {
-            mLoadingWindowInstance = GameObject.Instantiate(mPrefabs.LoadingWindowPrefab);
+            mLoadingWindowInstance = Object.Instantiate(mPrefabs.LoadingWindowPrefab);
         }
+
         return mLoadingWindowInstance;
     }
 }

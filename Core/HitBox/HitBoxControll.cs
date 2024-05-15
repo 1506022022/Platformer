@@ -1,6 +1,5 @@
 using PlatformGame.Character;
 using PlatformGame.Character.Collision;
-using PlatformGame.Character.Combat;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +25,7 @@ public class HitBoxControll
             Dictionary<HitBoxCollider, string> duplicates = new();
             foreach (var pair in pairs)
             {
-                Debug.Assert(!duplicates.ContainsKey(pair.Collider), $"��ø�� �� : {pair.Collider.name}");
+                Debug.Assert(!duplicates.ContainsKey(pair.Collider), $"Duplicate value : {pair.Collider.name}");
                 duplicates.Add(pair.Collider, pair.Name);
             }
 #endif

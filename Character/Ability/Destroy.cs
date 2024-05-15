@@ -1,28 +1,20 @@
 using PlatformGame.Character.Collision;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace PlatformGame.Character.Combat
 {
-    [CreateAssetMenu(menuName = "Custom/AbilityAction/Destroy")]
-    public class Destroy : AbilityAction
+    [CreateAssetMenu(menuName = "Custom/Ability/Destroy")]
+    public class Destroy : Ability
     {
-        public UnityEvent<CollisionData> DestroyEvent;
-
-        public override void Action(CollisionData collision)
+        public override void UseAbility(CollisionData collision)
         {
-            DestroyEvent.Invoke(collision);
+            var victim = collision.Victim;
+            DestroyTo(victim.gameObject);
         }
 
-        public void DestroyVictim(CollisionData collision)
+        public static void DestroyTo(GameObject gameObject)
         {
-            GameObject.Destroy(collision.Victim.gameObject);
+            GameObject.Destroy(gameObject);
         }
-
-        public void DestroyAttacker(CollisionData collision)
-        {
-            GameObject.Destroy(collision.Attacker.gameObject);
-        }
-        
     }
 }

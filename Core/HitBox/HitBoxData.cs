@@ -10,9 +10,8 @@ namespace PlatformGame.Character.Collision
     {
         [SerializeField] List<string> mHitBoxNames;
         [SerializeField] HitBoxFlags mFlags;
-        [SerializeField] bool mUseSelfHitBox;
         public List<string> Filter => mHitBoxNames.ToList();
         public HitBoxFlags Flags => mFlags;
-        public bool UseSelfHitBox => mUseSelfHitBox;
+        public bool UseHitBox => Filter.Count > 0;
     }
 }
