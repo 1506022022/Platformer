@@ -6,8 +6,8 @@
 - Contents는 설정된 타입에 따른 형태로 Contents.LoadNextLevel()을 수행합니다.
 
 ![image](https://github.com/1506022022/Platformer/assets/88864717/39c3ea28-e56f-48ff-9fad-eba48031be68)
-- [Portal.cs](https://github.com/1506022022/Platformer/blob/main/Contents/Portal/Portal.cs)   
 - [GoalPortal.cs](https://github.com/1506022022/Platformer/blob/main/Contents/Portal/GoalPortal.cs)   
+- [Portal.cs](https://github.com/1506022022/Platformer/blob/main/Contents/Portal/Portal.cs)   
 - [Contents.cs](https://github.com/1506022022/Platformer/blob/main/Core/Contents/Contents.cs)   
 - [GameManager.cs](https://github.com/1506022022/Platformer/blob/main/GameManager/GameManager.cs)   
 ***
