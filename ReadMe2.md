@@ -24,7 +24,12 @@
 - [MovementComponent.cs](https://github.com/1506022022/Platformer/blob/main/Character/Movement/MovementComponent.cs)   
 - [MovementAction.cs](https://github.com/1506022022/Platformer/blob/main/Character/Movement/MovementAction.cs)   
 - [CharacterAnimation.cs](https://github.com/1506022022/Platformer/blob/main/Core/Character/Animation/CharacterAnimation.cs)   
-
+***
+**충돌 처리 로직**
+- 충돌은 공격의 주체와 피격의 주체의 정보를 가지고 처리합니다.
+- 충돌이 발생하면 파이프라인을 통해 필수 이벤트와 추가된 이벤트를 실행합니다.
+  - 필수 이벤트에는 부여된 Ability를 발동하는 AttackEvent와, 충돌 사실을 알려주는 HitCallback, 유니티 에디터에서 할당하는 FixedHitEvent가 있습니다.
+  - 추가된 이벤트에는 디버그에 사용되는 로그출력 등의 기능이 포함됩니다. 
 ![image](https://github.com/1506022022/Platformer/assets/88864717/5126588d-1710-4e26-b3d1-21599db23039)
 - [HitBoxCollider.cs](https://github.com/1506022022/Platformer/blob/main/Core/HitBox/HitBoxCollider.cs)   
 - [Ability.cs](https://github.com/1506022022/Platformer/blob/main/Core/Combat/CombatAction/Ability.cs)   
