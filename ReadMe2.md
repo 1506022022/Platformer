@@ -1,6 +1,9 @@
 # 코드리뷰
 **게임 로드 로직**   
 - 기본적으로 GameMaanger의 Awake 이벤트 때 GameManager.LoadGame()을 실행합니다.
+- 플레이중 GoaltPortal에 도착하면 Contents.SetLoaderType()을 통해 로딩방식을 결정하고 GameManager.LoadGame()을 실행합니다.
+- GameManager는 GameManager.Loadgame()이 호출되면 Contents.LoadNextLevel()을 실행합니다.
+- Contents는 설정된 타입에 따른 형태로 Contents.LoadNextLevel()을 수행합니다.
 
 ![image](https://github.com/1506022022/Platformer/assets/88864717/39c3ea28-e56f-48ff-9fad-eba48031be68)
 - [Portal.cs](https://github.com/1506022022/Platformer/blob/main/Contents/Portal/Portal.cs)   
