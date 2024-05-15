@@ -13,6 +13,7 @@
 - [MovementAction.cs](https://github.com/1506022022/Platformer/blob/main/Character/Movement/MovementAction.cs)   
 - [CharacterAnimation.cs](https://github.com/1506022022/Platformer/blob/main/Core/Character/Animation/CharacterAnimation.cs)   
 ***
+
 **충돌 처리 로직**
 - 충돌은 공격의 주체와 피격의 주체의 정보를 가지고 처리합니다.
 - 충돌이 발생하면 파이프라인을 통해 필수 이벤트와 추가된 이벤트를 실행합니다.
@@ -23,6 +24,7 @@
 - [HitBoxCollider.cs](https://github.com/1506022022/Platformer/blob/main/Core/HitBox/HitBoxCollider.cs)   
 - [Ability.cs](https://github.com/1506022022/Platformer/blob/main/Core/Combat/CombatAction/Ability.cs)   
 ***
+
 **능력**
 - Ability 클래스는 ScriptableObject를 상속받았습니다. 메서드들이 자원으로 사용됩니다.
 - 능력은 충돌 처리 로직에서 생성된 CollisionData에서 공격의 주체와 피격의 주체를 읽어와 수행됩니다.
@@ -31,7 +33,9 @@
   - 두번째 단계로는 추가적인 기능들이 실행됩니다. 예를 들어 데미지를 처리하는 기능이 추가될 수 있습니다.
 
 ![image](https://github.com/1506022022/Platformer/assets/88864717/de8b605f-fe84-4db5-8d1d-8fde1c65974e)
-- [Ability.cs](https://github.com/1506022022/Platformer/blob/main/Core/Combat/CombatAction/Ability.cs)   
+- [Ability.cs](https://github.com/1506022022/Platformer/blob/main/Core/Combat/CombatAction/Ability.cs)
+***
+
 **게임 로드 로직**   
 - 기본적으로 GameMaanger의 Awake 이벤트 때 GameManager.LoadGame()을 실행합니다.
 - 플레이중 GoaltPortal에 도착하면 Contents.SetLoaderType()을 통해 로딩방식을 결정하고 GameManager.LoadGame()을 실행합니다.
@@ -43,4 +47,3 @@
 - [Portal.cs](https://github.com/1506022022/Platformer/blob/main/Contents/Portal/Portal.cs)   
 - [Contents.cs](https://github.com/1506022022/Platformer/blob/main/Core/Contents/Contents.cs)   
 - [GameManager.cs](https://github.com/1506022022/Platformer/blob/main/GameManager/GameManager.cs)   
-***
