@@ -29,10 +29,18 @@
 - 충돌은 공격의 주체와 피격의 주체의 정보를 가지고 처리합니다.
 - 충돌이 발생하면 파이프라인을 통해 필수 이벤트와 추가된 이벤트를 실행합니다.
   - 필수 이벤트에는 부여된 Ability를 발동하는 AttackEvent와, 충돌 사실을 알려주는 HitCallback, 유니티 에디터에서 할당하는 FixedHitEvent가 있습니다.
-  - 추가된 이벤트에는 디버그에 사용되는 로그출력 등의 기능이 포함됩니다. 
+  - 추가된 이벤트에는 디버그에 사용되는 로그출력 등의 기능이 포함됩니다.
+
 ![image](https://github.com/1506022022/Platformer/assets/88864717/5126588d-1710-4e26-b3d1-21599db23039)
 - [HitBoxCollider.cs](https://github.com/1506022022/Platformer/blob/main/Core/HitBox/HitBoxCollider.cs)   
 - [Ability.cs](https://github.com/1506022022/Platformer/blob/main/Core/Combat/CombatAction/Ability.cs)   
+***
+**능력**
+- Ability 클래스는 ScriptableObject를 상속받았습니다. 메서드들이 자원으로 사용됩니다.
+- 능력은 충돌 처리 로직에서 생성된 CollisionData에서 공격의 주체와 피격의 주체를 읽어와 수행됩니다.
+- Ability.DoActivation()가 호출되면 파이프라인이 실행됩니다.
+  - 파이프라인의 첫 단계로 필수적인 기능들이 실행됩니다.
+  - 두번째 단계로는 추가적인 기능들이 실행됩니다. 예를 들어 데미지를 처리하는 기능이 추가될 수 있습니다.
 
 ![image](https://github.com/1506022022/Platformer/assets/88864717/de8b605f-fe84-4db5-8d1d-8fde1c65974e)
 - [Ability.cs](https://github.com/1506022022/Platformer/blob/main/Core/Combat/CombatAction/Ability.cs)   
