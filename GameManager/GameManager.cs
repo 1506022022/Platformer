@@ -23,7 +23,7 @@ namespace PlatformGame
             get
             {
                 Debug.Assert(mJoinCharactersController.Count > 0 && mJoinCharactersController.All(x => x),
-                    $"{gameObject.name}에 컨트롤러가 할당되지 않음.");
+                    $"{gameObject.name}is not assigned a controller.");
                 return mJoinCharactersController;
             }
             set => mJoinCharactersController = value;
@@ -34,19 +34,6 @@ namespace PlatformGame
         [Header("[Debug]")]
         [SerializeField, ReadOnly(false)] LoaderType mLoaderType;
         [SerializeField, ReadOnly(false)] bool bGameStart;
-
-        void ReplaceControlWith(PlayerCharacterController controller)
-        {
-            mController?.SetActive(false);
-            mController = controller;
-            mController.SetActive(true);
-        }
-
-        void PauseGame()
-        {
-            bGameStart = false;
-            ReleaseController();
-        }
 
         public void ExitGame()
         {
@@ -65,10 +52,23 @@ namespace PlatformGame
             ControlDefaultCharacter();
         }
 
+        void PauseGame()
+        {
+            bGameStart = false;
+            ReleaseController();
+        }
+
         void ControlDefaultCharacter()
         {
             var defaultCharacter = JoinCharactersController.First();
             ReplaceControlWith(defaultCharacter);
+        }
+
+        void ReplaceControlWith(PlayerCharacterController controller)
+        {
+            mController?.SetActive(false);
+            mController = controller;
+            mController.SetActive(true);
         }
 
         void ReleaseController()

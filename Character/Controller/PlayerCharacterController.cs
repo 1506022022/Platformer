@@ -47,7 +47,7 @@ namespace PlatformGame.Character.Controller
             }
         }
 
-        void DoCommand(ActionDataKeyPair input)
+        void EnterCommand(ActionDataKeyPair input)
         {
             var actionID = input.ActionData.ID;
             ControlledCharacter.DoAction(actionID);
@@ -68,7 +68,7 @@ namespace PlatformGame.Character.Controller
             SetInputAction(InputMap);
 
             mInputPipeline = Pipelines.Instance.PlayerCharacterControllerPipeline;
-            mInputPipeline.InsertPipe(DoCommand);
+            mInputPipeline.InsertPipe(EnterCommand);
             mInputPipeline.InsertPipe((x) => InputEvents.Invoke(x));
         }
 

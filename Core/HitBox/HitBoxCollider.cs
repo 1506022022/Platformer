@@ -51,7 +51,7 @@ namespace PlatformGame.Character.Collision
             mHitCallback?.Invoke(collision);
         }
 
-        void InvokeHitEvent(CollisionData collision)
+        void InvokeAttackEvent(CollisionData collision)
         {
             mAttackEvent?.Invoke(collision);
         }
@@ -114,7 +114,7 @@ namespace PlatformGame.Character.Collision
             mLastHitTime = Time.time - HitDelay + 0.1f;
 
             mHitPipeline = Pipelines.Instance.HitBoxColliderPipeline;
-            mHitPipeline.InsertPipe(InvokeHitEvent);
+            mHitPipeline.InsertPipe(InvokeAttackEvent);
             mHitPipeline.InsertPipe(InvokeFixedHitEvent);
             mHitPipeline.InsertPipe(InvokeHitCallback);
         }
