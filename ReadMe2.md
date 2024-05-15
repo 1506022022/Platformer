@@ -11,7 +11,10 @@
 - [Contents.cs](https://github.com/1506022022/Platformer/blob/main/Core/Contents/Contents.cs)   
 - [GameManager.cs](https://github.com/1506022022/Platformer/blob/main/GameManager/GameManager.cs)   
 ***
-**캐릭터 컨트롤 로직**
+**캐릭터 컨트롤 로직**   
+- 캐릭터는 DoAction을 통해 전달받은 데이터를 통해 Action을 수행합니다.
+- Action은 Ability, Movement, CharacterState 세가지의 동작으로 이루어져 있습니다.
+
 ![image](https://github.com/1506022022/Platformer/assets/88864717/6a16584f-4d81-4d02-924e-1053fd65dc7d)
 - [Controller.cs](https://github.com/1506022022/Platformer/blob/main/Character/Controller/PlayerCharacterController.cs)   
 - [Character.cs](https://github.com/1506022022/Platformer/blob/main/Core/Character/Character.cs)   
