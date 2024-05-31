@@ -1,7 +1,5 @@
-using PlatformGame.Character.Controller;
 using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace PlatformGame.Character
 {
@@ -25,7 +23,7 @@ namespace PlatformGame.Character
                 Debug.Assert(mInstance, $"CubeMap not unique : {mInstance.name}");
                 return mInstance;
             }
-            private set  =>mInstance = value;
+            private set => mInstance = value;
         }
         [SerializeField] CubeMapState mState;
         public CubeMapState State
@@ -59,5 +57,6 @@ namespace PlatformGame.Character
         {
             Instance = this;
         }
+
     }
 }

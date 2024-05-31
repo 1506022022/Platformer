@@ -1,6 +1,5 @@
 using PlatformGame.Character.Collision;
 using PlatformGame.Pipeline;
-using System;
 using UnityEngine;
 
 namespace PlatformGame.Character.Combat
@@ -9,19 +8,22 @@ namespace PlatformGame.Character.Combat
     {
         Pipeline<AbilityCollision> mPipeline;
 
-        public void DoActivation(CollisionData collision)
+        public void DoActivation(HitBoxCollision collision)
         {
             CreatePipeline();
-            mPipeline.Invoke(new AbilityCollision(collision, this));
+            var caster = collision.Subject.Actor;
+            var victim = collision.Victim == caster ? collision.Attacker : collision.Victim;
+            var abilityCollision = new AbilityCollision(caster, victim, this);
+            mPipeline.Invoke(abilityCollision);
         }
 
-        public abstract void UseAbility(CollisionData collision);
+        public abstract void UseAbility(AbilityCollision collision);
 
         // TODO : 검토
         void CreatePipeline()
         {
             mPipeline = Pipelines.Instance.AbilityPipeline;
-            mPipeline.InsertPipe((collision) => UseAbility(collision.Data));
+            mPipeline.InsertPipe((collision) => UseAbility(collision));
         }
         //
     }

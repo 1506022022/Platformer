@@ -6,27 +6,27 @@ namespace PlatformGame.Input
 {
     public static class ActionKey
     {
-        public const string UP = "Up";
-        public const string DOWN = "Down";
-        public const string RIGHT = "Right";
-        public const string LEFT = "Left";
-        public const string JUMP = "Jump";
-        public const string SWAP = "Tab";
-        public const string ATTACK = "Attack";
-        public const string GUARD = "Guard";
-        public const string PORTAL_JUMP = "PortalJump";
+        public const string KEY_UP = "Up";
+        public const string KEY_DOWN = "Down";
+        public const string KEY_RIGHT = "Right";
+        public const string KEY_LEFT = "Left";
+        public const string KEY_JUMP = "Jump";
+        public const string KEY_SWAP = "Tab";
+        public const string KEY_ATTACK = "Attack";
+        public const string KEY_GUARD = "Guard";
+        public const string KEY_PORTAL_JUMP = "PortalJump";
 
         static readonly Dictionary<string, bool> mKeyDownMap = new Dictionary<string, bool>
         {
-            { UP, false },
-            { DOWN, false },
-            { RIGHT, false },
-            { LEFT, false },
-            { JUMP, false },
-            { SWAP, false },
-            { ATTACK, false },
-            { GUARD, false },
-            { PORTAL_JUMP, false }
+            { KEY_UP, false },
+            { KEY_DOWN, false },
+            { KEY_RIGHT, false },
+            { KEY_LEFT, false },
+            { KEY_JUMP, false },
+            { KEY_SWAP, false },
+            { KEY_ATTACK, false },
+            { KEY_GUARD, false },
+            { KEY_PORTAL_JUMP, false }
         };
 
         static Dictionary<string, bool> KeyDownMap

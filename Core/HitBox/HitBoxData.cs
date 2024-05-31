@@ -9,9 +9,21 @@ namespace PlatformGame.Character.Collision
     public class HitBoxData
     {
         [SerializeField] List<string> mHitBoxNames;
-        [SerializeField] HitBoxFlags mFlags;
-        public List<string> Filter => mHitBoxNames.ToList();
-        public HitBoxFlags Flags => mFlags;
+        public List<string> Filter
+        {
+            get
+            {
+#if UNITY_EDITOR
+                List<string> duplicates = new();
+                foreach (var name in mHitBoxNames)
+                {
+                    Debug.Assert(!duplicates.Contains(name), $"Duplicate value : {name}");
+                    duplicates.Add(name);
+                }
+#endif
+                return mHitBoxNames.ToList();
+            }
+        }
         public bool UseHitBox => Filter.Count > 0;
     }
 }

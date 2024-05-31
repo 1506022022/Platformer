@@ -1,4 +1,3 @@
-using PlatformGame.Character;
 using PlatformGame.Character.Collision;
 using System;
 using System.Collections.Generic;
@@ -50,31 +49,10 @@ public class HitBoxControll
         }
     }
 
-    public void SyncDelay()
+    public HitBoxCollider GetColliderAs(string filter)
     {
-        if (!UseSyncDelay)
-        {
-            return;
-        }
-
-        foreach (var collider in Colliders)
-        {
-            collider.HitDelay = Delay;
-        }
-    }
-
-    public void SetActor(Character character)
-    {
-        foreach (var collider in Colliders)
-        {
-            collider.Actor = character;
-        }
-    }
-
-    public List<HitBoxCollider> GetCollidersAs(string x)
-    {
-        return Pairs.Where(c => c.Name.Equals(x))
-            .Select(c => c.Collider)
-            .ToList();
+        Debug.Assert(pairs.Any(x => x.Name.Equals(filter)), $"Values that are not registered in Pairs : {filter}");
+        var colliders = Pairs;
+        return colliders[colliders.FindIndex(x=>x.Name.Equals(filter))].Collider;
     }
 }

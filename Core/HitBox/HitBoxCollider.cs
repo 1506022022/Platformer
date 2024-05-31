@@ -5,102 +5,122 @@ using UnityEngine.Events;
 
 namespace PlatformGame.Character.Collision
 {
-    public delegate void HitEvent(CollisionData collision);
+    public delegate void HitEvent(HitBoxCollision collision);
 
-    public struct CollisionData
+    public struct HitBoxCollision
     {
         public Character Victim;
         public Character Attacker;
         public HitBoxCollider Subject;
     }
 
+    public interface IHitBox
+    {
+        public Character Actor { get; set; }
+        public bool IsDelay { get; }
+        public bool IsAttacker { get; set; }
+        public void DoHit(HitBoxCollision collision);
+    }
+
     [RequireComponent(typeof(Collider))]
     [RequireComponent(typeof(Rigidbody))]
-    public class HitBoxCollider : MonoBehaviour
+    public class HitBoxCollider : MonoBehaviour, IHitBox
     {
         public float HitDelay;
-        [SerializeField] HitBoxFlag mHitBoxFlag;
-        public HitBoxFlag HitBoxFlag => mHitBoxFlag;
-        public Character Actor;
-
+        [SerializeField] bool mbAttacker;
+        public bool IsAttacker
+        {
+            get => mbAttacker;
+            set => mbAttacker = value;
+        }
+        [SerializeField] Character mActor;
+        public Character Actor
+        {
+            get => mActor;
+            set => mActor = value;
+        }
+        [HideInInspector]
+        public UnityEvent<HitBoxCollision> HitCallback;
         public bool IsDelay => Time.time < mLastHitTime + HitDelay;
-
         float mLastHitTime;
-        [SerializeField] UnityEvent<CollisionData> mFixedHitEvent;
-        HitEvent mAttackEvent;
-        HitEvent mHitCallback;
-        Pipeline<CollisionData> mHitPipeline;
+        HitEvent mAbilityEvent;
+        Pipeline<HitBoxCollision> mHitPipeline;
+        [SerializeField] UnityEvent<HitBoxCollision> mEffectEvent;
 
-        public void AddCallback(HitEvent callback)
-        {
-            mHitCallback += callback;
-        }
-
-        public void SetHitEvent(HitEvent hitEvent)
-        {
-            mAttackEvent = hitEvent;
-        }
 
         public void StartDelay()
         {
             mLastHitTime = Time.time;
         }
 
-        void InvokeHitCallback(CollisionData collision)
+        public void SetAbilityEvent(HitEvent hitEvent)
         {
-            mHitCallback?.Invoke(collision);
+            mAbilityEvent = hitEvent;
         }
 
-        void InvokeAttackEvent(CollisionData collision)
+        void InvokeAbilityEvent(HitBoxCollision collision)
         {
-            mAttackEvent?.Invoke(collision);
+            mAbilityEvent?.Invoke(collision);
         }
 
-        void InvokeFixedHitEvent(CollisionData collision)
+        void InvokeEffectEvent(HitBoxCollision collision)
         {
-            mFixedHitEvent.Invoke(collision);
+            mEffectEvent.Invoke(collision);
         }
 
-        void DoHit(CollisionData collision)
+        void InvokeHitCallback(HitBoxCollision collision)
+        {
+            HitCallback?.Invoke(collision);
+        }
+
+        void SendCollisionData(IHitBox victim)
+        {
+            var attacker = this;
+            var collsion = new HitBoxCollision()
+            {
+                Attacker = attacker.Actor,
+                Victim = victim.Actor,
+            };
+            victim.DoHit(collsion);
+            attacker.DoHit(collsion);
+        }
+
+        public void DoHit(HitBoxCollision collision)
         {
             StartDelay();
+            collision.Subject = this;
             mHitPipeline.Invoke(collision);
+        }
+
+        bool CanAttack(IHitBox targetHitBox)
+        {
+            return IsAttacker &&
+                   !targetHitBox.IsDelay &&
+                   !targetHitBox.IsAttacker &&
+                   !Actor.Equals(targetHitBox.Actor);
         }
 
         void OnTriggerStay(Collider other)
         {
-            if (!HitBoxFlag.IsAttacker())
+            if (!IsAttacker)
             {
                 return;
             }
 
-            var victim = other.GetComponent<HitBoxCollider>();
-            if (!victim)
+            var victim = other.GetComponent<IHitBox>();
+            if (victim == null)
             {
                 return;
             }
 
-            if (victim.Actor.Equals(Actor))
+            if (!CanAttack(victim))
             {
                 return;
             }
-
-            if (!HitBoxFlag.CanAttack(victim))
-            {
-                return;
-            }
-
-            var attacker = this;
-            var collsion = new CollisionData()
-            {
-                Attacker = attacker.Actor,
-                Victim = victim.Actor,
-                Subject = this
-            };
-
-            attacker.DoHit(collsion);
-            victim.DoHit(collsion);
+            SendCollisionData(victim);
         }
+
+
 
         void Start()
         {
@@ -114,9 +134,8 @@ namespace PlatformGame.Character.Collision
             mLastHitTime = Time.time - HitDelay + 0.1f;
 
             mHitPipeline = Pipelines.Instance.HitBoxColliderPipeline;
-            mHitPipeline.InsertPipe(InvokeAttackEvent);
-            mHitPipeline.InsertPipe(InvokeFixedHitEvent);
-            mHitPipeline.InsertPipe(InvokeHitCallback);
+            mHitPipeline.InsertPipe(InvokeEffectEvent);
+            mHitPipeline.InsertPipe(InvokeAbilityEvent);
         }
     }
 }

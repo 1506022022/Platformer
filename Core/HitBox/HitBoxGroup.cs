@@ -7,72 +7,38 @@ namespace PlatformGame.Character.Collision
 
     public class HitBoxGroup : MonoBehaviour
     {
-        readonly Dictionary<HitBoxCollider, uint> mActionIDs = new();
         Character mCharacter;
-        AttackCallback mAttackCallback;
         [SerializeField] HitBoxControll mHitControll;
         [SerializeField] HitBoxControll mAttackControll;
-
-        public void AddAttackCallback(AttackCallback callback)
-        {
-            mAttackCallback += callback;
-        }
 
         public void SetAttackEvent(List<string> filterColliderNames, HitEvent hitEvent, uint actionID)
         {
             var colliders = GetCollidersAs(filterColliderNames, mAttackControll);
             foreach (var hitBoxCollider in colliders)
             {
-                hitBoxCollider.SetHitEvent(hitEvent);
-                mActionIDs[hitBoxCollider] = actionID;
+                hitBoxCollider.SetAbilityEvent(hitEvent);
             }
         }
 
-        public void SetAttackCollidersFlags(List<string> filterColliderNames, HitBoxFlags flags)
+        void OnHit(HitBoxCollision collision)
         {
-            var colliders = GetCollidersAs(filterColliderNames, mAttackControll);
-            foreach (var hitBoxCollider in colliders)
+            if (collision.Subject.IsAttacker)
             {
-                hitBoxCollider.HitBoxFlag.SetFlag(flags);
+                mAttackControll.StartDelay();
+            }
+            else
+            {
+                mHitControll.StartDelay();
             }
         }
 
-        void OnHit(CollisionData collision, HitBoxCollider subject)
+        void InitColliders(HitBoxControll hitBoxControll, bool isAttacker)
         {
-            mHitControll.StartDelay();
-        }
-
-        void OnAttack(CollisionData collision, HitBoxCollider subject)
-        {
-            mAttackControll.StartDelay();
-
-            if (mAttackCallback == null)
+            foreach (var collider in hitBoxControll.Colliders)
             {
-                return;
-            }
-
-            var victim = collision.Victim;
-            var actionID = mActionIDs[subject];
-            mAttackCallback.Invoke(victim, actionID);
-        }
-
-        void InjectionDependencyInto(HitBoxControll hitBoxControll)
-        {
-            hitBoxControll.SetActor(mCharacter);
-
-            foreach (var hitBoxCollider in hitBoxControll.Colliders)
-            {
-                hitBoxCollider.AddCallback((collision) =>
-                {
-                    if (hitBoxCollider.HitBoxFlag.IsAttacker())
-                    {
-                        OnAttack(collision, hitBoxCollider);
-                    }
-                    else
-                    {
-                        OnHit(collision, hitBoxCollider);
-                    }
-                });
+                collider.Actor = mCharacter;
+                collider.IsAttacker = isAttacker;
+                collider.HitCallback.AddListener(OnHit);
             }
         }
 
@@ -81,14 +47,8 @@ namespace PlatformGame.Character.Collision
             var list = new List<HitBoxCollider>();
             foreach (var filter in filterColliderNames)
             {
-                var colliders = hitBoxControll.GetCollidersAs(filter);
-                foreach (var hitBoxCollider in colliders)
-                {
-                    if (!list.Contains(hitBoxCollider))
-                    {
-                        list.Add(hitBoxCollider);
-                    }
-                }
+                var collider = hitBoxControll.GetColliderAs(filter);
+                list.Add(collider);
             }
 
             return list;
@@ -97,13 +57,8 @@ namespace PlatformGame.Character.Collision
         void Awake()
         {
             mCharacter = GetComponent<Character>();
-            InjectionDependencyInto(mHitControll);
-            InjectionDependencyInto(mAttackControll);
-
-            foreach (var hitBoxCollider in mAttackControll.Colliders)
-            {
-                mActionIDs.Add(hitBoxCollider, 0);
-            }
+            InitColliders(mHitControll, false);
+            InitColliders(mAttackControll, true);
         }
     }
 }

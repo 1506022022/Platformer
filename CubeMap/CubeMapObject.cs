@@ -51,11 +51,6 @@ namespace PlatformGame.Character
             Objects.Add(this);
         }
 
-        void Start()
-        {
-            OnChanged(CubeMap.Instance.State);
-        }
-
         void OnDestroy()
         {
             Objects.Remove(this);

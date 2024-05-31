@@ -6,15 +6,19 @@ namespace PlatformGame.Character.Combat
     [CreateAssetMenu(menuName = "Custom/Ability/Destroy")]
     public class Destroy : Ability
     {
-        public override void UseAbility(CollisionData collision)
+        public override void UseAbility(AbilityCollision collision)
         {
             var victim = collision.Victim;
-            DestroyTo(victim.gameObject);
+            if (!victim.Attribute.IsInclude(AttributeFlags.Destructibility))
+            {
+                return;
+            }
+            DestroyTo(victim);
         }
 
-        public static void DestroyTo(GameObject gameObject)
+        public static void DestroyTo(Character character)
         {
-            GameObject.Destroy(gameObject);
+            GameObject.Destroy(character.gameObject);
         }
     }
 }

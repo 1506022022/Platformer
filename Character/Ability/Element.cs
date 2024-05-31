@@ -1,4 +1,3 @@
-using PlatformGame.Character.Collision;
 using UnityEngine;
 
 namespace PlatformGame.Character.Combat
@@ -8,9 +7,9 @@ namespace PlatformGame.Character.Combat
     {
         public string TargetTag = "Fire";
 
-        public override void UseAbility(CollisionData collision)
+        public override void UseAbility(AbilityCollision collision)
         {
-            var attacker = collision.Attacker;
+            var attacker = collision.Caster;
             if (!attacker.CompareTag(TargetTag))
             {
                 return;
@@ -24,8 +23,8 @@ namespace PlatformGame.Character.Combat
         {
             var obj = Instantiate(attacker);
             obj.transform.position = victim.transform.position;
-            Combat.Destroy.DestroyTo(victim.gameObject);
+            Combat.Destroy.DestroyTo(victim);
         }
-        
+
     }
 }

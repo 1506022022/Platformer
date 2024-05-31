@@ -1,6 +1,5 @@
 using PlatformGame.Tool;
 using System;
-using Unity.VisualScripting;
 using UnityEngine;
 using static PlatformGame.Character.Status.MovementInfo;
 
@@ -37,7 +36,7 @@ namespace PlatformGame.Character.Controller
                 actionID = STATE_LAND;
             }
 
-            else if (IsJumpState(velY))
+            else if (IsJumpState())
             {
                 actionID = (velY > 0) ? STATE_JUMPING : STATE_FALLING;
             }
@@ -62,7 +61,7 @@ namespace PlatformGame.Character.Controller
             return (Mathf.Abs(mCharacter.Rigid.velocity.magnitude) < MIN_WALK_VELOCITY);
         }
 
-        bool IsJumpState(double velY)
+        bool IsJumpState()
         {
             return !RigidbodyUtil.IsGrounded(mCharacter.Rigid) && !IsStopped();
         }

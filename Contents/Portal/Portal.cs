@@ -1,5 +1,6 @@
 using PlatformGame.Contents.Loader;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -8,7 +9,7 @@ namespace PlatformGame.Contents
     public abstract class Portal : MonoBehaviour
     {
         protected WorkState State { get; set; }
-        protected readonly Dictionary<Character.Character, bool> mEnteredCharacters = new();
+        protected readonly Dictionary<Character.Character, bool> mEntrylist = new();
         [SerializeField] UnityEvent mRunEvent;
 
         protected virtual void RunPortal()
@@ -17,15 +18,15 @@ namespace PlatformGame.Contents
             mRunEvent.Invoke();
         }
 
-        protected abstract bool IsGoingLiveWithPortal(Character.Character other);
+        protected abstract bool CanRunningPortal(Character.Character other);
 
-        void ResetEnteredCharacterMap()
+        void ResetEntrylist()
         {
-            mEnteredCharacters.Clear();
+            mEntrylist.Clear();
             var characters = GameManager.Instance.JoinCharacters;
             foreach (var character in characters)
             {
-                mEnteredCharacters.Add(character, false);
+                mEntrylist.Add(character, false);
             }
         }
 
@@ -36,9 +37,9 @@ namespace PlatformGame.Contents
             {
                 return;
             }
-            mEnteredCharacters[character] = true;
+            mEntrylist[character] = true;
 
-            if (!IsGoingLiveWithPortal(character))
+            if (!CanRunningPortal(character))
             {
                 return;
             }
@@ -53,15 +54,20 @@ namespace PlatformGame.Contents
                 return;
             }
 
-            if (mEnteredCharacters.ContainsKey(character))
+            if (mEntrylist.ContainsKey(character))
             {
-                mEnteredCharacters[character] = false;
+                mEntrylist[character] = false;
+            }
+
+            if (mEntrylist.All(x => x.Value == false))
+            {
+                State = WorkState.Ready;
             }
         }
 
         void Start()
         {
-            ResetEnteredCharacterMap();
+            ResetEntrylist();
         }
 
     }
