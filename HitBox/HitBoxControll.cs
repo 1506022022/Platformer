@@ -53,10 +53,6 @@ public class HitBoxControll
     {
         Debug.Assert(pairs.Any(x => x.Name.Equals(filter)), $"Values that are not registered in Pairs : {filter}");
         var colliders = Pairs;
-<<<<<<< HEAD:HitBox/HitBoxControll.cs
         return colliders[colliders.FindIndex(x => x.Name.Equals(filter))].Collider;
-=======
-        return colliders[colliders.FindIndex(x=>x.Name.Equals(filter))].Collider;
->>>>>>> 55905e167fdf216c12329ed6e479be5122586bc9:Core/HitBox/HitBoxControll.cs
     }
 }
