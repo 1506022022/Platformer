@@ -32,7 +32,11 @@ namespace PlatformGame.Character.Combat
             {
                 return;
             }
+<<<<<<< HEAD:Character/Ability/AbilityAgent.cs
 
+=======
+            
+>>>>>>> 55905e167fdf216c12329ed6e479be5122586bc9:Core/Combat/AbilityAgent.cs
             var filter = hitBoxData.Filter;
             mHitBox.SetAttackEvent(filter, actionData.Ability.DoActivation, actionData.ID);
         }

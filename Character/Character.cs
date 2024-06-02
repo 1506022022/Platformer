@@ -12,7 +12,11 @@ namespace PlatformGame.Character
     public class Character : MonoBehaviour
     {
         public const string TAG_PLAYER = "Player";
+<<<<<<< HEAD:Character/Character.cs
         static readonly List<Character> mInstances = new();
+=======
+        static List<Character> mInstances = new();
+>>>>>>> 55905e167fdf216c12329ed6e479be5122586bc9:Core/Character/Character.cs
         public static List<Character> Instances => mInstances.ToList();
         public bool IsAction => mAgent.InAction;
         CharacterState mState;

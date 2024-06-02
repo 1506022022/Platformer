@@ -60,5 +60,6 @@ namespace PlatformGame.Character
         {
             Instance = this;
         }
+
     }
 }

@@ -27,7 +27,11 @@ namespace PlatformGame.Character.Combat
 
         public static void PushingTo(Character victim, Vector3 force)
         {
+<<<<<<< HEAD
             if (!victim.Attribute.IsInclude(NonStatic))
+=======
+            if(!victim.Attribute.IsInclude(NonStatic))
+>>>>>>> 55905e167fdf216c12329ed6e479be5122586bc9
             {
                 return;
             }

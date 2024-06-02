@@ -14,7 +14,11 @@ namespace PlatformGame.Input
         public const string KEY_SWAP = "Tab";
         public const string KEY_ATTACK = "Attack";
         public const string KEY_GUARD = "Guard";
+<<<<<<< HEAD:Input/ActionKey.cs
         public const string KEY_Debug = "Debug Load";
+=======
+        public const string KEY_PORTAL_JUMP = "PortalJump";
+>>>>>>> 55905e167fdf216c12329ed6e479be5122586bc9:Core/Input/ActionKey.cs
 
         static readonly Dictionary<string, bool> mKeyDownMap = new Dictionary<string, bool>
         {
@@ -26,7 +30,11 @@ namespace PlatformGame.Input
             { KEY_SWAP, false },
             { KEY_ATTACK, false },
             { KEY_GUARD, false },
+<<<<<<< HEAD:Input/ActionKey.cs
             { KEY_Debug, false }
+=======
+            { KEY_PORTAL_JUMP, false }
+>>>>>>> 55905e167fdf216c12329ed6e479be5122586bc9:Core/Input/ActionKey.cs
         };
 
         static Dictionary<string, bool> KeyDownMap
