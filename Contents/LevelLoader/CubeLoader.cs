@@ -1,5 +1,4 @@
-﻿using PlatformGame.Character.Controller;
-using PlatformGame.Input;
+﻿using PlatformGame.Input;
 using UnityEngine;
 using static PlatformGame.Input.ActionKey;
 
@@ -8,7 +7,7 @@ namespace PlatformGame.Contents.Loader
     public class CubeLoader : MonoBehaviour, ILevelLoader
     {
         public WorkState State { get; private set; }
-        [SerializeField] PlayerCharacterController mCubeController;
+        [SerializeField] Character.Controller.PlayerCharacterController mCubeController;
 
         void Awake()
         {
@@ -24,7 +23,7 @@ namespace PlatformGame.Contents.Loader
             }
 
             var map = ActionKey.GetKeyDownMap();
-            if (!map[GUARD])
+            if (!map[KEY_GUARD])
             {
                 return;
             }

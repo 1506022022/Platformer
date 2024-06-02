@@ -1,15 +1,20 @@
 using PlatformGame.Contents.Loader;
 using System.Linq;
+using UnityEngine;
 
 namespace PlatformGame.Contents
 {
     public class GoalPortal : Portal
     {
         public LoaderType LoaderType;
+        [Range(0, byte.MaxValue)]
+        public byte NeedCharacters = 1;
 
-        protected override bool IsGoingLiveWithPortal(Character.Character other)
+        protected override bool CanRunningPortal(Character.Character other)
         {
-            return mEnteredCharacters.All(x => x.Value) && State == WorkState.Ready;
+            Debug.Assert(NeedCharacters <= mEntrylist.Count);
+            return State == WorkState.Ready &&
+                   NeedCharacters <= mEntrylist.Count(x => x.Value);
         }
 
         protected override void RunPortal()

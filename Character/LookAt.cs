@@ -1,12 +1,12 @@
 using PlatformGame.Character;
 using UnityEngine;
 
-public class Look : MonoBehaviour
+public class LookAt : MonoBehaviour
 {
     [SerializeField] Character mCharacter;
     static Vector3 m3DVelocity;
 
-    public static void LookAtMovingDirection(Transform transform, Vector3 dir)
+    static void LookAtMovingDirection(Transform transform, Vector3 dir)
     {
         m3DVelocity = dir;
         m3DVelocity.y = 0;
@@ -31,7 +31,7 @@ public class Look : MonoBehaviour
             return;
         }
 
-        LookAtMovingDirection(mCharacter.Model, velocity);
+        LookAtMovingDirection(transform, velocity);
     }
 
     void Update()

@@ -19,18 +19,18 @@ public class Pipelines : ScriptableObject
         }
     }
 
-    [SerializeField] Pipeline<ActionDataKeyPair> mPlayerCharacterControllerPipeline;
+    [SerializeField] Pipeline<ControllerInputData> mPlayerCharacterControllerPipeline;
 
-    public Pipeline<ActionDataKeyPair> PlayerCharacterControllerPipeline
-        => Pipeline<ActionDataKeyPair>.CopyTo(mPlayerCharacterControllerPipeline);
+    public Pipeline<ControllerInputData> PlayerCharacterControllerPipeline
+        => Pipeline<ControllerInputData>.CopyTo(mPlayerCharacterControllerPipeline);
 
     [SerializeField] Pipeline<AbilityCollision> mAbilityPipeline;
 
     public Pipeline<AbilityCollision> AbilityPipeline
         => Pipeline<AbilityCollision>.CopyTo(mAbilityPipeline);
 
-    [SerializeField] Pipeline<CollisionData> mHitBoxColliderPipeline;
+    [SerializeField] Pipeline<HitBoxCollision> mHitBoxColliderPipeline;
 
-    public Pipeline<CollisionData> HitBoxColliderPipeline
-        => Pipeline<CollisionData>.CopyTo(mHitBoxColliderPipeline);
+    public Pipeline<HitBoxCollision> HitBoxColliderPipeline
+        => Pipeline<HitBoxCollision>.CopyTo(mHitBoxColliderPipeline);
 }

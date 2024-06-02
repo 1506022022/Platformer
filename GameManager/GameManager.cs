@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using UnityEngine;
+using static PlatformGame.Character.Character;
 using static PlatformGame.Input.ActionKey;
 
 namespace PlatformGame
@@ -14,22 +15,19 @@ namespace PlatformGame
     {
         public static GameManager Instance { get; private set; }
         public List<Character.Character> JoinCharacters => JoinCharactersController.Select(x => x.ControlledCharacter).ToList();
+        float mLastSwapTime;
         Contents.Contents mContents;
-        PlayerCharacterController mController;
-        [SerializeField] List<PlayerCharacterController> mJoinCharactersController;
-
+        PlayerCharacterController mCurrentController;
         List<PlayerCharacterController> JoinCharactersController
         {
             get
             {
-                Debug.Assert(mJoinCharactersController.Count > 0 && mJoinCharactersController.All(x => x),
-                    $"{gameObject.name}is not assigned a controller.");
-                return mJoinCharactersController;
+                var playerControllers = PlayerCharacterController.Instances.Where(x => x.CompareTag(TAG_PLAYER)).ToList();
+                Debug.Assert(playerControllers.Count > 0 && playerControllers.All(x => x),
+                    $"No controllers with the {TAG_PLAYER} tag found.");
+                return playerControllers;
             }
-            set => mJoinCharactersController = value;
         }
-
-        float mLastSwapTime;
 
         [Header("[Debug]")]
         [SerializeField, ReadOnly(false)] LoaderType mLoaderType;
@@ -60,21 +58,22 @@ namespace PlatformGame
 
         void ControlDefaultCharacter()
         {
+            JoinCharactersController.ForEach(x => x.SetActive(false));
             var defaultCharacter = JoinCharactersController.First();
             ReplaceControlWith(defaultCharacter);
         }
 
-        void ReplaceControlWith(PlayerCharacterController controller)
+        void ReplaceControlWith(Character.Controller.PlayerCharacterController controller)
         {
-            mController?.SetActive(false);
-            mController = controller;
-            mController.SetActive(true);
+            mCurrentController?.SetActive(false);
+            mCurrentController = controller;
+            mCurrentController.SetActive(true);
         }
 
         void ReleaseController()
         {
-            mController?.SetActive(false);
-            mController = null;
+            mCurrentController?.SetActive(false);
+            mCurrentController = null;
         }
 
         void SwapCharacter()
@@ -114,7 +113,7 @@ namespace PlatformGame
                 }
 
                 var map = ActionKey.GetKeyDownMap();
-                if (!map[SWAP])
+                if (!map[KEY_SWAP])
                 {
                     return;
                 }

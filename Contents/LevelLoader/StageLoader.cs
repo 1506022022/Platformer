@@ -23,7 +23,7 @@ namespace PlatformGame.Contents
             Stages = Resources.Load<StageList>("StageLevels");
             Debug.Assert(Stages);
             // TODOEND
-            
+
             Debug.Assert(Stages.Names.Count > 0);
 
             mLoadingWindow = UIWindowContainer.GetLoadingWindow();

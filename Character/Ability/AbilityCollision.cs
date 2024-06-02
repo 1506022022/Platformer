@@ -1,18 +1,20 @@
 using System;
-using PlatformGame.Character.Collision;
 
 namespace PlatformGame.Character.Combat
 {
     [Serializable]
     public struct AbilityCollision
     {
-        public CollisionData Data;
-        public Ability Ability;
+        public readonly Character Caster;
+        public readonly Character Victim;
+        public readonly Ability Ability;
 
-        public AbilityCollision(CollisionData data, Ability ability)
+        public AbilityCollision(Character caster, Character victim, Ability ability)
         {
-            Data = data;
+            Caster = caster;
+            Victim = victim;
             Ability = ability;
         }
+
     }
 }

@@ -1,4 +1,3 @@
-using PlatformGame.Character.Collision;
 using PlatformGame.Character.Movement;
 using UnityEngine;
 
@@ -10,12 +9,12 @@ namespace PlatformGame.Character.Combat
         [SerializeField] Character mSatellite;
         [SerializeField] SatelliteMovement mMovement;
 
-        public override void UseAbility(CollisionData collision)
+        public override void UseAbility(AbilityCollision collision)
         {
             Debug.Assert(mSatellite, $"Satellite reference not found. : {name}");
             Debug.Assert(mMovement, $"Movement reference not found : {name}");
 
-            var attacker = collision.Attacker;
+            var attacker = collision.Caster;
             var owner = attacker.transform;
             SpawnSatellite(mSatellite, owner, mMovement);
         }

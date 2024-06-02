@@ -10,10 +10,9 @@ namespace PlatformGame.Character.Movement
 
         public override void PlayAction(Rigidbody rigid, MonoBehaviour coroutine)
         {
-            Debug.Assert(Camera.main);
-            Debug.Assert(mDir.y == 0);
+            Debug.Assert(Camera.main, $"Main Camera is not found.");
+            Debug.Assert(mDir.y == 0, $"Must have a Y value of 0. : {name}");
             var camTransform = Camera.main.transform;
-            Debug.Assert(camTransform);
             var moveForce = camTransform.right * mDir.x;
             moveForce += camTransform.forward * mDir.z;
             moveForce = moveForce.normalized * (Time.deltaTime * MOVE_SPEED);

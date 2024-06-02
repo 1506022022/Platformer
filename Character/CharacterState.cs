@@ -24,6 +24,7 @@ namespace PlatformGame.Character
         Falling,
         Land,
         Attack,
+        Attack2,
         AttackDelay,
         Die
     }
@@ -40,6 +41,7 @@ namespace PlatformGame.Character
                 case CharacterState.Jumping: return (flags & CharacterStateFlags.Jump) == CharacterStateFlags.Jump;
                 case CharacterState.Falling: return (flags & CharacterStateFlags.Fall) == CharacterStateFlags.Fall;
                 case CharacterState.Attack: return (flags & CharacterStateFlags.Action) == CharacterStateFlags.Action;
+                case CharacterState.Attack2: return (flags & CharacterStateFlags.Action) == CharacterStateFlags.Action;
                 case CharacterState.AttackDelay: return (flags & CharacterStateFlags.Action) == CharacterStateFlags.Action;
                 case CharacterState.Land: return (flags & CharacterStateFlags.Jump) == CharacterStateFlags.Jump;
                 default: Debug.Assert(false, $"Undefined values : {state}"); return false;

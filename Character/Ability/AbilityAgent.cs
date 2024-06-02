@@ -18,7 +18,7 @@ namespace PlatformGame.Character.Combat
 
         public bool InAction
         {
-            get { return mLastUsedAction != null && Time.time < mLastActionTime + mLastUsedAction.ActionDelay; }
+            get => mLastUsedAction != null && Time.time < mLastActionTime + mLastUsedAction.ActionDelay;
         }
 
         public void UseAbility(ActionData actionData)
@@ -27,17 +27,13 @@ namespace PlatformGame.Character.Combat
             mLastUsedAction = actionData;
             var hitBoxData = actionData.HitBoxData;
 
-            if (!hitBoxData.UseHitBox)
+            if (!hitBoxData.UseHitBox ||
+                !actionData.Ability)
             {
                 return;
             }
-            var filter = hitBoxData.Filter;
-            mHitBox.SetAttackCollidersFlags(filter, actionData.HitBoxData.Flags);
 
-            if (!actionData.Ability)
-            {
-                return;
-            }
+            var filter = hitBoxData.Filter;
             mHitBox.SetAttackEvent(filter, actionData.Ability.DoActivation, actionData.ID);
         }
     }

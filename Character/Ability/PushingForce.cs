@@ -1,5 +1,5 @@
-using PlatformGame.Character.Collision;
 using UnityEngine;
+using static PlatformGame.Character.Collision.AttributeFlags;
 
 namespace PlatformGame.Character.Combat
 {
@@ -9,7 +9,7 @@ namespace PlatformGame.Character.Combat
         public float PowerMultiply = 300f;
         public float UpperPower = 3f;
 
-        public override void UseAbility(CollisionData collision)
+        public override void UseAbility(AbilityCollision collision)
         {
             var victim = collision.Victim;
             var rigid = victim.Rigid;
@@ -18,7 +18,7 @@ namespace PlatformGame.Character.Combat
                 return;
             }
 
-            var attacker = collision.Attacker;
+            var attacker = collision.Caster;
             var force = attacker.Model.forward;
             force.y = UpperPower;
             force *= PowerMultiply;
@@ -27,6 +27,11 @@ namespace PlatformGame.Character.Combat
 
         public static void PushingTo(Character victim, Vector3 force)
         {
+            if (!victim.Attribute.IsInclude(NonStatic))
+            {
+                return;
+            }
+
             if (victim.transform.parent != null)
             {
                 victim.transform.SetParent(null, true);
@@ -35,6 +40,6 @@ namespace PlatformGame.Character.Combat
             victim.Movement.RemoveMovement();
             victim.Rigid.AddForce(force);
         }
-        
+
     }
 }

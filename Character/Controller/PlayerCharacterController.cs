@@ -3,6 +3,7 @@ using PlatformGame.Input;
 using PlatformGame.Pipeline;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
@@ -16,20 +17,43 @@ namespace PlatformGame.Character.Controller
         public ActionData ActionData;
     }
 
+    public class ControllerInputData
+    {
+        public readonly string Key;
+        public readonly ActionData ActionData;
+        public readonly PlayerCharacterController Controller;
+
+        public ControllerInputData(string key, ActionData actionData, PlayerCharacterController controller)
+        {
+            Key = key;
+            ActionData = actionData;
+            Controller = controller;
+        }
+    }
+
     public class PlayerCharacterController : MonoBehaviour
     {
-        [FormerlySerializedAs("InputMap")]
-        [HideInInspector] public List<ActionDataKeyPair> InputMap;
-        [FormerlySerializedAs("BeforeTarget")]
-        [HideInInspector] public Character BeforeTarget;
-        public UnityEvent<ActionDataKeyPair> InputEvents;
+        static List<PlayerCharacterController> mInstances = new();
+        public static List<PlayerCharacterController> Instances => mInstances.ToList();
+
+        [FormerlySerializedAs("EditorInputMap")]
+        [HideInInspector] public List<ActionDataKeyPair> EditorInputMap;
+        [HideInInspector] public Character EditorBeforeCharacter;
+
+        [Header("References")]
+        public Character ControlledCharacter;
+
+        [Header("Controls")]
+        [SerializeField] bool mIsActive;
         public bool IsActive
         {
-            get; private set;
+            get => mIsActive;
+            private set => mIsActive = value;
         }
-        public Character ControlledCharacter;
+        [SerializeField] UnityEvent<ControllerInputData> InputEvents;
+
         Dictionary<string, ActionData> mInputMap;
-        Pipeline<ActionDataKeyPair> mInputPipeline;
+        Pipeline<ControllerInputData> mInputPipeline;
 
         public void SetActive(bool able)
         {
@@ -42,12 +66,12 @@ namespace PlatformGame.Character.Controller
             mInputMap = new Dictionary<string, ActionData>();
             foreach (var item in actionKeys)
             {
-                Debug.Assert(!mInputMap.ContainsKey(item.Key), $"duplicate elements : {item.Key}");
+                Debug.Assert(!mInputMap.ContainsKey(item.Key), $"duplicate elements in {name} : {item.Key}");
                 mInputMap.Add(item.Key, item.ActionData);
             }
         }
 
-        void EnterCommand(ActionDataKeyPair input)
+        void EnterCommand(ControllerInputData input)
         {
             var actionID = input.ActionData.ID;
             ControlledCharacter.DoAction(actionID);
@@ -65,11 +89,12 @@ namespace PlatformGame.Character.Controller
 
         void Awake()
         {
-            SetInputAction(InputMap);
+            SetInputAction(EditorInputMap);
 
             mInputPipeline = Pipelines.Instance.PlayerCharacterControllerPipeline;
             mInputPipeline.InsertPipe(EnterCommand);
             mInputPipeline.InsertPipe((x) => InputEvents.Invoke(x));
+            mInstances.Add(this);
         }
 
         void Update()
@@ -79,19 +104,24 @@ namespace PlatformGame.Character.Controller
                 return;
             }
 
-            var map = ActionKey.GetKeyDownMap();
+            var inputMap = ActionKey.GetKeyDownMap();
             foreach (var input_Action in mInputMap)
             {
-                var input = map[input_Action.Key];
+                var input = inputMap[input_Action.Key];
                 if (!input)
                 {
                     continue;
                 }
 
-                mInputPipeline.Invoke(new ActionDataKeyPair()
-                    { Key = input_Action.Key, ActionData = input_Action.Value });
+                var inputData = new ControllerInputData(input_Action.Key, input_Action.Value, this);
+                mInputPipeline.Invoke(inputData);
             }
         }
-        
+
+        void OnDestroy()
+        {
+            mInstances.Remove(this);
+        }
+
     }
 }

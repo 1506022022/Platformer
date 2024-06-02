@@ -1,6 +1,9 @@
 ﻿using PlatformGame.Character.Collision;
 using PlatformGame.Character.Combat;
 using PlatformGame.Character.Movement;
+using PlatformGame.Debugger;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -8,16 +11,20 @@ namespace PlatformGame.Character
 {
     public class Character : MonoBehaviour
     {
+        public const string TAG_PLAYER = "Player";
+        static readonly List<Character> mInstances = new();
+        public static List<Character> Instances => mInstances.ToList();
         public bool IsAction => mAgent.InAction;
         CharacterState mState;
         public CharacterState State
         {
             get => mState;
-            set
+            private set
             {
                 if (mState != value)
                 {
                     OnChangedState.Invoke(value);
+                    Log.PrintLog(transform, value);
                 }
                 mState = value;
             }
@@ -36,17 +43,20 @@ namespace PlatformGame.Character
 
 
         [Header("Controls")]
-        [SerializeField] AbilityAgent mAgent;
         [SerializeField] ActionDataList mHasAbilities;
         public ActionDataList HasAbilities => mHasAbilities;
+        [SerializeField] AttributeFlag mAttribute;
+        public AttributeFlag Attribute => mAttribute;
         [SerializeField] UnityEvent<CharacterState> mOnChangedState;
         public UnityEvent<CharacterState> OnChangedState => mOnChangedState;
+
+        AbilityAgent mAgent;
 
 
         public void DoAction(uint actionID)
         {
             mHasAbilities.Library.TryGetValue(actionID, out var action);
-            Debug.Assert(action, $"{actionID}가 {gameObject.name}의 능력으로 등록되지 않음.");
+            Debug.Assert(action, $"The {actionID} is not registered as an ability for {gameObject.name}.");
 
             if (!StateCheck.Equals(State, action.AllowedState))
             {
@@ -73,8 +83,15 @@ namespace PlatformGame.Character
             Debug.Assert(Rigid, $"Rigidbody reference not found : {gameObject.name}");
             Debug.Assert(mMovement, $"Movement reference not found : {gameObject.name}");
             Debug.Assert(mModel, $"Model reference not found : {gameObject.name}");
+            mInstances.Add(this);
             mAgent = new AbilityAgent(mHitBox);
+            Attribute.SetFlag(Attribute.Flags, this);
             OnChangedState.Invoke(State);
+        }
+
+        void OnDestroy()
+        {
+            mInstances.Remove(this);
         }
 
     }

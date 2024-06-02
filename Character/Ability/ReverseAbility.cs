@@ -1,4 +1,3 @@
-using PlatformGame.Character.Collision;
 using UnityEngine;
 
 namespace PlatformGame.Character.Combat
@@ -8,10 +7,10 @@ namespace PlatformGame.Character.Combat
     {
         public Ability AbilityAction;
 
-        public override void UseAbility(CollisionData collision)
+        public override void UseAbility(AbilityCollision collision)
         {
-            (collision.Attacker, collision.Victim) = (collision.Victim, collision.Attacker);
-            AbilityAction.UseAbility(collision);
+            var abilityCollision = new AbilityCollision(collision.Victim, collision.Caster, collision.Ability);
+            AbilityAction.UseAbility(abilityCollision);
         }
 
     }
