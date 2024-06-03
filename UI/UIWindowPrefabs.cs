@@ -14,7 +14,7 @@ public static class UIWindowContainer
 
     public static LoadingWindow GetLoadingWindow()
     {
-        Debug.Assert(mPrefabs);
+        Debug.Assert(mPrefabs, "Resource not found: Resources/UIWindows");
         if (mLoadingWindowInstance == null)
         {
             mLoadingWindowInstance = Object.Instantiate(mPrefabs.LoadingWindowPrefab);

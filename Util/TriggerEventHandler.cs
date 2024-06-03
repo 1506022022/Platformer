@@ -1,24 +1,28 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class TriggerEventHandler : MonoBehaviour
+namespace PlatformGame.Util
 {
-    public UnityEvent mOnCollisionEnter;
-    public UnityEvent mOnCollisionExit;
-    public UnityEvent mOnCollisionStay;
-
-    void OnTriggerEnter(Collider coll)
+    public class TriggerEventHandler : MonoBehaviour
     {
-        mOnCollisionEnter.Invoke();
+        public UnityEvent mOnCollisionEnter;
+        public UnityEvent mOnCollisionExit;
+        public UnityEvent mOnCollisionStay;
+
+        void OnTriggerEnter(Collider coll)
+        {
+            mOnCollisionEnter.Invoke();
+        }
+
+        void OnTriggerExit(Collider coll)
+        {
+            mOnCollisionExit.Invoke();
+        }
+
+        void OnTriggerStay(Collider coll)
+        {
+            mOnCollisionStay.Invoke();
+        }
     }
 
-    void OnTriggerExit(Collider coll)
-    {
-        mOnCollisionExit.Invoke();
-    }
-
-    void OnTriggerStay(Collider coll)
-    {
-        mOnCollisionStay.Invoke();
-    }
 }

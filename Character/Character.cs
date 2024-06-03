@@ -24,7 +24,7 @@ namespace PlatformGame.Character
                 if (mState != value)
                 {
                     OnChangedState.Invoke(value);
-                    Log.PrintLog(transform, value);
+                    DebugLog.PrintLog(transform, value);
                 }
                 mState = value;
             }
